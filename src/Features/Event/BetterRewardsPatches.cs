@@ -396,7 +396,7 @@ internal static class BetterRewardsMerchantRoomExitPatch
     }
 }
 
-[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpNewSinglePlayer))]
+[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpNewSingleplayer))]
 internal static class BetterRewardsResetSinglePlayerRunPatch
 {
     [HarmonyPostfix]
@@ -406,7 +406,7 @@ internal static class BetterRewardsResetSinglePlayerRunPatch
     }
 }
 
-[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpSavedSinglePlayer))]
+[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpSavedSingleplayer))]
 internal static class BetterRewardsResetSavedSinglePlayerRunPatch
 {
     [HarmonyPostfix]
@@ -416,7 +416,7 @@ internal static class BetterRewardsResetSavedSinglePlayerRunPatch
     }
 }
 
-[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpNewMultiPlayer))]
+[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpNewMultiplayer))]
 internal static class BetterRewardsResetNewMultiplayerRunPatch
 {
     [HarmonyPostfix]
@@ -426,7 +426,7 @@ internal static class BetterRewardsResetNewMultiplayerRunPatch
     }
 }
 
-[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpSavedMultiPlayer))]
+[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpSavedMultiplayer))]
 internal static class BetterRewardsResetSavedMultiplayerRunPatch
 {
     [HarmonyPostfix]

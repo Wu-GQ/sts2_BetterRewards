@@ -272,7 +272,7 @@ internal static class BetterRewardsShopButtonsFeature
         // (CalcCost throws if CreationResult is null, so we must Populate before notifying.)
         foreach (var entry in inventory.CardEntries)
         {
-            entry.Populate();
+            entry.Populate(inventory);
             entry.OnMerchantInventoryUpdated();
         }
 
@@ -546,8 +546,7 @@ internal static class BetterRewardsShopButtonsFeature
             // Start from the merchant inventory region (center of screen is a safe default).
             cardNode.GlobalPosition = new Vector2(globalUi.Size.X * 0.5f, globalUi.Size.Y * 0.5f);
 
-            var targetPos = PileType.Deck.GetTargetPosition(cardNode);
-            var vfx = NCardFlyVfx.Create(cardNode, targetPos, isAddingToPile: true, player.Character.TrailPath);
+            var vfx = NCardFlyVfx.Create(cardNode, PileType.Deck, isAddingToPile: true, player.Character.TrailPath);
             if (vfx != null)
             {
                 trailContainer.AddChildSafely(vfx);

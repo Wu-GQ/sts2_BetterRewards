@@ -10,12 +10,12 @@ namespace BetterRewards.Features.Settings;
 [ConfigHoverTipsByDefault]
 internal sealed class BetterRewardsSettings : SimpleModConfig
 {
-    public const string ModId = "BetterRewards";
+    public const string ConfigModId = "BetterRewards";
 
     public static void Register()
     {
         BetterRewardsSettingsLocalization.TryMerge();
-        ModConfigRegistry.Register(ModId, new BetterRewardsSettings());
+        ModConfigRegistry.Register(ConfigModId, new BetterRewardsSettings());
     }
 
     // --- HP sacrifice event ---

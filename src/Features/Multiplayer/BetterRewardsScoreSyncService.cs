@@ -22,6 +22,7 @@ internal struct BetterRewardsPreviousRunScoreMessage : INetMessage, IPacketSeria
 
     public LogLevel LogLevel => LogLevel.Info;
 
+    public bool ShouldBuffer => true;
     public void Serialize(PacketWriter writer)
     {
         writer.WriteString(PlayerSignature ?? string.Empty);
@@ -242,23 +243,23 @@ internal static class NetHostGameServiceAttachBetterRewardsScorePatch
     }
 }
 
-[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpNewMultiPlayer))]
+[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpNewMultiplayer))]
 internal static class RunManagerSetUpNewMultiPlayerBetterRewardsPatch
 {
     [HarmonyPostfix]
     public static void Postfix(RunState state)
     {
-        BetterRewardsScoreSyncService.RefreshForCurrentRun(state, "RunManager.SetUpNewMultiPlayer");
+        BetterRewardsScoreSyncService.RefreshForCurrentRun(state, "RunManager.SetUpNewMultiplayer");
     }
 }
 
-[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpSavedMultiPlayer))]
+[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpSavedMultiplayer))]
 internal static class RunManagerSetUpSavedMultiPlayerBetterRewardsPatch
 {
     [HarmonyPostfix]
     public static void Postfix(RunState state)
     {
-        BetterRewardsScoreSyncService.RefreshForCurrentRun(state, "RunManager.SetUpSavedMultiPlayer");
+        BetterRewardsScoreSyncService.RefreshForCurrentRun(state, "RunManager.SetUpSavedMultiplayer");
     }
 }
 
