@@ -1,145 +1,297 @@
+using BaseLib.Config;
+
 namespace BetterRewards.Features.Settings;
 
 /// <summary>
-/// Runtime-accessible settings values for BetterRewards.
-/// All values are set by the registration/hydration layer.
+/// BetterRewards configuration. BaseLib builds the settings UI from these properties,
+/// loads them at startup, and saves them to the game's user://mod_configs/BetterRewards.cfg.
+/// Gameplay reads the static properties directly.
 /// </summary>
-internal static class BetterRewardsSettings
+[ConfigHoverTipsByDefault]
+internal sealed class BetterRewardsSettings : SimpleModConfig
 {
+    public const string ModId = "BetterRewards";
+
+    public static void Register()
+    {
+        BetterRewardsSettingsLocalization.TryMerge();
+        ModConfigRegistry.Register(ModId, new BetterRewardsSettings());
+    }
+
     // --- HP sacrifice event ---
 
     /// <summary>Fraction of current HP lost per sacrifice choice (0.0–1.0).</summary>
-    public static double HpSacrificePercent { get; private set; } = 0.20;
+    [ConfigSection("Event")]
+    [ConfigSlider(0.0, 1.0, 0.01, Format = "{0:0.00}")]
+    public static double HpSacrificePercent
+    {
+        get => _hpSacrificePercent;
+        set => _hpSacrificePercent = Math.Clamp(value, 0.0, 1.0);
+    }
 
     /// <summary>How many times the sacrifice option may be chosen.</summary>
-    public static int SacrificeRepeatCount { get; private set; } = 4;
+    [ConfigSlider(1, 999, 1, Format = "{0:0}")]
+    public static int SacrificeRepeatCount
+    {
+        get => _sacrificeRepeatCount;
+        set => _sacrificeRepeatCount = Math.Max(1, value);
+    }
 
     /// <summary>Fraction of previous run score converted to gold (0.0–100.0+).</summary>
-    public static double ScoreToGoldPercent { get; private set; } = 0.25;
+    [ConfigSlider(0.0, 100.0, 0.05, Format = "{0:0.00}")]
+    public static double ScoreToGoldPercent
+    {
+        get => _scoreToGoldPercent;
+        set => _scoreToGoldPercent = Math.Max(0.0, value);
+    }
 
     /// <summary>Minimum effective previous-run score (guarantees at least this much gold opportunity).</summary>
-    public static int MinPreviousScore { get; private set; } = 1000;
+    [ConfigSlider(0, 100000, 50, Format = "{0:0}")]
+    public static int MinPreviousScore
+    {
+        get => _minPreviousScore;
+        set => _minPreviousScore = Math.Max(0, value);
+    }
 
     // --- Shop: reroll ---
 
-    public static double ShopRerollBaseCost { get; private set; } = 150.0;
-    public static double ShopRerollCostScaling { get; private set; } = 1.10;
+    [ConfigSection("Shop reroll")]
+    [ConfigSlider(0, 9999, 5, Format = "{0:0}")]
+    public static double ShopRerollBaseCost
+    {
+        get => _shopRerollBaseCost;
+        set => _shopRerollBaseCost = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(1.0, 5.0, 0.05, Format = "{0:0.00}")]
+    public static double ShopRerollCostScaling
+    {
+        get => _shopRerollCostScaling;
+        set => _shopRerollCostScaling = Math.Max(1.0, value);
+    }
 
     // --- Shop: random relic ---
 
-    public static double RelicBaseCost { get; private set; } = 300.0;
-    public static double RelicCostScaling { get; private set; } = 1.10;
+    [ConfigSection("Random relic")]
+    [ConfigSlider(0, 9999, 5, Format = "{0:0}")]
+    public static double RelicBaseCost
+    {
+        get => _relicBaseCost;
+        set => _relicBaseCost = Math.Max(0.0, value);
+    }
 
-    // Relic rarity weights (higher = more likely)
-    public static double RelicWeightCommon   { get; private set; } = 10.0;
-    public static double RelicWeightUncommon { get; private set; } = 20.0;
-    public static double RelicWeightRare     { get; private set; } = 35.0;
-    public static double RelicWeightShop     { get; private set; } = 10.0;
-    public static double RelicWeightAncient  { get; private set; } = 25.0;
+    [ConfigSlider(1.0, 5.0, 0.05, Format = "{0:0.00}")]
+    public static double RelicCostScaling
+    {
+        get => _relicCostScaling;
+        set => _relicCostScaling = Math.Max(1.0, value);
+    }
+
+    [ConfigSection("Random relic weights", CollapsedByDefault = true)]
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double RelicWeightCommon
+    {
+        get => _relicWeightCommon;
+        set => _relicWeightCommon = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double RelicWeightUncommon
+    {
+        get => _relicWeightUncommon;
+        set => _relicWeightUncommon = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double RelicWeightRare
+    {
+        get => _relicWeightRare;
+        set => _relicWeightRare = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double RelicWeightShop
+    {
+        get => _relicWeightShop;
+        set => _relicWeightShop = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double RelicWeightAncient
+    {
+        get => _relicWeightAncient;
+        set => _relicWeightAncient = Math.Max(0.0, value);
+    }
 
     // --- Shop: random item ---
 
-    public static double RandomItemBaseCost { get; private set; } = 75.0;
-    public static double RandomItemCostScaling { get; private set; } = 1.10;
-
-    // Item type weights (Curse is now a sub-type of Card)
-    public static double ItemWeightRelic  { get; private set; } = 15.0;
-    public static double ItemWeightCard   { get; private set; } = 50.0;
-    public static double ItemWeightPotion { get; private set; } = 35.0;
-
-    // Card sub-type weights for random item
-    // Common/Uncommon/Rare = player's character card pool
-    // Colorless = colorless pool
-    // Curse = curse cards
-    public static double CardWeightCommon    { get; private set; } = 55.0;
-    public static double CardWeightUncommon  { get; private set; } = 25.0;
-    public static double CardWeightRare      { get; private set; } = 10.0;
-    public static double CardWeightColorless { get; private set; } = 5.0;
-    public static double CardWeightCurse     { get; private set; } = 5.0;
-
-    // Relic rarity weights for random item (separate from dedicated relic button)
-    public static double ItemRelicWeightCommon   { get; private set; } = 50.0;
-    public static double ItemRelicWeightUncommon { get; private set; } = 33.0;
-    public static double ItemRelicWeightRare     { get; private set; } = 17.0;
-    public static double ItemRelicWeightShop     { get; private set; } = 5.0;
-    public static double ItemRelicWeightAncient  { get; private set; } = 2.0;
-
-    // Potion rarity weights for random item
-    public static double PotionWeightCommon   { get; private set; } = 65.0;
-    public static double PotionWeightUncommon { get; private set; } = 25.0;
-    public static double PotionWeightRare     { get; private set; } = 10.0;
-
-    // -------------------------------------------------------------------------
-    // Setters (called from registration/hydration)
-    // -------------------------------------------------------------------------
-
-    public static void SetHpSacrificePercent(double v)      => HpSacrificePercent      = Math.Clamp(v, 0.0, 1.0);
-    public static void SetSacrificeRepeatCount(double v)    => SacrificeRepeatCount    = Math.Max(1, (int)Math.Round(v));
-    public static void SetScoreToGoldPercent(double v)      => ScoreToGoldPercent      = Math.Max(0.0, v);
-    public static void SetMinPreviousScore(double v)        => MinPreviousScore        = Math.Max(0, (int)Math.Round(v));
-
-    public static void SetShopRerollBaseCost(double v)      => ShopRerollBaseCost      = Math.Max(0.0, v);
-    public static void SetShopRerollCostScaling(double v)   => ShopRerollCostScaling   = Math.Max(1.0, v);
-
-    public static void SetRelicBaseCost(double v)           => RelicBaseCost           = Math.Max(0.0, v);
-    public static void SetRelicCostScaling(double v)        => RelicCostScaling        = Math.Max(1.0, v);
-    public static void SetRelicWeightCommon(double v)       => RelicWeightCommon       = Math.Max(0.0, v);
-    public static void SetRelicWeightUncommon(double v)     => RelicWeightUncommon     = Math.Max(0.0, v);
-    public static void SetRelicWeightRare(double v)         => RelicWeightRare         = Math.Max(0.0, v);
-    public static void SetRelicWeightShop(double v)         => RelicWeightShop         = Math.Max(0.0, v);
-    public static void SetRelicWeightAncient(double v)      => RelicWeightAncient      = Math.Max(0.0, v);
-
-    public static void SetRandomItemBaseCost(double v)      => RandomItemBaseCost      = Math.Max(0.0, v);
-    public static void SetRandomItemCostScaling(double v)   => RandomItemCostScaling   = Math.Max(1.0, v);
-    public static void SetItemWeightRelic(double v)         => ItemWeightRelic         = Math.Max(0.0, v);
-    public static void SetItemWeightCard(double v)          => ItemWeightCard          = Math.Max(0.0, v);
-    public static void SetItemWeightPotion(double v)        => ItemWeightPotion        = Math.Max(0.0, v);
-    public static void SetCardWeightCommon(double v)        => CardWeightCommon        = Math.Max(0.0, v);
-    public static void SetCardWeightUncommon(double v)      => CardWeightUncommon      = Math.Max(0.0, v);
-    public static void SetCardWeightRare(double v)          => CardWeightRare          = Math.Max(0.0, v);
-    public static void SetCardWeightColorless(double v)     => CardWeightColorless     = Math.Max(0.0, v);
-    public static void SetCardWeightCurse(double v)         => CardWeightCurse         = Math.Max(0.0, v);
-    public static void SetItemRelicWeightCommon(double v)   => ItemRelicWeightCommon   = Math.Max(0.0, v);
-    public static void SetItemRelicWeightUncommon(double v) => ItemRelicWeightUncommon = Math.Max(0.0, v);
-    public static void SetItemRelicWeightRare(double v)     => ItemRelicWeightRare     = Math.Max(0.0, v);
-    public static void SetItemRelicWeightShop(double v)     => ItemRelicWeightShop     = Math.Max(0.0, v);
-    public static void SetItemRelicWeightAncient(double v)  => ItemRelicWeightAncient  = Math.Max(0.0, v);
-    public static void SetPotionWeightCommon(double v)      => PotionWeightCommon      = Math.Max(0.0, v);
-    public static void SetPotionWeightUncommon(double v)    => PotionWeightUncommon    = Math.Max(0.0, v);
-    public static void SetPotionWeightRare(double v)        => PotionWeightRare        = Math.Max(0.0, v);
-
-    public static void ResetToDefaults()
+    [ConfigSection("Random item")]
+    [ConfigSlider(0, 9999, 5, Format = "{0:0}")]
+    public static double RandomItemBaseCost
     {
-        HpSacrificePercent      = 0.20;
-        SacrificeRepeatCount    = 4;
-        ScoreToGoldPercent      = 0.25;
-        MinPreviousScore        = 1000;
-        ShopRerollBaseCost      = 150.0;
-        ShopRerollCostScaling   = 1.10;
-        RelicBaseCost           = 300.0;
-        RelicCostScaling        = 1.10;
-        RelicWeightCommon       = 10.0;
-        RelicWeightUncommon     = 20.0;
-        RelicWeightRare         = 35.0;
-        RelicWeightShop         = 10.0;
-        RelicWeightAncient      = 25.0;
-        RandomItemBaseCost      = 75.0;
-        RandomItemCostScaling   = 1.10;
-        ItemWeightRelic         = 15.0;
-        ItemWeightCard          = 50.0;
-        ItemWeightPotion        = 35.0;
-        CardWeightCommon        = 55.0;
-        CardWeightUncommon      = 25.0;
-        CardWeightRare          = 10.0;
-        CardWeightColorless     = 5.0;
-        CardWeightCurse         = 5.0;
-        ItemRelicWeightCommon   = 50.0;
-        ItemRelicWeightUncommon = 33.0;
-        ItemRelicWeightRare     = 17.0;
-        ItemRelicWeightShop     = 5.0;
-        ItemRelicWeightAncient  = 2.0;
-        PotionWeightCommon      = 65.0;
-        PotionWeightUncommon    = 25.0;
-        PotionWeightRare        = 10.0;
+        get => _randomItemBaseCost;
+        set => _randomItemBaseCost = Math.Max(0.0, value);
     }
+
+    [ConfigSlider(1.0, 5.0, 0.05, Format = "{0:0.00}")]
+    public static double RandomItemCostScaling
+    {
+        get => _randomItemCostScaling;
+        set => _randomItemCostScaling = Math.Max(1.0, value);
+    }
+
+    [ConfigSection("Item type weights", CollapsedByDefault = true)]
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double ItemWeightRelic
+    {
+        get => _itemWeightRelic;
+        set => _itemWeightRelic = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double ItemWeightCard
+    {
+        get => _itemWeightCard;
+        set => _itemWeightCard = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double ItemWeightPotion
+    {
+        get => _itemWeightPotion;
+        set => _itemWeightPotion = Math.Max(0.0, value);
+    }
+
+    [ConfigSection("Card weights", CollapsedByDefault = true)]
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double CardWeightCommon
+    {
+        get => _cardWeightCommon;
+        set => _cardWeightCommon = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double CardWeightUncommon
+    {
+        get => _cardWeightUncommon;
+        set => _cardWeightUncommon = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double CardWeightRare
+    {
+        get => _cardWeightRare;
+        set => _cardWeightRare = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double CardWeightColorless
+    {
+        get => _cardWeightColorless;
+        set => _cardWeightColorless = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double CardWeightCurse
+    {
+        get => _cardWeightCurse;
+        set => _cardWeightCurse = Math.Max(0.0, value);
+    }
+
+    [ConfigSection("Random item relic weights", CollapsedByDefault = true)]
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double ItemRelicWeightCommon
+    {
+        get => _itemRelicWeightCommon;
+        set => _itemRelicWeightCommon = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double ItemRelicWeightUncommon
+    {
+        get => _itemRelicWeightUncommon;
+        set => _itemRelicWeightUncommon = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double ItemRelicWeightRare
+    {
+        get => _itemRelicWeightRare;
+        set => _itemRelicWeightRare = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double ItemRelicWeightShop
+    {
+        get => _itemRelicWeightShop;
+        set => _itemRelicWeightShop = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double ItemRelicWeightAncient
+    {
+        get => _itemRelicWeightAncient;
+        set => _itemRelicWeightAncient = Math.Max(0.0, value);
+    }
+
+    /// <summary>
+    /// Preserved from the previous settings screen. The random-item potion grant still uses
+    /// PotionFactory and does not read these weights.
+    /// </summary>
+    [ConfigSection("Potion weights", CollapsedByDefault = true)]
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double PotionWeightCommon
+    {
+        get => _potionWeightCommon;
+        set => _potionWeightCommon = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double PotionWeightUncommon
+    {
+        get => _potionWeightUncommon;
+        set => _potionWeightUncommon = Math.Max(0.0, value);
+    }
+
+    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
+    public static double PotionWeightRare
+    {
+        get => _potionWeightRare;
+        set => _potionWeightRare = Math.Max(0.0, value);
+    }
+
+    private static double _hpSacrificePercent = 0.20;
+    private static int _sacrificeRepeatCount = 4;
+    private static double _scoreToGoldPercent = 0.25;
+    private static int _minPreviousScore = 1000;
+
+    private static double _shopRerollBaseCost = 150.0;
+    private static double _shopRerollCostScaling = 1.10;
+
+    private static double _relicBaseCost = 300.0;
+    private static double _relicCostScaling = 1.10;
+    private static double _relicWeightCommon = 10.0;
+    private static double _relicWeightUncommon = 20.0;
+    private static double _relicWeightRare = 35.0;
+    private static double _relicWeightShop = 10.0;
+    private static double _relicWeightAncient = 25.0;
+
+    private static double _randomItemBaseCost = 75.0;
+    private static double _randomItemCostScaling = 1.10;
+    private static double _itemWeightRelic = 15.0;
+    private static double _itemWeightCard = 50.0;
+    private static double _itemWeightPotion = 35.0;
+    private static double _cardWeightCommon = 55.0;
+    private static double _cardWeightUncommon = 25.0;
+    private static double _cardWeightRare = 10.0;
+    private static double _cardWeightColorless = 5.0;
+    private static double _cardWeightCurse = 5.0;
+    private static double _itemRelicWeightCommon = 50.0;
+    private static double _itemRelicWeightUncommon = 33.0;
+    private static double _itemRelicWeightRare = 17.0;
+    private static double _itemRelicWeightShop = 5.0;
+    private static double _itemRelicWeightAncient = 2.0;
+    private static double _potionWeightCommon = 65.0;
+    private static double _potionWeightUncommon = 25.0;
+    private static double _potionWeightRare = 10.0;
 }

@@ -2,12 +2,16 @@
   "id": "BetterRewards",
   "name": "BetterRewards",
   "author": "Jack Carlton",
-  "description": "Adds a post-Neow event where you can sacrifice HP for gold, then shop in a special store with reroll, random relics, and random items.",
-  "version": "1.1.0",
-  "has_pck": false,
+  "description": "Adds a post-Neow event where you can sacrifice HP for gold, then shop in a special store with reroll, random relics, and random items. This fork keeps Jack Carlton's gameplay and uses BaseLib for settings. It is not published on the Steam Workshop.",
+  "version": "1.3.0",
+  "min_game_version": "0.107.1",
+  "has_pck": true,
   "has_dll": true,
   "dependencies": [
-    "ModManagerSettings"
+    {
+      "id": "BaseLib",
+      "min_version": "3.4.8"
+    }
   ],
   "affects_gameplay": true
 }
