@@ -1,3 +1,4 @@
+using System.Reflection;
 using BetterRewards.Features.Event;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
@@ -221,10 +222,14 @@ internal static class BetterRewardsScoreSyncService
     }
 }
 
-[HarmonyPatch(typeof(NetClientGameService))]
+[HarmonyPatch]
 internal static class NetClientGameServiceAttachBetterRewardsScorePatch
 {
-    [HarmonyPatch(MethodType.Constructor)]
+    private static IEnumerable<MethodBase> TargetMethods()
+    {
+        return typeof(NetClientGameService).GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+    }
+
     [HarmonyPostfix]
     public static void Postfix(NetClientGameService __instance)
     {
@@ -232,10 +237,14 @@ internal static class NetClientGameServiceAttachBetterRewardsScorePatch
     }
 }
 
-[HarmonyPatch(typeof(NetHostGameService))]
+[HarmonyPatch]
 internal static class NetHostGameServiceAttachBetterRewardsScorePatch
 {
-    [HarmonyPatch(MethodType.Constructor)]
+    private static IEnumerable<MethodBase> TargetMethods()
+    {
+        return typeof(NetHostGameService).GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+    }
+
     [HarmonyPostfix]
     public static void Postfix(NetHostGameService __instance)
     {

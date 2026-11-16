@@ -7,7 +7,7 @@ namespace BetterRewards.Core;
 public static class ModBootstrap
 {
     private const string HarmonyId = "betterrewards.harmony";
-    private const string BuildMarker = "2026-11-15-baselib";
+    private const string BuildMarker = "2026-11-16-compat";
 
     private static bool _initialized;
 
@@ -24,6 +24,16 @@ public static class ModBootstrap
         BetterRewardsSettings.Register();
 
         var harmony = new Harmony(HarmonyId);
-        harmony.PatchAll();
+        foreach (var type in AccessTools.GetTypesFromAssembly(typeof(ModBootstrap).Assembly))
+        {
+            try
+            {
+                harmony.CreateClassProcessor(type).Patch();
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[BetterRewards] Failed to apply Harmony patch {type.FullName}: {ex}");
+            }
+        }
     }
 }
