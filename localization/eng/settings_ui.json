@@ -13,22 +13,5 @@
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "Reroll Base Cost",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "Gold cost for the first shop reroll.",
   "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "Reroll Cost Scaling",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "Multiplier applied to reroll cost after each use (e.g. 1.10 = +10% each time).",
-  "BETTERREWARDS-RANDOM_RELIC.title": "Random relic",
-  "BETTERREWARDS-RELIC_BASE_COST.title": "Random Relic Base Cost",
-  "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "Gold cost for the first random relic purchase.",
-  "BETTERREWARDS-RELIC_COST_SCALING.title": "Random Relic Cost Scaling",
-  "BETTERREWARDS-RELIC_COST_SCALING.hover.desc": "Multiplier applied to relic cost after each purchase.",
-  "BETTERREWARDS-RANDOM_ITEM.title": "Random item",
-  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Random Item Base Cost",
-  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "Gold cost for the first random item purchase.",
-  "BETTERREWARDS-RANDOM_ITEM_COST_SCALING.title": "Random Item Cost Scaling",
-  "BETTERREWARDS-RANDOM_ITEM_COST_SCALING.hover.desc": "Multiplier applied to random item cost after each purchase.",
-  "BETTERREWARDS-ITEM_TYPE_WEIGHTS.title": "Item type weights",
-  "BETTERREWARDS-ITEM_WEIGHT_RELIC.title": "Item Type Weight: Relic",
-  "BETTERREWARDS-ITEM_WEIGHT_RELIC.hover.desc": "Relative weight for the random item to be a relic.",
-  "BETTERREWARDS-ITEM_WEIGHT_CARD.title": "Item Type Weight: Card",
-  "BETTERREWARDS-ITEM_WEIGHT_CARD.hover.desc": "Relative weight for the random item to be a card.",
-  "BETTERREWARDS-ITEM_WEIGHT_POTION.title": "Item Type Weight: Potion",
-  "BETTERREWARDS-ITEM_WEIGHT_POTION.hover.desc": "Relative weight for the random item to be a potion."
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "Multiplier applied to reroll cost after each use (e.g. 1.10 = +10% each time)."
 }

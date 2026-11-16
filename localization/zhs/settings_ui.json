@@ -13,22 +13,5 @@
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "刷新基础花费",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "第一次刷新商店所需的金币。",
   "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "刷新花费倍率",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "每次刷新后，花费乘以该倍率（例如 1.10 表示每次增加 10%）。",
-  "BETTERREWARDS-RANDOM_RELIC.title": "随机遗物",
-  "BETTERREWARDS-RELIC_BASE_COST.title": "随机遗物基础花费",
-  "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "第一次购买随机遗物所需的金币。",
-  "BETTERREWARDS-RELIC_COST_SCALING.title": "随机遗物花费倍率",
-  "BETTERREWARDS-RELIC_COST_SCALING.hover.desc": "每次购买后，花费乘以该倍率。",
-  "BETTERREWARDS-RANDOM_ITEM.title": "随机物品",
-  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "随机物品基础花费",
-  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "第一次购买随机物品所需的金币。",
-  "BETTERREWARDS-RANDOM_ITEM_COST_SCALING.title": "随机物品花费倍率",
-  "BETTERREWARDS-RANDOM_ITEM_COST_SCALING.hover.desc": "每次购买后，花费乘以该倍率。",
-  "BETTERREWARDS-ITEM_TYPE_WEIGHTS.title": "物品类型权值",
-  "BETTERREWARDS-ITEM_WEIGHT_RELIC.title": "物品类型权值：遗物",
-  "BETTERREWARDS-ITEM_WEIGHT_RELIC.hover.desc": "随机物品抽到遗物的相对权重。",
-  "BETTERREWARDS-ITEM_WEIGHT_CARD.title": "物品类型权值：卡牌",
-  "BETTERREWARDS-ITEM_WEIGHT_CARD.hover.desc": "随机物品抽到卡牌的相对权重。",
-  "BETTERREWARDS-ITEM_WEIGHT_POTION.title": "物品类型权值：药水",
-  "BETTERREWARDS-ITEM_WEIGHT_POTION.hover.desc": "随机物品抽到药水的相对权重。"
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "每次刷新后，花费乘以该倍率（例如 1.10 表示每次增加 10%）。"
 }

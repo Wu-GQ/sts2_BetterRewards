@@ -45,6 +45,9 @@ internal static class BetterRewardsShopButtonsFeature
     private static Texture2D? _randomRelicIconTexture;
     private static Texture2D? _randomItemIconTexture;
 
+    private static MerchantRelicEntry? _preparedRelic;
+    private static PreparedItemOffer? _preparedItem;
+
     private static bool _isActiveShop;
     public static bool IsActiveShop
     {
@@ -52,7 +55,11 @@ internal static class BetterRewardsShopButtonsFeature
         set
         {
             _isActiveShop = value;
-            if (!value) _activeRefreshAction = null;
+            if (!value)
+            {
+                _activeRefreshAction = null;
+                ClearPreparedOffers();
+            }
         }
     }
 
@@ -114,12 +121,12 @@ internal static class BetterRewardsShopButtonsFeature
         var relicButton = MakeIconAction(
             "random_relic",
             _randomRelicIconTexture,
-            () => BetterRewardsShopState.CurrentRelicCost,
+            GetPreparedRelicCost,
             merchantInventory);
         var randomButton = MakeIconAction(
             "random_item",
             _randomItemIconTexture,
-            () => BetterRewardsShopState.CurrentRandomItemCost,
+            GetPreparedItemCost,
             merchantInventory);
 
         buttons = new[] { rerollButton, relicButton, randomButton };
@@ -149,13 +156,13 @@ internal static class BetterRewardsShopButtonsFeature
                 return;
             }
 
-            var cost = BetterRewardsShopState.CurrentRelicCost;
+            var cost = GetPreparedRelicCost();
             if (player.Gold < cost)
             {
                 return;
             }
 
-            TaskHelper.RunSafely(DoRandomRelic(player, cost, RefreshLabels));
+            TaskHelper.RunSafely(DoRandomRelic(player, RefreshLabels));
         };
 
         randomButton.OnPressed = () =>
@@ -166,13 +173,13 @@ internal static class BetterRewardsShopButtonsFeature
                 return;
             }
 
-            var cost = BetterRewardsShopState.CurrentRandomItemCost;
+            var cost = GetPreparedItemCost();
             if (player.Gold < cost)
             {
                 return;
             }
 
-            TaskHelper.RunSafely(DoRandomItem(player, cost, RefreshLabels));
+            TaskHelper.RunSafely(DoRandomItem(player, RefreshLabels));
         };
 
         container.AddChild(rerollButton.Root);
@@ -339,53 +346,96 @@ internal static class BetterRewardsShopButtonsFeature
         Log.Info("[BetterRewards] Shop rerolled in-place.");
     }
 
-    private static async Task DoRandomRelic(Player player, int cost, Action refreshLabels)
+    private static async Task DoRandomRelic(Player player, Action refreshLabels)
     {
+        EnsurePreparedRelic(player);
+        var entry = _preparedRelic;
+        if (entry?.Model == null)
+        {
+            Log.Warn("[BetterRewards] Random Relic → no prepared relic offer.");
+            refreshLabels();
+            return;
+        }
+
+        var cost = entry.Cost;
+        if (player.Gold < cost)
+        {
+            return;
+        }
+
         await PlayerCmd.LoseGold(cost, player, GoldLossType.Spent);
 
-        var relic = PullShopRelic(player);
+        var relic = entry.Model;
         var mutable = relic.IsMutable ? relic : relic.ToMutable();
-        Log.Info($"[BetterRewards] Random Relic → {relic.Rarity} relic: {relic.Id}");
+        Log.Info($"[BetterRewards] Random Relic → {relic.Rarity} relic: {relic.Id} for {cost} gold");
         await RelicCmd.Obtain(mutable, player);
 
-        BetterRewardsShopState.RecordRelicUse();
+        _preparedRelic = null;
+        EnsurePreparedRelic(player);
         refreshLabels();
     }
-    private static async Task DoRandomItem(Player player, int cost, Action refreshLabels)
-    {
-        await PlayerCmd.LoseGold(cost, player, GoldLossType.Spent);
 
-        var itemType = RollItemType();
-        Log.Info($"[BetterRewards] Random Item rolled type: {itemType}");
+    private static async Task DoRandomItem(Player player, Action refreshLabels)
+    {
+        EnsurePreparedItem(player);
+        var offer = _preparedItem;
+        if (offer == null || !offer.IsReady)
+        {
+            Log.Warn("[BetterRewards] Random Item → no prepared item offer.");
+            refreshLabels();
+            return;
+        }
+
+        var cost = offer.Cost;
+        if (player.Gold < cost)
+        {
+            return;
+        }
+
+        Log.Info($"[BetterRewards] Random Item rolled type: {offer.Type}");
+        var granted = false;
         try
         {
-            switch (itemType)
+            switch (offer.Type)
             {
                 case RandomItemType.Relic:
                 {
-                    var relic = PullShopRelic(player);
+                    var relic = offer.Relic!.Model!;
                     var mutable = relic.IsMutable ? relic : relic.ToMutable();
-                    Log.Info($"[BetterRewards] Random Item (Relic) → {relic.Rarity}: {relic.Id}");
+                    Log.Info($"[BetterRewards] Random Item (Relic) → {relic.Rarity}: {relic.Id} for {cost} gold");
+                    await PlayerCmd.LoseGold(cost, player, GoldLossType.Spent);
                     await RelicCmd.Obtain(mutable, player);
+                    granted = true;
                     break;
                 }
                 case RandomItemType.Card:
                 {
-                    await GiveRandomShopCard(player);
+                    var card = offer.Card!.CreationResult!.Card;
+                    Log.Info($"[BetterRewards] Random Item (Card) → {card.Rarity}: {card.Id} for {cost} gold");
+                    if (!(await CardPileCmd.Add(card, PileType.Deck)).success)
+                    {
+                        Log.Warn("[BetterRewards] Random Item (Card) could not be added to the deck.");
+                        break;
+                    }
+
+                    await PlayerCmd.LoseGold(cost, player, GoldLossType.Spent);
+                    AnimateCardToDeck(card, player);
+                    granted = true;
                     break;
                 }
                 case RandomItemType.Potion:
                 {
-                    var potion = PotionFactory.CreateRandomPotionOutOfCombat(player, player.PlayerRng.Shops);
-                    if (potion != null)
+                    var potion = offer.Potion!.Model!;
+                    Log.Info($"[BetterRewards] Random Item (Potion) → {potion.Rarity}: {potion.Id} for {cost} gold");
+                    var result = await PotionCmd.TryToProcure(potion, player);
+                    if (!result.success)
                     {
-                        Log.Info($"[BetterRewards] Random Item (Potion) → {potion.Rarity}: {potion.Id}");
-                        await PotionCmd.TryToProcure(potion.ToMutable(), player);
+                        Log.Warn("[BetterRewards] Random Item (Potion) could not be procured.");
+                        break;
                     }
-                    else
-                    {
-                        Log.Warn("[BetterRewards] Random Item (Potion) → PotionFactory returned null.");
-                    }
+
+                    await PlayerCmd.LoseGold(cost, player, GoldLossType.Spent);
+                    granted = true;
                     break;
                 }
             }
@@ -395,7 +445,12 @@ internal static class BetterRewardsShopButtonsFeature
             Log.Warn($"[BetterRewards] Random item grant failed: {ex.Message}\n{ex.StackTrace}");
         }
 
-        BetterRewardsShopState.RecordRandomItemUse();
+        if (granted)
+        {
+            _preparedItem = null;
+            EnsurePreparedItem(player);
+        }
+
         refreshLabels();
     }
     private static void AnimateCardToDeck(CardModel card, Player player)
@@ -448,66 +503,145 @@ internal static class BetterRewardsShopButtonsFeature
         CardRarity.Uncommon, CardRarity.Rare
     };
 
-    private static RelicModel PullShopRelic(Player player)
+    private const int ShopRelicSlotCount = 3;
+    private const int ShopCardSlotCount = 7;
+    private const int ShopPotionSlotCount = 3;
+
+    internal static void ClearPreparedOffers()
     {
-        var rarity = RelicFactory.RollRarity(player.PlayerRng.Shops);
-        return RelicFactory.PullNextRelicFromBack(player, rarity, relic => relic.IsAllowedInShops);
+        _preparedRelic = null;
+        _preparedItem = null;
     }
 
-    private static async Task GiveRandomShopCard(Player player)
+    private static int GetPreparedRelicCost()
+    {
+        var player = GetLocalPlayer();
+        if (player == null)
+        {
+            return 0;
+        }
+
+        EnsurePreparedRelic(player);
+        return _preparedRelic?.Cost ?? 0;
+    }
+
+    private static int GetPreparedItemCost()
+    {
+        var player = GetLocalPlayer();
+        if (player == null)
+        {
+            return 0;
+        }
+
+        EnsurePreparedItem(player);
+        return _preparedItem?.Cost ?? 0;
+    }
+
+    private static void EnsurePreparedRelic(Player player)
+    {
+        if (_preparedRelic?.IsStocked == true)
+        {
+            return;
+        }
+
+        var rarity = RelicFactory.RollRarity(player.PlayerRng.Shops);
+        _preparedRelic = new MerchantRelicEntry(rarity, player);
+    }
+
+    private static void EnsurePreparedItem(Player player)
+    {
+        if (_preparedItem?.IsReady == true)
+        {
+            return;
+        }
+
+        _preparedItem = null;
+        for (var attempt = 0; attempt < 5 && _preparedItem == null; attempt++)
+        {
+            switch (RollItemType(player))
+            {
+                case RandomItemType.Relic:
+                {
+                    var rarity = RelicFactory.RollRarity(player.PlayerRng.Shops);
+                    var entry = new MerchantRelicEntry(rarity, player);
+                    if (entry.IsStocked)
+                    {
+                        _preparedItem = PreparedItemOffer.FromRelic(entry);
+                    }
+                    break;
+                }
+                case RandomItemType.Card:
+                {
+                    var entry = CreateShopCardEntry(player);
+                    if (entry.IsStocked)
+                    {
+                        _preparedItem = PreparedItemOffer.FromCard(entry);
+                    }
+                    break;
+                }
+                case RandomItemType.Potion:
+                {
+                    var potion = PotionFactory.CreateRandomPotionOutOfCombat(player, player.PlayerRng.Shops);
+                    if (potion != null)
+                    {
+                        _preparedItem = PreparedItemOffer.FromPotion(new MerchantPotionEntry(potion.ToMutable(), player));
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    private static MerchantCardEntry CreateShopCardEntry(Player player)
     {
         var rng = player.PlayerRng.Shops;
         var characterSlots = ShopCharacterCardTypes.Length;
         var colorlessSlots = ShopColorlessCardRarities.Length;
         var slot = rng.NextInt(characterSlots + colorlessSlots);
+        var inventory = NMerchantRoom.Instance?.Inventory?.Inventory;
 
-        CardCreationResult result;
+        MerchantCardEntry entry;
         if (slot < characterSlots)
         {
             var type = ShopCharacterCardTypes[slot];
             var pool = player.Character.CardPool.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint);
-            result = CardFactory.CreateForMerchant(player, pool, Array.Empty<CardModel>(), type);
-            Log.Info($"[BetterRewards] Random Item (Card) → character {type} {result.Card.Rarity}: {result.Card.Id}");
+            entry = new MerchantCardEntry(player, pool, type);
+            entry.Populate(inventory);
+            if (rng.NextInt(characterSlots) == 0)
+            {
+                entry.SetOnSale();
+            }
+            Log.Info($"[BetterRewards] Prepared character {type} {entry.CreationResult?.Card.Rarity}: {entry.CreationResult?.Card.Id}");
         }
         else
         {
             var rarity = ShopColorlessCardRarities[slot - characterSlots];
             var pool = ModelDb.CardPool<ColorlessCardPool>().GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint);
-            result = CardFactory.CreateForMerchant(player, pool, Array.Empty<CardModel>(), rarity);
-            Log.Info($"[BetterRewards] Random Item (Card) → colorless {rarity}: {result.Card.Id}");
+            entry = new MerchantCardEntry(player, pool, rarity);
+            entry.Populate(inventory);
+            Log.Info($"[BetterRewards] Prepared colorless {rarity}: {entry.CreationResult?.Card.Id}");
         }
 
-        if (!(await CardPileCmd.Add(result.Card, PileType.Deck)).success)
-        {
-            Log.Warn("[BetterRewards] Random Item (Card) could not be added to the deck.");
-            return;
-        }
-
-        AnimateCardToDeck(result.Card, player);
+        return entry;
     }
 
     private enum RandomItemType { Relic, Card, Potion }
 
-    private static RandomItemType RollItemType()
+    private static RandomItemType RollItemType(Player player)
     {
-        var weights = new (RandomItemType type, double weight)[]
+        var total = ShopRelicSlotCount + ShopCardSlotCount + ShopPotionSlotCount;
+        var roll = player.PlayerRng.Shops.NextInt(total);
+        if (roll < ShopRelicSlotCount)
         {
-            (RandomItemType.Relic,  BetterRewardsSettings.ItemWeightRelic),
-            (RandomItemType.Card,   BetterRewardsSettings.ItemWeightCard),
-            (RandomItemType.Potion, BetterRewardsSettings.ItemWeightPotion),
-        };
-        var total = weights.Sum(w => w.weight);
-        var roll  = System.Random.Shared.NextDouble() * total;
-        var acc   = 0.0;
-        foreach (var (type, weight) in weights)
-        {
-            acc += weight;
-            if (roll < acc)
-            {
-                return type;
-            }
+            return RandomItemType.Relic;
         }
-        return RandomItemType.Card;
+
+        if (roll < ShopRelicSlotCount + ShopCardSlotCount)
+        {
+            return RandomItemType.Card;
+        }
+
+        return RandomItemType.Potion;
     }
 
     private static void EnsureTooltipLocalization()
@@ -758,6 +892,47 @@ internal static class BetterRewardsShopButtonsFeature
             Log.Warn($"[BetterRewards] Failed loading icon resource {resourceName}: {ex.Message}");
             return null;
         }
+    }
+
+    private sealed class PreparedItemOffer
+    {
+        private PreparedItemOffer(RandomItemType type, MerchantRelicEntry? relic, MerchantCardEntry? card, MerchantPotionEntry? potion)
+        {
+            Type = type;
+            Relic = relic;
+            Card = card;
+            Potion = potion;
+        }
+
+        public RandomItemType Type { get; }
+
+        public MerchantRelicEntry? Relic { get; }
+
+        public MerchantCardEntry? Card { get; }
+
+        public MerchantPotionEntry? Potion { get; }
+
+        public bool IsReady => Type switch
+        {
+            RandomItemType.Relic => Relic?.IsStocked == true,
+            RandomItemType.Card => Card?.IsStocked == true,
+            RandomItemType.Potion => Potion?.IsStocked == true,
+            _ => false,
+        };
+
+        public int Cost => Type switch
+        {
+            RandomItemType.Relic => Relic!.Cost,
+            RandomItemType.Card => Card!.Cost,
+            RandomItemType.Potion => Potion!.Cost,
+            _ => 0,
+        };
+
+        public static PreparedItemOffer FromRelic(MerchantRelicEntry entry) => new(RandomItemType.Relic, entry, null, null);
+
+        public static PreparedItemOffer FromCard(MerchantCardEntry entry) => new(RandomItemType.Card, null, entry, null);
+
+        public static PreparedItemOffer FromPotion(MerchantPotionEntry entry) => new(RandomItemType.Potion, null, null, entry);
     }
 
     private sealed class ShopActionUi

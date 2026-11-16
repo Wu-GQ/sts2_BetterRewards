@@ -6,9 +6,8 @@ namespace BetterRewards.Features.Settings;
 /// BetterRewards configuration. BaseLib builds the settings UI from these properties,
 /// loads them at startup, and saves them to the game's user://mod_configs/BetterRewards.cfg.
 /// Gameplay reads the static properties directly.
-/// Rarity odds for the random relic and random item buttons follow the regular merchant shop
-/// (RelicFactory.RollRarity, CardFactory.CreateForMerchant, and PotionFactory) instead of
-/// custom weight sliders.
+/// Random relic and random item buttons follow the regular merchant shop: rarity odds,
+/// item type ratios of 3 relics / 7 cards / 3 potions, and official shop prices.
 /// </summary>
 [ConfigHoverTipsByDefault]
 internal sealed class BetterRewardsSettings : SimpleModConfig
@@ -73,62 +72,6 @@ internal sealed class BetterRewardsSettings : SimpleModConfig
         set => _shopRerollCostScaling = Math.Max(1.0, value);
     }
 
-    // --- Shop: random relic ---
-
-    [ConfigSection("Random relic")]
-    [ConfigSlider(0, 9999, 5, Format = "{0:0}")]
-    public static double RelicBaseCost
-    {
-        get => _relicBaseCost;
-        set => _relicBaseCost = Math.Max(0.0, value);
-    }
-
-    [ConfigSlider(1.0, 5.0, 0.05, Format = "{0:0.00}")]
-    public static double RelicCostScaling
-    {
-        get => _relicCostScaling;
-        set => _relicCostScaling = Math.Max(1.0, value);
-    }
-
-    // --- Shop: random item ---
-
-    [ConfigSection("Random item")]
-    [ConfigSlider(0, 9999, 5, Format = "{0:0}")]
-    public static double RandomItemBaseCost
-    {
-        get => _randomItemBaseCost;
-        set => _randomItemBaseCost = Math.Max(0.0, value);
-    }
-
-    [ConfigSlider(1.0, 5.0, 0.05, Format = "{0:0.00}")]
-    public static double RandomItemCostScaling
-    {
-        get => _randomItemCostScaling;
-        set => _randomItemCostScaling = Math.Max(1.0, value);
-    }
-
-    [ConfigSection("Item type weights", CollapsedByDefault = true)]
-    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
-    public static double ItemWeightRelic
-    {
-        get => _itemWeightRelic;
-        set => _itemWeightRelic = Math.Max(0.0, value);
-    }
-
-    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
-    public static double ItemWeightCard
-    {
-        get => _itemWeightCard;
-        set => _itemWeightCard = Math.Max(0.0, value);
-    }
-
-    [ConfigSlider(0, 1000, 1, Format = "{0:0}")]
-    public static double ItemWeightPotion
-    {
-        get => _itemWeightPotion;
-        set => _itemWeightPotion = Math.Max(0.0, value);
-    }
-
     private static double _hpSacrificePercent = 0.20;
     private static int _sacrificeRepeatCount = 4;
     private static double _scoreToGoldPercent = 0.25;
@@ -136,13 +79,4 @@ internal sealed class BetterRewardsSettings : SimpleModConfig
 
     private static double _shopRerollBaseCost = 150.0;
     private static double _shopRerollCostScaling = 1.10;
-
-    private static double _relicBaseCost = 300.0;
-    private static double _relicCostScaling = 1.10;
-
-    private static double _randomItemBaseCost = 75.0;
-    private static double _randomItemCostScaling = 1.10;
-    private static double _itemWeightRelic = 15.0;
-    private static double _itemWeightCard = 50.0;
-    private static double _itemWeightPotion = 35.0;
 }
