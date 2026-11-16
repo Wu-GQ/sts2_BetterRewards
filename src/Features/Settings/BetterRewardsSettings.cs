@@ -31,38 +31,38 @@ internal sealed class BetterRewardsSettings : SimpleModConfig
         set => _hpSacrificePercent = Math.Clamp(value, 0.0, 1.0);
     }
 
-    /// <summary>How many times the sacrifice option may be chosen.</summary>
-    [ConfigSlider(1, 999, 1, Format = "{0:0}")]
+    /// <summary>How many times the sacrifice option may be chosen (1–10).</summary>
+    [ConfigSlider(1, 10, 1, Format = "{0:0}")]
     public static int SacrificeRepeatCount
     {
         get => _sacrificeRepeatCount;
-        set => _sacrificeRepeatCount = Math.Max(1, value);
+        set => _sacrificeRepeatCount = Math.Clamp(value, 1, 10);
     }
 
-    /// <summary>Fraction of previous run score converted to gold (0.0–100.0+).</summary>
-    [ConfigSlider(0.0, 100.0, 0.05, Format = "{0:0.00}")]
+    /// <summary>Fraction of previous run score converted to gold (0.0–1.0).</summary>
+    [ConfigSlider(0.0, 1.0, 0.01, Format = "{0:0.00}")]
     public static double ScoreToGoldPercent
     {
         get => _scoreToGoldPercent;
-        set => _scoreToGoldPercent = Math.Max(0.0, value);
+        set => _scoreToGoldPercent = Math.Clamp(value, 0.0, 1.0);
     }
 
     /// <summary>Minimum effective previous-run score (guarantees at least this much gold opportunity).</summary>
-    [ConfigSlider(0, 100000, 50, Format = "{0:0}")]
+    [ConfigSlider(1000, 10000, 50, Format = "{0:0}")]
     public static int MinPreviousScore
     {
         get => _minPreviousScore;
-        set => _minPreviousScore = Math.Max(0, value);
+        set => _minPreviousScore = Math.Clamp(value, 1000, 10000);
     }
 
     // --- Shop: reroll ---
 
     [ConfigSection("Shop reroll")]
-    [ConfigSlider(0, 9999, 5, Format = "{0:0}")]
+    [ConfigSlider(50, 1000, 5, Format = "{0:0}")]
     public static double ShopRerollBaseCost
     {
         get => _shopRerollBaseCost;
-        set => _shopRerollBaseCost = Math.Max(0.0, value);
+        set => _shopRerollBaseCost = Math.Clamp(value, 50.0, 1000.0);
     }
 
     [ConfigSlider(1.0, 5.0, 0.05, Format = "{0:0.00}")]
