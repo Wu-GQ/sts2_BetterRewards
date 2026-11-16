@@ -343,32 +343,14 @@ internal static class BetterRewardsShopButtonsFeature
     {
         await PlayerCmd.LoseGold(cost, player, GoldLossType.Spent);
 
-        var rarity = RollRelicRarity(player.PlayerRng.Rewards,
-            BetterRewardsSettings.RelicWeightCommon,
-            BetterRewardsSettings.RelicWeightUncommon,
-            BetterRewardsSettings.RelicWeightRare,
-            BetterRewardsSettings.RelicWeightShop,
-            BetterRewardsSettings.RelicWeightAncient);
-        // Ancient relics are excluded from the grab bag entirely (Populate filters them out).
-        // Pull directly from ModelDb for Ancient, bypassing the grab bag.
-        RelicModel relic;
-        if (rarity == RelicRarity.Ancient)
-        {
-            relic = PullRandomAncientRelic(player) ?? RelicFactory.PullNextRelicFromFront(player, RelicRarity.Rare);
-        }
-        else
-        {
-            relic = RelicFactory.PullNextRelicFromFront(player, rarity);
-        }
-
+        var relic = PullShopRelic(player);
         var mutable = relic.IsMutable ? relic : relic.ToMutable();
-        Log.Info($"[BetterRewards] Random Relic → {rarity} relic: {relic.Id}");
+        Log.Info($"[BetterRewards] Random Relic → {relic.Rarity} relic: {relic.Id}");
         await RelicCmd.Obtain(mutable, player);
 
         BetterRewardsShopState.RecordRelicUse();
         refreshLabels();
     }
-
     private static async Task DoRandomItem(Player player, int cost, Action refreshLabels)
     {
         await PlayerCmd.LoseGold(cost, player, GoldLossType.Spent);
@@ -381,36 +363,20 @@ internal static class BetterRewardsShopButtonsFeature
             {
                 case RandomItemType.Relic:
                 {
-                    var rarity = RollRelicRarity(player.PlayerRng.Rewards,
-                        BetterRewardsSettings.ItemRelicWeightCommon,
-                        BetterRewardsSettings.ItemRelicWeightUncommon,
-                        BetterRewardsSettings.ItemRelicWeightRare,
-                        BetterRewardsSettings.ItemRelicWeightShop,
-                        BetterRewardsSettings.ItemRelicWeightAncient);
-                    RelicModel relic;
-                    if (rarity == RelicRarity.Ancient)
-                    {
-                        relic = PullRandomAncientRelic(player) ?? RelicFactory.PullNextRelicFromFront(player, RelicRarity.Rare);
-                    }
-                    else
-                    {
-                        relic = RelicFactory.PullNextRelicFromFront(player, rarity);
-                    }
+                    var relic = PullShopRelic(player);
                     var mutable = relic.IsMutable ? relic : relic.ToMutable();
-                    Log.Info($"[BetterRewards] Random Item (Relic) → {rarity}: {relic.Id}");
+                    Log.Info($"[BetterRewards] Random Item (Relic) → {relic.Rarity}: {relic.Id}");
                     await RelicCmd.Obtain(mutable, player);
                     break;
                 }
                 case RandomItemType.Card:
                 {
-                    var cardSubType = RollCardSubType();
-                    Log.Info($"[BetterRewards] Random Item (Card) → sub-type: {cardSubType}");
-                    await GiveRandomCard(player, cardSubType);
+                    await GiveRandomShopCard(player);
                     break;
                 }
                 case RandomItemType.Potion:
                 {
-                    var potion = PotionFactory.CreateRandomPotionOutOfCombat(player, player.PlayerRng.Rewards);
+                    var potion = PotionFactory.CreateRandomPotionOutOfCombat(player, player.PlayerRng.Shops);
                     if (potion != null)
                     {
                         Log.Info($"[BetterRewards] Random Item (Potion) → {potion.Rarity}: {potion.Id}");
@@ -432,104 +398,6 @@ internal static class BetterRewardsShopButtonsFeature
         BetterRewardsShopState.RecordRandomItemUse();
         refreshLabels();
     }
-
-    private static async Task GiveRandomCard(Player player, CardSubType subType)
-    {
-        var constraint = player.RunState.CardMultiplayerConstraint;
-
-        CardModel? canonical = null;
-
-        switch (subType)
-        {
-            case CardSubType.Common:
-            case CardSubType.Uncommon:
-            case CardSubType.Rare:
-            {
-                var targetRarity = subType switch
-                {
-                    CardSubType.Common   => CardRarity.Common,
-                    CardSubType.Uncommon => CardRarity.Uncommon,
-                    _                    => CardRarity.Rare
-                };
-                var candidates = player.Character.CardPool
-                    .GetUnlockedCards(player.UnlockState, constraint)
-                    .Where(c => c.Rarity == targetRarity)
-                    .ToList();
-                Log.Info($"[BetterRewards] Card ({targetRarity}) pool size after constraint filter: {candidates.Count}");
-                if (candidates.Count == 0)
-                {
-                    // Fallback: factory picks
-                    var options = CardCreationOptions.ForNonCombatWithDefaultOdds(new[] { player.Character.CardPool });
-                    var results = CardFactory.CreateForReward(player, 1, options).ToList();
-                    if (results.Count > 0)
-                    {
-                        canonical = results[0].Card;
-                        Log.Info($"[BetterRewards] Card ({targetRarity}) fallback → {canonical.Id}");
-                    }
-                }
-                else
-                {
-                    canonical = candidates[player.PlayerRng.Rewards.NextInt(candidates.Count)];
-                    Log.Info($"[BetterRewards] Card ({targetRarity}) → {canonical.Id}");
-                    canonical = player.RunState.CreateCard(canonical, player);
-                }
-                break;
-            }
-            case CardSubType.Colorless:
-            {
-                var candidates = ModelDb.CardPool<ColorlessCardPool>()
-                    .GetUnlockedCards(player.UnlockState, constraint)
-                    .Where(c => c.Rarity != CardRarity.Basic && c.Rarity != CardRarity.Curse
-                                && c.Rarity != CardRarity.Status && c.Rarity != CardRarity.Token)
-                    .ToList();
-                Log.Info($"[BetterRewards] Colorless pool size after constraint filter: {candidates.Count}");
-                if (candidates.Count > 0)
-                {
-                    canonical = candidates[player.PlayerRng.Rewards.NextInt(candidates.Count)];
-                    Log.Info($"[BetterRewards] Card (Colorless) → {canonical.Id}");
-                    canonical = player.RunState.CreateCard(canonical, player);
-                }
-                break;
-            }
-            case CardSubType.Curse:
-            {
-                var curses = player.Character.CardPool
-                    .GetUnlockedCards(player.UnlockState, constraint)
-                    .Where(c => c.Rarity == CardRarity.Curse)
-                    .ToList();
-                if (curses.Count == 0)
-                {
-                    curses = ModelDb.CardPool<ColorlessCardPool>()
-                        .GetUnlockedCards(player.UnlockState, constraint)
-                        .Where(c => c.Rarity == CardRarity.Curse)
-                        .ToList();
-                }
-                Log.Info($"[BetterRewards] Curse pool size after constraint filter: {curses.Count}");
-                if (curses.Count > 0)
-                {
-                    var curse = curses[player.PlayerRng.Rewards.NextInt(curses.Count)];
-                    Log.Info($"[BetterRewards] Card (Curse) → {curse.Id}");
-                    var mutableCurse = player.RunState.CreateCard(curse, player);
-                    await CardPileCmd.AddCursesToDeck(new[] { mutableCurse }, player);
-                    AnimateCardToDeck(mutableCurse, player);
-                    return;
-                }
-                break;
-            }
-        }
-
-        if (canonical != null)
-        {
-            // Ensure it's registered in RunState (CreateCard already does this; fallback card may not be)
-            if (!player.RunState.ContainsCard(canonical))
-            {
-                canonical = player.RunState.CreateCard(canonical, player);
-            }
-            await CardPileCmd.Add(canonical, PileType.Deck);
-            AnimateCardToDeck(canonical, player);
-        }
-    }
-
     private static void AnimateCardToDeck(CardModel card, Player player)
     {
         try
@@ -570,19 +438,52 @@ internal static class BetterRewardsShopButtonsFeature
         return null;
     }
 
-    private static RelicRarity RollRelicRarity(
-        MegaCrit.Sts2.Core.Random.Rng rng,
-        double wCommon, double wUncommon, double wRare, double wShop, double wAncient)
+    private static readonly CardType[] ShopCharacterCardTypes =
     {
-        var weights = new (RelicRarity rarity, double weight)[]
+        CardType.Attack, CardType.Attack, CardType.Skill, CardType.Skill, CardType.Power
+    };
+
+    private static readonly CardRarity[] ShopColorlessCardRarities =
+    {
+        CardRarity.Uncommon, CardRarity.Rare
+    };
+
+    private static RelicModel PullShopRelic(Player player)
+    {
+        var rarity = RelicFactory.RollRarity(player.PlayerRng.Shops);
+        return RelicFactory.PullNextRelicFromBack(player, rarity, relic => relic.IsAllowedInShops);
+    }
+
+    private static async Task GiveRandomShopCard(Player player)
+    {
+        var rng = player.PlayerRng.Shops;
+        var characterSlots = ShopCharacterCardTypes.Length;
+        var colorlessSlots = ShopColorlessCardRarities.Length;
+        var slot = rng.NextInt(characterSlots + colorlessSlots);
+
+        CardCreationResult result;
+        if (slot < characterSlots)
         {
-            (RelicRarity.Common,   wCommon),
-            (RelicRarity.Uncommon, wUncommon),
-            (RelicRarity.Rare,     wRare),
-            (RelicRarity.Shop,     wShop),
-            (RelicRarity.Ancient,  wAncient),
-        };
-        return RollWeighted(rng, weights);
+            var type = ShopCharacterCardTypes[slot];
+            var pool = player.Character.CardPool.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint);
+            result = CardFactory.CreateForMerchant(player, pool, Array.Empty<CardModel>(), type);
+            Log.Info($"[BetterRewards] Random Item (Card) → character {type} {result.Card.Rarity}: {result.Card.Id}");
+        }
+        else
+        {
+            var rarity = ShopColorlessCardRarities[slot - characterSlots];
+            var pool = ModelDb.CardPool<ColorlessCardPool>().GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint);
+            result = CardFactory.CreateForMerchant(player, pool, Array.Empty<CardModel>(), rarity);
+            Log.Info($"[BetterRewards] Random Item (Card) → colorless {rarity}: {result.Card.Id}");
+        }
+
+        if (!(await CardPileCmd.Add(result.Card, PileType.Deck)).success)
+        {
+            Log.Warn("[BetterRewards] Random Item (Card) could not be added to the deck.");
+            return;
+        }
+
+        AnimateCardToDeck(result.Card, player);
     }
 
     private enum RandomItemType { Relic, Card, Potion }
@@ -607,53 +508,6 @@ internal static class BetterRewardsShopButtonsFeature
             }
         }
         return RandomItemType.Card;
-    }
-
-    private enum CardSubType { Common, Uncommon, Rare, Colorless, Curse }
-
-    private static CardSubType RollCardSubType()
-    {
-        var weights = new (CardSubType sub, double weight)[]
-        {
-            (CardSubType.Common,    BetterRewardsSettings.CardWeightCommon),
-            (CardSubType.Uncommon,  BetterRewardsSettings.CardWeightUncommon),
-            (CardSubType.Rare,      BetterRewardsSettings.CardWeightRare),
-            (CardSubType.Colorless, BetterRewardsSettings.CardWeightColorless),
-            (CardSubType.Curse,     BetterRewardsSettings.CardWeightCurse),
-        };
-        var total = weights.Sum(w => w.weight);
-        var roll  = System.Random.Shared.NextDouble() * total;
-        var acc   = 0.0;
-        foreach (var (sub, weight) in weights)
-        {
-            acc += weight;
-            if (roll < acc)
-            {
-                return sub;
-            }
-        }
-        return CardSubType.Common;
-    }
-
-    private static T RollWeighted<T>(MegaCrit.Sts2.Core.Random.Rng rng, (T item, double weight)[] weights)
-    {
-        var total = weights.Sum(w => w.weight);
-        if (total <= 0)
-        {
-            return weights[0].item;
-        }
-
-        var roll = rng.NextFloat() * (float)total;
-        var acc  = 0.0;
-        foreach (var (item, weight) in weights)
-        {
-            acc += weight;
-            if (roll < acc)
-            {
-                return item;
-            }
-        }
-        return weights[^1].item;
     }
 
     private static void EnsureTooltipLocalization()
@@ -864,30 +718,6 @@ internal static class BetterRewardsShopButtonsFeature
     /// Ancient relics are excluded from the normal grab bag, so we query ModelDb directly.
     /// Returns null if no candidates exist (caller should fall back to Rare).
     /// </summary>
-    private static RelicModel? PullRandomAncientRelic(Player player)
-    {
-        var owned = new HashSet<string>(player.Relics.Select(r => r.Id.Entry), StringComparer.OrdinalIgnoreCase);
-
-        var candidates = ModelDb.AllRelicPools
-            .SelectMany(pool => pool.GetUnlockedRelics(player.UnlockState))
-            .Where(r => r.Rarity == RelicRarity.Ancient && !owned.Contains(r.Id.Entry))
-            .Distinct()
-            .ToList();
-
-        if (candidates.Count == 0)
-        {
-            Log.Info("[BetterRewards] PullRandomAncientRelic: no candidates, falling back.");
-            return null;
-        }
-
-        var index = player.PlayerRng.Rewards.NextInt(candidates.Count);
-        var relic = candidates[index];
-        // Remove from shared grab bag to avoid duplicates with future normal pulls.
-        player.RunState.SharedRelicGrabBag.Remove(relic);
-        Log.Info($"[BetterRewards] PullRandomAncientRelic → {relic.Id}");
-        return relic;
-    }
-
     private static bool HasEnoughGold(int cost)
     {
         var player = GetLocalPlayer();
