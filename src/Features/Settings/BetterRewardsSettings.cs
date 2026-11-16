@@ -14,7 +14,7 @@ internal sealed class BetterRewardsSettings : SimpleModConfig
 
     public static void Register()
     {
-        BetterRewardsSettingsLocalization.TryMerge();
+        BetterRewardsLocalization.TryMerge();
         ModConfigRegistry.Register(ConfigModId, new BetterRewardsSettings());
     }
 

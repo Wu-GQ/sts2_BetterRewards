@@ -1,0 +1,16 @@
+{
+  "BETTERREWARDS.NEOW.title": "The Merchant's Bargain",
+  "BETTERREWARDS.NEOW.description": "Visit a special shop. Sacrifice HP for gold (prev score: {previousScore}). Up to {n} sacrifices, {hpPercent}% HP each for {goldPerSacrifice}g.",
+  "BETTERREWARDS.NEOW.description.no_score": "Visit a special shop. No previous run — gold rewards will be 0.",
+  "BETTERREWARDS.ENTER_SHOP.title": "Enter the shop",
+  "BETTERREWARDS.ENTER_SHOP.description": "Leave Neow and enter the merchant's special shop.",
+  "BETTERREWARDS.ENTER_SHOP.desc": "Leave Neow and enter the merchant's special shop.",
+  "BETTERREWARDS.SACRIFICE.locked.title": "Cannot Sacrifice {hpPercent}% HP",
+  "BETTERREWARDS.SACRIFICE.locked.description": "You would die from this sacrifice.",
+  "BETTERREWARDS.SACRIFICE.locked.desc": "You would die from this sacrifice.",
+  "BETTERREWARDS.SHOP_PENDING.title": "Waiting for the merchant",
+  "BETTERREWARDS.SHOP_PENDING.desc": "The merchant waits. You will enter the special shop once everyone is finished with Neow.",
+  "BETTERREWARDS.SACRIFICE.state.desc": "The merchant offers a bargain. Sacrifice HP in exchange for gold.\n\nSacrifices: {sacrificesDone}/{maxRepeats}  |  HP: {currentHp}/{maxHp}  |  Gold per sacrifice: {goldPerSacrifice}",
+  "BETTERREWARDS.SACRIFICE.do.title": "Sacrifice {hpCost} HP for {goldPerSacrifice} gold",
+  "BETTERREWARDS.SACRIFICE.do.desc": "Lose {hpCost} HP and gain {goldPerSacrifice} gold. ({sacrificeIndex}/{maxRepeats})"
+}

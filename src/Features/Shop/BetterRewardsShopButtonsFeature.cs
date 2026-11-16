@@ -656,43 +656,9 @@ internal static class BetterRewardsShopButtonsFeature
         return weights[^1].item;
     }
 
-    private static bool _locTableRegistered;
-
     private static void EnsureTooltipLocalization()
     {
-        if (_locTableRegistered)
-        {
-            return;
-        }
-
-        _locTableRegistered = true;
-
-        var entries = new Dictionary<string, string>
-        {
-            ["reroll.title"]             = "Reroll Shop",
-            ["reroll.description"]       = "Replace the merchant stock with a fresh roll.",
-            ["random_relic.title"]       = "Random Relic",
-            ["random_relic.description"] = "Buy a random relic from the configured rarity weights.",
-            ["random_item.title"]        = "Random Item",
-            ["random_item.description"]  = "Buy a random relic, card, or potion.",
-        };
-
-        // LocManager throws if the table doesn't exist — create and register it.
-        var manager = LocManager.Instance;
-        var tablesField = typeof(LocManager).GetField("_tables", BindingFlags.NonPublic | BindingFlags.Instance);
-        if (tablesField?.GetValue(manager) is Dictionary<string, MegaCrit.Sts2.Core.Localization.LocTable> tables)
-        {
-            if (!tables.ContainsKey(LocTableName))
-            {
-                tables[LocTableName] = new MegaCrit.Sts2.Core.Localization.LocTable(LocTableName, new Dictionary<string, string>());
-            }
-
-            tables[LocTableName].MergeWith(entries);
-        }
-        else
-        {
-            Log.Warn("[BetterRewards] Could not access LocManager._tables — hover tooltips will use fallback text.");
-        }
+        BetterRewardsLocalization.TryMerge();
     }
 
     private static ShopActionUi MakeIconAction(string id, Texture2D? iconTexture, Func<int> getCost, NMerchantInventory merchantInventory)

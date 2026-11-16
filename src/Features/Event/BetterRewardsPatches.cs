@@ -69,36 +69,23 @@ internal static class NeowGenerateInitialOptionsPatch
         var effectiveHPct    = Math.Min(hPct, 1.0 / n);
         var goldPerSacrifice = (int)Math.Floor(previousScore * sPct);
 
-        EnsureLocStrings(previousScore, effectiveHPct, n, goldPerSacrifice);
+        var hpPercent = (int)(effectiveHPct * 100);
+        var descriptionKey = previousScore > 0
+            ? "BETTERREWARDS.NEOW.description"
+            : "BETTERREWARDS.NEOW.description.no_score";
 
         return new EventOption(
             neow,
             () => OnBargainChosen(neow, effectiveHPct, n, goldPerSacrifice, sacrificesDone: 0),
-            new LocString("events", "BETTERREWARDS.NEOW.title"),
-            new LocString("events", "BETTERREWARDS.NEOW.description"),
+            BetterRewardsLocalization.EventString("BETTERREWARDS.NEOW.title"),
+            BetterRewardsLocalization.EventString(
+                descriptionKey,
+                ("previousScore", previousScore),
+                ("n", n),
+                ("hpPercent", hpPercent),
+                ("goldPerSacrifice", goldPerSacrifice)),
             "BETTERREWARDS.NEOW",
             Array.Empty<IHoverTip>());
-    }
-
-    private static void EnsureLocStrings(int previousScore, double hPct, int n, int goldPerSacrifice)
-    {
-        var locTable = LocManager.Instance.GetTable("events");
-        locTable.MergeWith(new Dictionary<string, string>
-        {
-            // NEOW option — uses LocString constructor directly so no .title/.description needed here,
-            // but also register for safety.
-            ["BETTERREWARDS.NEOW.title"]                   = "The Merchant's Bargain",
-            ["BETTERREWARDS.NEOW.description"]             = previousScore > 0
-                ? $"Visit a special shop. Sacrifice HP for gold (prev score: {previousScore}). Up to {n} sacrifices, {(int)(hPct * 100)}% HP each for {goldPerSacrifice}g."
-                : "Visit a special shop. No previous run — gold rewards will be 0.",
-            // EventOption string-key ctor appends .title / .description
-            ["BETTERREWARDS.ENTER_SHOP.title"]             = "Enter the shop",
-            ["BETTERREWARDS.ENTER_SHOP.description"]       = "Leave Neow and enter the merchant's special shop.",
-            ["BETTERREWARDS.SACRIFICE.locked.title"]       = $"Cannot Sacrifice {(int)(hPct * 100)}% HP",
-            ["BETTERREWARDS.SACRIFICE.locked.description"] = "You would die from this sacrifice.",
-            ["BETTERREWARDS.SHOP_PENDING.title"]           = "Waiting for the merchant",
-            ["BETTERREWARDS.SHOP_PENDING.desc"]            = "The merchant waits. You will enter the special shop once everyone is finished with Neow.",
-        });
     }
 
     private static Task OnBargainChosen(Neow neow, double hPct, int maxRepeats, int goldPerSacrifice, int sacrificesDone)
@@ -120,19 +107,7 @@ internal static class NeowGenerateInitialOptionsPatch
         var wouldDie = hpCost >= owner.Creature.CurrentHp;
         var canMore  = sacrificesDone < maxRepeats;
 
-        var locTable = LocManager.Instance.GetTable("events");
-
-        // Inject all display strings directly into the loc table so they resolve at display time.
-        locTable.MergeWith(new Dictionary<string, string>
-        {
-            ["BETTERREWARDS.SACRIFICE.state.desc"]         = $"The merchant offers a bargain. Sacrifice HP in exchange for gold.\n\nSacrifices: {sacrificesDone}/{maxRepeats}  |  HP: {owner.Creature.CurrentHp}/{owner.Creature.MaxHp}  |  Gold per sacrifice: {goldPerSacrifice}",
-            ["BETTERREWARDS.SACRIFICE.do.title"]           = $"Sacrifice {hpCost} HP for {goldPerSacrifice} gold",
-            ["BETTERREWARDS.SACRIFICE.do.desc"]            = $"Lose {hpCost} HP and gain {goldPerSacrifice} gold. ({sacrificesDone + 1}/{maxRepeats})",
-            ["BETTERREWARDS.SACRIFICE.locked.title"]       = $"Cannot Sacrifice {(int)(hPct * 100)}% HP",
-            ["BETTERREWARDS.SACRIFICE.locked.desc"]        = "You would die from this sacrifice.",
-            ["BETTERREWARDS.ENTER_SHOP.title"]             = "Enter the shop",
-            ["BETTERREWARDS.ENTER_SHOP.desc"]              = "Leave Neow and enter the merchant's special shop.",
-        });
+        var hpPercent = (int)(hPct * 100);
 
         // Use the LocString-based EventOption constructor directly to avoid the string-key
         // overload's call to GetOptionTitle/GetOptionDescription, which returns null for keys
@@ -150,8 +125,8 @@ internal static class NeowGenerateInitialOptionsPatch
                     await PlayerCmd.GainGold(goldPerSacrifice, owner);
                     ShowSacrificeState(neow, owner, hPct, maxRepeats, goldPerSacrifice, sacrificesDone + 1);
                 },
-                new LocString("events", "BETTERREWARDS.SACRIFICE.do.title"),
-                new LocString("events", "BETTERREWARDS.SACRIFICE.do.desc"),
+                BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.do.title", ("hpCost", hpCost), ("goldPerSacrifice", goldPerSacrifice), ("sacrificeIndex", sacrificesDone + 1), ("maxRepeats", maxRepeats)),
+                BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.do.desc", ("hpCost", hpCost), ("goldPerSacrifice", goldPerSacrifice), ("sacrificeIndex", sacrificesDone + 1), ("maxRepeats", maxRepeats)),
                 "BETTERREWARDS.SACRIFICE.do",
                 Array.Empty<IHoverTip>()));
         }
@@ -161,8 +136,8 @@ internal static class NeowGenerateInitialOptionsPatch
             options.Add(new EventOption(
                 neow,
                 null,
-                new LocString("events", "BETTERREWARDS.SACRIFICE.locked.title"),
-                new LocString("events", "BETTERREWARDS.SACRIFICE.locked.desc"),
+                BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.locked.title", ("hpPercent", hpPercent)),
+                BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.locked.desc"),
                 "BETTERREWARDS.SACRIFICE.locked",
                 Array.Empty<IHoverTip>()));
         }
@@ -175,12 +150,12 @@ internal static class NeowGenerateInitialOptionsPatch
                 ShowMerchantPendingState(neow);
                 await TryEnterPendingMerchantRoom("Enter shop option");
             },
-            new LocString("events", "BETTERREWARDS.ENTER_SHOP.title"),
-            new LocString("events", "BETTERREWARDS.ENTER_SHOP.desc"),
+            BetterRewardsLocalization.EventString("BETTERREWARDS.ENTER_SHOP.title"),
+            BetterRewardsLocalization.EventString("BETTERREWARDS.ENTER_SHOP.desc"),
             "BETTERREWARDS.ENTER_SHOP",
             Array.Empty<IHoverTip>()));
 
-        CallSetEventState(neow, new LocString("events", "BETTERREWARDS.SACRIFICE.state.desc"), options);
+        CallSetEventState(neow, BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.state.desc", ("sacrificesDone", sacrificesDone), ("maxRepeats", maxRepeats), ("currentHp", owner.Creature.CurrentHp), ("maxHp", owner.Creature.MaxHp), ("goldPerSacrifice", goldPerSacrifice)), options);
     }
 
     private static void ShowMerchantPendingState(Neow neow)
@@ -189,14 +164,14 @@ internal static class NeowGenerateInitialOptionsPatch
 
         CallSetEventState(
             neow,
-            new LocString("events", "BETTERREWARDS.SHOP_PENDING.desc"),
+            BetterRewardsLocalization.EventString("BETTERREWARDS.SHOP_PENDING.desc"),
             new[]
             {
                 new EventOption(
                     neow,
                     null,
-                    new LocString("events", "BETTERREWARDS.SHOP_PENDING.title"),
-                    new LocString("events", "BETTERREWARDS.SHOP_PENDING.desc"),
+                    BetterRewardsLocalization.EventString("BETTERREWARDS.SHOP_PENDING.title"),
+                    BetterRewardsLocalization.EventString("BETTERREWARDS.SHOP_PENDING.desc"),
                     "BETTERREWARDS.SHOP_PENDING",
                     Array.Empty<IHoverTip>())
             });

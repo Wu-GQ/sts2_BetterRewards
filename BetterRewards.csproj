@@ -37,7 +37,12 @@
     <EmbeddedResource Include="resources/reroll_icon.png" LogicalName="BetterRewards.RerollIconPng" />
     <EmbeddedResource Include="resources/random_relic_icon.png" LogicalName="BetterRewards.RandomRelicIconPng" />
     <EmbeddedResource Include="resources/random_item_icon.png" LogicalName="BetterRewards.RandomItemIconPng" />
-    <EmbeddedResource Include="localization/eng/settings_ui.json" LogicalName="BetterRewards.SettingsUiLocalization" />
+    <EmbeddedResource Include="localization/eng/settings_ui.json" LogicalName="BetterRewards.Loc.eng.settings_ui" />
+    <EmbeddedResource Include="localization/zhs/settings_ui.json" LogicalName="BetterRewards.Loc.zhs.settings_ui" />
+    <EmbeddedResource Include="localization/eng/events.json" LogicalName="BetterRewards.Loc.eng.events" />
+    <EmbeddedResource Include="localization/zhs/events.json" LogicalName="BetterRewards.Loc.zhs.events" />
+    <EmbeddedResource Include="localization/eng/better_rewards_shop.json" LogicalName="BetterRewards.Loc.eng.better_rewards_shop" />
+    <EmbeddedResource Include="localization/zhs/better_rewards_shop.json" LogicalName="BetterRewards.Loc.zhs.better_rewards_shop" />
   </ItemGroup>
 
   <Target Name="ValidateSts2InstallDir" BeforeTargets="ResolveReferences">

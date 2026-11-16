@@ -1,4 +1,5 @@
 {
+  "BETTERREWARDS.mod_title": "Better Rewards",
   "BETTERREWARDS-EVENT.title": "Event",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "HP Sacrifice %",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Fraction of your current HP lost per sacrifice (0.0–1.0). Capped so a single choice cannot exceed 1/N of your max HP.",
@@ -8,19 +9,16 @@
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Fraction of your previous run's score converted to gold per sacrifice (e.g. 0.25 = 25% of score per sacrifice).",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Minimum Previous Score",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "The effective previous-run score is at least this value, guaranteeing a minimum gold opportunity even on the first run.",
-
   "BETTERREWARDS-SHOP_REROLL.title": "Shop reroll",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "Reroll Base Cost",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "Gold cost for the first shop reroll.",
   "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "Reroll Cost Scaling",
   "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "Multiplier applied to reroll cost after each use (e.g. 1.10 = +10% each time).",
-
   "BETTERREWARDS-RANDOM_RELIC.title": "Random relic",
   "BETTERREWARDS-RELIC_BASE_COST.title": "Random Relic Base Cost",
   "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "Gold cost for the first random relic purchase.",
   "BETTERREWARDS-RELIC_COST_SCALING.title": "Random Relic Cost Scaling",
   "BETTERREWARDS-RELIC_COST_SCALING.hover.desc": "Multiplier applied to relic cost after each purchase.",
-
   "BETTERREWARDS-RANDOM_RELIC_WEIGHTS.title": "Random relic weights",
   "BETTERREWARDS-RELIC_WEIGHT_COMMON.title": "Relic Weight: Common",
   "BETTERREWARDS-RELIC_WEIGHT_COMMON.hover.desc": "Relative weight for rolling a Common relic.",
@@ -32,13 +30,11 @@
   "BETTERREWARDS-RELIC_WEIGHT_SHOP.hover.desc": "Relative weight for rolling a Shop relic.",
   "BETTERREWARDS-RELIC_WEIGHT_ANCIENT.title": "Relic Weight: Ancient",
   "BETTERREWARDS-RELIC_WEIGHT_ANCIENT.hover.desc": "Relative weight for rolling an Ancient relic.",
-
   "BETTERREWARDS-RANDOM_ITEM.title": "Random item",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Random Item Base Cost",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "Gold cost for the first random item purchase.",
   "BETTERREWARDS-RANDOM_ITEM_COST_SCALING.title": "Random Item Cost Scaling",
   "BETTERREWARDS-RANDOM_ITEM_COST_SCALING.hover.desc": "Multiplier applied to random item cost after each purchase.",
-
   "BETTERREWARDS-ITEM_TYPE_WEIGHTS.title": "Item type weights",
   "BETTERREWARDS-ITEM_WEIGHT_RELIC.title": "Item Type Weight: Relic",
   "BETTERREWARDS-ITEM_WEIGHT_RELIC.hover.desc": "Relative weight for the random item to be a relic.",
@@ -46,7 +42,6 @@
   "BETTERREWARDS-ITEM_WEIGHT_CARD.hover.desc": "Relative weight for the random item to be a card.",
   "BETTERREWARDS-ITEM_WEIGHT_POTION.title": "Item Type Weight: Potion",
   "BETTERREWARDS-ITEM_WEIGHT_POTION.hover.desc": "Relative weight for the random item to be a potion.",
-
   "BETTERREWARDS-CARD_WEIGHTS.title": "Card weights",
   "BETTERREWARDS-CARD_WEIGHT_COMMON.title": "Card Weight: Common (character pool)",
   "BETTERREWARDS-CARD_WEIGHT_COMMON.hover.desc": "Relative weight for a character-specific Common card.",
@@ -58,7 +53,6 @@
   "BETTERREWARDS-CARD_WEIGHT_COLORLESS.hover.desc": "Relative weight for a random Colorless card.",
   "BETTERREWARDS-CARD_WEIGHT_CURSE.title": "Card Weight: Curse",
   "BETTERREWARDS-CARD_WEIGHT_CURSE.hover.desc": "Relative weight for a random Curse card.",
-
   "BETTERREWARDS-RANDOM_ITEM_RELIC_WEIGHTS.title": "Random item relic weights",
   "BETTERREWARDS-ITEM_RELIC_WEIGHT_COMMON.title": "Random Item Relic Weight: Common",
   "BETTERREWARDS-ITEM_RELIC_WEIGHT_COMMON.hover.desc": "Relative weight for the random-item relic to be Common.",
@@ -70,7 +64,6 @@
   "BETTERREWARDS-ITEM_RELIC_WEIGHT_SHOP.hover.desc": "Relative weight for the random-item relic to be a Shop relic.",
   "BETTERREWARDS-ITEM_RELIC_WEIGHT_ANCIENT.title": "Random Item Relic Weight: Ancient",
   "BETTERREWARDS-ITEM_RELIC_WEIGHT_ANCIENT.hover.desc": "Relative weight for the random-item relic to be Ancient.",
-
   "BETTERREWARDS-POTION_WEIGHTS.title": "Potion weights",
   "BETTERREWARDS-POTION_WEIGHT_COMMON.title": "Potion Rarity Weight: Common",
   "BETTERREWARDS-POTION_WEIGHT_COMMON.hover.desc": "Relative weight for a Common potion. The current random-item potion grant still uses the game's potion factory and does not apply this weight.",
