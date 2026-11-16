@@ -1,7 +1,7 @@
 {
   "BETTERREWARDS.NEOW.title": "商人的交易",
-  "BETTERREWARDS.NEOW.description": "进入一家特殊商店。可用生命兑换金币（上一局得分：{previousScore}）。最多牺牲 {n} 次，每次失去 {hpPercent}% 生命，获得 {goldPerSacrifice} 金币。",
-  "BETTERREWARDS.NEOW.description.no_score": "进入一家特殊商店。没有上一局记录，此次兑换不会获得金币。",
+  "BETTERREWARDS.NEOW.description": "进入特殊商店。可牺牲最多 {n} 次，每次失去 {hpPercent}% 生命，获得 {goldPerSacrifice} 金币。",
+  "BETTERREWARDS.NEOW.description.no_score": "进入特殊商店。没有上一局得分，牺牲生命不会获得金币。",
   "BETTERREWARDS.ENTER_SHOP.title": "进入商店",
   "BETTERREWARDS.ENTER_SHOP.description": "离开涅奥，进入商人的特殊商店。",
   "BETTERREWARDS.ENTER_SHOP.desc": "离开涅奥，进入商人的特殊商店。",

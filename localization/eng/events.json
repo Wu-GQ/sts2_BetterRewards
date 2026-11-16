@@ -1,7 +1,7 @@
 {
   "BETTERREWARDS.NEOW.title": "The Merchant's Bargain",
-  "BETTERREWARDS.NEOW.description": "Visit a special shop. Sacrifice HP for gold (prev score: {previousScore}). Up to {n} sacrifices, {hpPercent}% HP each for {goldPerSacrifice}g.",
-  "BETTERREWARDS.NEOW.description.no_score": "Visit a special shop. No previous run — gold rewards will be 0.",
+  "BETTERREWARDS.NEOW.description": "Visit a special shop. Up to {n} sacrifices, {hpPercent}% HP each for {goldPerSacrifice}g.",
+  "BETTERREWARDS.NEOW.description.no_score": "Visit a special shop. No previous score, sacrifices give no gold.",
   "BETTERREWARDS.ENTER_SHOP.title": "Enter the shop",
   "BETTERREWARDS.ENTER_SHOP.description": "Leave Neow and enter the merchant's special shop.",
   "BETTERREWARDS.ENTER_SHOP.desc": "Leave Neow and enter the merchant's special shop.",

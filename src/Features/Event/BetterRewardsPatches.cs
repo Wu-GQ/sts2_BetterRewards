@@ -1,5 +1,6 @@
 using BetterRewards.Features.Settings;
 using BetterRewards.Features.Shop;
+using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Context;
@@ -408,5 +409,50 @@ internal static class BetterRewardsResetSavedMultiplayerRunPatch
     public static void Postfix()
     {
         BetterRewardsNeowShopTransitionState.ResetForNeowStart();
+    }
+}
+
+
+/// <summary>
+/// Shows a shop icon on BetterRewards event options, matching Neow relic blessings.
+/// </summary>
+[HarmonyPatch(typeof(NEventOptionButton), "_Ready")]
+internal static class NEventOptionButtonReadyPatch
+{
+    private const string ShopIconPath = "res://images/packed/common_ui/map/icons/map_shop.png";
+
+    [HarmonyPostfix]
+    public static void Postfix(NEventOptionButton __instance)
+    {
+        try
+        {
+            var option = __instance.Option;
+            if (option?.TextKey is not string textKey ||
+                !textKey.StartsWith("BETTERREWARDS.", StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            var icon = __instance.GetNodeOrNull<TextureRect>("%RelicIcon");
+            if (icon == null)
+            {
+                return;
+            }
+
+            var texture = ResourceLoader.Load<Texture2D>(ShopIconPath, cacheMode: ResourceLoader.CacheMode.Reuse);
+            if (texture == null)
+            {
+                return;
+            }
+
+            icon.SetTexture(texture);
+            var outline = icon.GetNodeOrNull<TextureRect>("%Outline");
+            outline?.SetTexture(texture);
+            icon.Visible = true;
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"[BetterRewards] Failed to apply event option icon: {ex.Message}");
+        }
     }
 }
