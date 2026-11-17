@@ -1,0 +1,17 @@
+{
+  "BETTERREWARDS.mod_title": "مكافآت أفضل",
+  "BETTERREWARDS-EVENT.title": "حدث",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "نسبة التضحية بالصحة",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "حصة نقاط صحتك الحالية التي تُفقد في كل تضحية (0.0–1.0). محدودة كي لا يتجاوز خيار واحد 1/N من نقاط صحتك القصوى.",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "عدد التضحيات",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "كم مرة يمكنك التضحية بنقاط الصحة مقابل الذهب.",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "النتيجة ← الذهب %",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "حصة نتيجة الجولة السابقة التي تُحوَّل إلى ذهب في كل تضحية (مثلًا 0.25 = 25% من النتيجة لكل تضحية).",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "الحد الأدنى للنتيجة السابقة",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "النتيجة الفعلية للجولة السابقة لا تقل عن هذه القيمة، مما يضمن حدًا أدنى من الذهب حتى في الجولة الأولى.",
+  "BETTERREWARDS-SHOP_REROLL.title": "إعادة رمي المتجر",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "التكلفة الأساسية لإعادة الرمي",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "تكلفة الذهب لأول إعادة رمي للمتجر.",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "تزايد تكلفة إعادة الرمي",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "المضاعف المطبَّق على تكلفة إعادة الرمي بعد كل استخدام (مثلًا 1.10 = +10% في كل مرة)."
+}

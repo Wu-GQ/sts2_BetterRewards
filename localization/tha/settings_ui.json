@@ -1,0 +1,17 @@
+{
+  "BETTERREWARDS.mod_title": "รางวัลที่ดีกว่า",
+  "BETTERREWARDS-EVENT.title": "เหตุการณ์",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "สัดส่วนการเสียสละ HP",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "สัดส่วนของ HP ปัจจุบันที่เสียในแต่ละครั้งของการเสียสละ (0.0–1.0) จำกัดไว้ไม่ให้การเลือกครั้งเดียวเกิน 1/N ของ HP สูงสุด",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "จำนวนครั้งที่เสียสละได้",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "จำนวนครั้งที่สามารถเสียสละ HP เพื่อแลกทองได้",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "คะแนน → ทอง %",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "สัดส่วนของคะแนนรอบก่อนหน้าที่แปลงเป็นทองต่อการเสียสละหนึ่งครั้ง (เช่น 0.25 = 25% ของคะแนนต่อการเสียสละ)",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "คะแนนรอบก่อนหน้าขั้นต่ำ",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "คะแนนรอบก่อนหน้าที่มีผลจะไม่ต่ำกว่าค่านี้ จึงยังได้รับทองขั้นต่ำแม้ในการเล่นครั้งแรก",
+  "BETTERREWARDS-SHOP_REROLL.title": "รีโรลร้านค้า",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "ค่าใช้จ่ายพื้นฐานของรีโรล",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "ทองที่ใช้ในการรีโรลร้านค้าครั้งแรก",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "อัตราเพิ่มค่าใช้จ่ายรีโรล",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "ตัวคูณที่นำไปคูณกับค่าใช้จ่ายรีโรลหลังใช้งานแต่ละครั้ง (เช่น 1.10 คือเพิ่มขึ้น 10% ทุกครั้ง)"
+}

@@ -1,0 +1,16 @@
+{
+  "BETTERREWARDS.NEOW.title": "Układ kupca",
+  "BETTERREWARDS.NEOW.description": "Odwiedź specjalny sklep. Do {n} poświęceń, za każdym razem {hpPercent}% PŻ za {goldPerSacrifice} złota.",
+  "BETTERREWARDS.NEOW.description.no_score": "Odwiedź specjalny sklep. Brak poprzedniego wyniku, poświęcenia nie dają złota.",
+  "BETTERREWARDS.ENTER_SHOP.title": "Wejdź do sklepu",
+  "BETTERREWARDS.ENTER_SHOP.description": "Opuść Neow i wejdź do specjalnego sklepu kupca.",
+  "BETTERREWARDS.ENTER_SHOP.desc": "Opuść Neow i wejdź do specjalnego sklepu kupca.",
+  "BETTERREWARDS.SACRIFICE.locked.title": "Nie można poświęcić {hpPercent}% PŻ",
+  "BETTERREWARDS.SACRIFICE.locked.description": "To poświęcenie by cię zabiło.",
+  "BETTERREWARDS.SACRIFICE.locked.desc": "To poświęcenie by cię zabiło.",
+  "BETTERREWARDS.SHOP_PENDING.title": "Oczekiwanie na kupca",
+  "BETTERREWARDS.SHOP_PENDING.desc": "Kupiec czeka. Wejdziesz do specjalnego sklepu, gdy wszyscy skończą u Neow.",
+  "BETTERREWARDS.SACRIFICE.state.desc": "Kupiec oferuje układ. Poświęć PŻ w zamian za złoto.\n\nPoświęcenia: {sacrificesDone}/{maxRepeats}  |  PŻ: {currentHp}/{maxHp}  |  Złoto za poświęcenie: {goldPerSacrifice}",
+  "BETTERREWARDS.SACRIFICE.do.title": "Poświęć {hpCost} PŻ za {goldPerSacrifice} złota",
+  "BETTERREWARDS.SACRIFICE.do.desc": "Strać {hpCost} PŻ i zyskaj {goldPerSacrifice} złota. ({sacrificeIndex}/{maxRepeats})"
+}

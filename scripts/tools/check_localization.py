@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check BetterRewards localization tables against the settings actually declared in code.
 
-Validates JSON syntax, eng/zhs key parity for every table, and that each
+Validates JSON syntax, official-language key parity for every table, and that each
 SimpleModConfig property/section has the keys BaseLib looks up by convention:
   {PREFIX}-{SLUG}.title, {PREFIX}-{SLUG}.hover.desc, {PREFIX}-{SECTION_SLUG}.title
 It also reports settings_ui keys that no property, section, or BaseLib convention uses.
@@ -17,7 +17,11 @@ ROOT = Path(__file__).resolve().parents[2]
 LOC = ROOT / "localization"
 SETTINGS_SRC = ROOT / "src" / "Features" / "Settings" / "BetterRewardsSettings.cs"
 TABLES = ("settings_ui", "events", "better_rewards_shop")
-LANGS = ("eng", "zhs")
+LANGS = (
+    "eng", "zhs", "zht",
+    "deu", "esp", "fra", "ind", "ita", "jpn", "kor",
+    "pol", "ptb", "rus", "spa", "tha", "tur", "ara",
+)
 PREFIX = "BETTERREWARDS"
 
 
@@ -58,11 +62,14 @@ def main() -> int:
 
     for table in TABLES:
         eng = loaded.get(("eng", table), {})
-        zhs = loaded.get(("zhs", table), {})
-        for key in sorted(set(eng) - set(zhs)):
-            problems.append(f"{table}: missing zhs key {key}")
-        for key in sorted(set(zhs) - set(eng)):
-            problems.append(f"{table}: missing eng key {key}")
+        for language in LANGS:
+            if language == "eng":
+                continue
+            other = loaded.get((language, table), {})
+            for key in sorted(set(eng) - set(other)):
+                problems.append(f"{table}: missing {language} key {key}")
+            for key in sorted(set(other) - set(eng)):
+                problems.append(f"{table}: extra {language} key {key}")
 
     for language in LANGS:
         loc = loaded.get((language, "settings_ui"), {})
@@ -85,7 +92,7 @@ def main() -> int:
         return 1
 
     print(f"OK: {len(properties)} settings, {len(sections)} sections, all tables parse,")
-    print("    eng/zhs keys match, and settings_ui has no unused keys.")
+    print(f"    {len(LANGS)} official languages match eng keys, and settings_ui has no unused keys.")
     return 0
 
 

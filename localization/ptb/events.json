@@ -1,0 +1,16 @@
+{
+  "BETTERREWARDS.NEOW.title": "O acordo do mercador",
+  "BETTERREWARDS.NEOW.description": "Visite uma loja especial. Até {n} sacrifícios, {hpPercent}% de PV cada um por {goldPerSacrifice} de ouro.",
+  "BETTERREWARDS.NEOW.description.no_score": "Visite uma loja especial. Sem pontuação anterior, os sacrifícios não dão ouro.",
+  "BETTERREWARDS.ENTER_SHOP.title": "Entrar na loja",
+  "BETTERREWARDS.ENTER_SHOP.description": "Deixe Neow e entre na loja especial do mercador.",
+  "BETTERREWARDS.ENTER_SHOP.desc": "Deixe Neow e entre na loja especial do mercador.",
+  "BETTERREWARDS.SACRIFICE.locked.title": "Não é possível sacrificar {hpPercent}% de PV",
+  "BETTERREWARDS.SACRIFICE.locked.description": "Este sacrifício mataria você.",
+  "BETTERREWARDS.SACRIFICE.locked.desc": "Este sacrifício mataria você.",
+  "BETTERREWARDS.SHOP_PENDING.title": "Aguardando o mercador",
+  "BETTERREWARDS.SHOP_PENDING.desc": "O mercador espera. Você entrará na loja especial quando todos terminarem com Neow.",
+  "BETTERREWARDS.SACRIFICE.state.desc": "O mercador oferece um acordo. Sacrifique PV em troca de ouro.\n\nSacrifícios: {sacrificesDone}/{maxRepeats}  |  PV: {currentHp}/{maxHp}  |  Ouro por sacrifício: {goldPerSacrifice}",
+  "BETTERREWARDS.SACRIFICE.do.title": "Sacrifique {hpCost} PV por {goldPerSacrifice} de ouro",
+  "BETTERREWARDS.SACRIFICE.do.desc": "Perca {hpCost} PV e ganhe {goldPerSacrifice} de ouro. ({sacrificeIndex}/{maxRepeats})"
+}

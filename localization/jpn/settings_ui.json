@@ -1,0 +1,17 @@
+{
+  "BETTERREWARDS.mod_title": "より良い報酬",
+  "BETTERREWARDS-EVENT.title": "イベント",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "HP犠牲割合",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "犠牲1回ごとに失う現在HPの割合（0.0–1.0）。1回の選択で最大HPの1/Nを超えないよう制限されます。",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "犠牲回数",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "HPをゴールドに交換できる回数。",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "スコア→ゴールド割合",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "犠牲1回ごとに、前回のランのスコアをこの割合でゴールドに変換します（例：0.25は、1回あたりスコアの25%）。",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "前回スコアの下限",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "前回のランの有効スコアはこの値を下回らず、初回プレイでも最低限のゴールドを得られます。",
+  "BETTERREWARDS-SHOP_REROLL.title": "ショップリロール",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "リロール基本コスト",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "最初のショップリロールに必要なゴールド。",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "リロールコスト倍率",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "リロールするたびにコストに乗算される倍率（例：1.10は毎回10%増加）。"
+}

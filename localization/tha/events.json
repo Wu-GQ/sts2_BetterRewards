@@ -1,0 +1,16 @@
+{
+  "BETTERREWARDS.NEOW.title": "ข้อเสนอของพ่อค้า",
+  "BETTERREWARDS.NEOW.description": "เข้าชมร้านค้าพิเศษ เสียสละได้สูงสุด {n} ครั้ง แต่ละครั้งเสีย HP {hpPercent}% เพื่อแลก {goldPerSacrifice} ทอง",
+  "BETTERREWARDS.NEOW.description.no_score": "เข้าชมร้านค้าพิเศษ ไม่มีคะแนนรอบก่อนหน้า การเสียสละจะไม่ให้ทอง",
+  "BETTERREWARDS.ENTER_SHOP.title": "เข้าสู่ร้านค้า",
+  "BETTERREWARDS.ENTER_SHOP.description": "ออกจากนีโอ แล้วเข้าสู่ร้านค้าพิเศษของพ่อค้า",
+  "BETTERREWARDS.ENTER_SHOP.desc": "ออกจากนีโอ แล้วเข้าสู่ร้านค้าพิเศษของพ่อค้า",
+  "BETTERREWARDS.SACRIFICE.locked.title": "ไม่สามารถเสียสละ HP {hpPercent}% ได้",
+  "BETTERREWARDS.SACRIFICE.locked.description": "การเสียสละครั้งนี้จะทำให้คุณตาย",
+  "BETTERREWARDS.SACRIFICE.locked.desc": "การเสียสละครั้งนี้จะทำให้คุณตาย",
+  "BETTERREWARDS.SHOP_PENDING.title": "กำลังรอพ่อค้า",
+  "BETTERREWARDS.SHOP_PENDING.desc": "พ่อค้ากำลังรออยู่ คุณจะเข้าสู่ร้านค้าพิเศษเมื่อทุกคนเลือกกับนีโอเสร็จแล้ว",
+  "BETTERREWARDS.SACRIFICE.state.desc": "พ่อค้าเสนอข้อแลกเปลี่ยน เสียสละ HP เพื่อแลกทอง\n\nการเสียสละ: {sacrificesDone}/{maxRepeats}  |  HP: {currentHp}/{maxHp}  |  ทองต่อการเสียสละ: {goldPerSacrifice}",
+  "BETTERREWARDS.SACRIFICE.do.title": "เสียสละ {hpCost} HP เพื่อแลก {goldPerSacrifice} ทอง",
+  "BETTERREWARDS.SACRIFICE.do.desc": "เสีย {hpCost} HP และได้รับ {goldPerSacrifice} ทอง ({sacrificeIndex}/{maxRepeats})"
+}

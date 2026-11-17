@@ -1,0 +1,8 @@
+{
+  "reroll.title": "Reroll de la boutique",
+  "reroll.description": "Remplacez le stock du marchand par un nouvel inventaire.",
+  "random_relic.title": "Relique aléatoire",
+  "random_relic.description": "Achetez une relique aléatoire selon les probabilités de rareté et les prix de la boutique habituelle.",
+  "random_item.title": "Objet aléatoire",
+  "random_item.description": "Achetez une relique, une carte ou une potion aléatoire selon les proportions de stock, les probabilités de rareté et les prix de la boutique habituelle."
+}

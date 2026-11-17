@@ -1,0 +1,17 @@
+{
+  "BETTERREWARDS.mod_title": "Ricompense migliori",
+  "BETTERREWARDS-EVENT.title": "Evento",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "% di PF sacrificati",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Frazione dei PF attuali persa a ogni sacrificio (0.0–1.0). Limitata così che una singola scelta non superi 1/N dei PF massimi.",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Numero di sacrifici",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Quante volte puoi sacrificare PF in cambio di oro.",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Punteggio → oro %",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Frazione del punteggio della corsa precedente convertita in oro a ogni sacrificio (es. 0.25 = 25% del punteggio per sacrificio).",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Punteggio precedente minimo",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "Il punteggio effettivo della corsa precedente è almeno questo valore, garantendo un minimo di oro anche alla prima partita.",
+  "BETTERREWARDS-SHOP_REROLL.title": "Reroll del negozio",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "Costo base del reroll",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "Costo in oro del primo reroll del negozio.",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "Aumento del costo di reroll",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "Moltiplicatore applicato al costo del reroll dopo ogni utilizzo (es. 1.10 = +10% ogni volta)."
+}

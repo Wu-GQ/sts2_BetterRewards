@@ -1,0 +1,8 @@
+{
+  "reroll.title": "Laden neu würfeln",
+  "reroll.description": "Ersetze den Bestand des Händlers durch eine neue Auswahl.",
+  "random_relic.title": "Zufälliges Relikt",
+  "random_relic.description": "Kaufe ein zufälliges Relikt zu den Seltenheitschancen und Preisen des normalen Ladens.",
+  "random_item.title": "Zufälliger Gegenstand",
+  "random_item.description": "Kaufe ein zufälliges Relikt, eine Karte oder einen Trank zu den Bestandsanteilen, Seltenheitschancen und Preisen des normalen Ladens."
+}

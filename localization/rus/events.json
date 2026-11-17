@@ -1,0 +1,16 @@
+{
+  "BETTERREWARDS.NEOW.title": "Сделка торговца",
+  "BETTERREWARDS.NEOW.description": "Посетите особый магазин. До {n} жертв, по {hpPercent}% ОЗ за {goldPerSacrifice} золота.",
+  "BETTERREWARDS.NEOW.description.no_score": "Посетите особый магазин. Нет предыдущего счёта, жертвы не дают золота.",
+  "BETTERREWARDS.ENTER_SHOP.title": "Войти в магазин",
+  "BETTERREWARDS.ENTER_SHOP.description": "Покиньте Нео и войдите в особый магазин торговца.",
+  "BETTERREWARDS.ENTER_SHOP.desc": "Покиньте Нео и войдите в особый магазин торговца.",
+  "BETTERREWARDS.SACRIFICE.locked.title": "Нельзя пожертвовать {hpPercent}% ОЗ",
+  "BETTERREWARDS.SACRIFICE.locked.description": "Эта жертва вас убьёт.",
+  "BETTERREWARDS.SACRIFICE.locked.desc": "Эта жертва вас убьёт.",
+  "BETTERREWARDS.SHOP_PENDING.title": "Ожидание торговца",
+  "BETTERREWARDS.SHOP_PENDING.desc": "Торговец ждёт. Вы войдёте в особый магазин, когда все закончат с Нео.",
+  "BETTERREWARDS.SACRIFICE.state.desc": "Торговец предлагает сделку. Пожертвуйте ОЗ в обмен на золото.\n\nЖертвы: {sacrificesDone}/{maxRepeats}  |  ОЗ: {currentHp}/{maxHp}  |  Золото за жертву: {goldPerSacrifice}",
+  "BETTERREWARDS.SACRIFICE.do.title": "Пожертвовать {hpCost} ОЗ за {goldPerSacrifice} золота",
+  "BETTERREWARDS.SACRIFICE.do.desc": "Потеряйте {hpCost} ОЗ и получите {goldPerSacrifice} золота. ({sacrificeIndex}/{maxRepeats})"
+}

@@ -1,0 +1,8 @@
+{
+  "reroll.title": "Przetasuj sklep",
+  "reroll.description": "Zastąp asortyment kupca nowym zestawem towarów.",
+  "random_relic.title": "Losowy relikt",
+  "random_relic.description": "Kup losowy relikt według szans rzadkości i cen zwykłego sklepu.",
+  "random_item.title": "Losowy przedmiot",
+  "random_item.description": "Kup losowy relikt, kartę lub miksturę według proporcji asortymentu, szans rzadkości i cen zwykłego sklepu."
+}

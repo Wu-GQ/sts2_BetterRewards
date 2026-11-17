@@ -1,0 +1,17 @@
+{
+  "BETTERREWARDS.mod_title": "更好的獎勵",
+  "BETTERREWARDS-EVENT.title": "事件",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "生命犧牲比例",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "每次犧牲扣除目前生命的比例（0.0–1.0）。單次犧牲不會超過最大生命的 1/N。",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "可犧牲次數",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "可以用生命兌換金幣的次數。",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "得分兌換金幣比例",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "每次犧牲將上一局得分按該比例兌換為金幣（例如 0.25 表示每次兌換上一局得分的 25%）。",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "最低上一局得分",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "上一局有效得分不會低於該值，即使是第一次遊戲，也保證有最低金幣可兌換。",
+  "BETTERREWARDS-SHOP_REROLL.title": "商店刷新",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "刷新基礎花費",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "第一次刷新商店所需的金幣。",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "刷新花費倍率",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "每次刷新後，花費乘以該倍率（例如 1.10 表示每次增加 10%）。"
+}

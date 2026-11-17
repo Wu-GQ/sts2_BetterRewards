@@ -1,0 +1,16 @@
+{
+  "BETTERREWARDS.NEOW.title": "Tüccarın Anlaşması",
+  "BETTERREWARDS.NEOW.description": "Özel bir dükkânı ziyaret et. En fazla {n} fedakârlık, her birinde %{hpPercent} can karşılığında {goldPerSacrifice} altın.",
+  "BETTERREWARDS.NEOW.description.no_score": "Özel bir dükkânı ziyaret et. Önceki skor yok, fedakârlıklar altın vermez.",
+  "BETTERREWARDS.ENTER_SHOP.title": "Dükkâna gir",
+  "BETTERREWARDS.ENTER_SHOP.description": "Neow'dan ayrıl ve tüccarın özel dükkânına gir.",
+  "BETTERREWARDS.ENTER_SHOP.desc": "Neow'dan ayrıl ve tüccarın özel dükkânına gir.",
+  "BETTERREWARDS.SACRIFICE.locked.title": "%{hpPercent} can feda edilemez",
+  "BETTERREWARDS.SACRIFICE.locked.description": "Bu fedakârlık seni öldürür.",
+  "BETTERREWARDS.SACRIFICE.locked.desc": "Bu fedakârlık seni öldürür.",
+  "BETTERREWARDS.SHOP_PENDING.title": "Tüccar bekleniyor",
+  "BETTERREWARDS.SHOP_PENDING.desc": "Tüccar bekliyor. Herkes Neow ile işini bitirdiğinde özel dükkâna gireceksin.",
+  "BETTERREWARDS.SACRIFICE.state.desc": "Tüccar bir anlaşma teklif ediyor. Altın karşılığında can feda et.\n\nFedakârlıklar: {sacrificesDone}/{maxRepeats}  |  Can: {currentHp}/{maxHp}  |  Fedakârlık başına altın: {goldPerSacrifice}",
+  "BETTERREWARDS.SACRIFICE.do.title": "{hpCost} can feda ederek {goldPerSacrifice} altın al",
+  "BETTERREWARDS.SACRIFICE.do.desc": "{hpCost} can kaybet ve {goldPerSacrifice} altın kazan. ({sacrificeIndex}/{maxRepeats})"
+}

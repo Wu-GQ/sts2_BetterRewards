@@ -1,0 +1,17 @@
+{
+  "BETTERREWARDS.mod_title": "Melhores recompensas",
+  "BETTERREWARDS-EVENT.title": "Evento",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "% de PV sacrificados",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Fração dos seus PV atuais perdida a cada sacrifício (0.0–1.0). Limitada para que uma única escolha não ultrapasse 1/N dos seus PV máximos.",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Repetições de sacrifício",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Quantas vezes você pode sacrificar PV em troca de ouro.",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Pontuação → ouro %",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Fração da pontuação da run anterior convertida em ouro a cada sacrifício (ex.: 0.25 = 25% da pontuação por sacrifício).",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Pontuação anterior mínima",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "A pontuação efetiva da run anterior é no mínimo este valor, garantindo ouro mínimo mesmo na primeira partida.",
+  "BETTERREWARDS-SHOP_REROLL.title": "Reroll da loja",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "Custo base do reroll",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "Custo em ouro do primeiro reroll da loja.",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "Aumento do custo de reroll",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "Multiplicador aplicado ao custo do reroll após cada uso (ex.: 1.10 = +10% a cada vez)."
+}

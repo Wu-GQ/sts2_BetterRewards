@@ -1,0 +1,16 @@
+{
+  "BETTERREWARDS.NEOW.title": "صفقة التاجر",
+  "BETTERREWARDS.NEOW.description": "زُر متجرًا خاصًا. حتى {n} تضحيات، {hpPercent}% من نقاط الصحة في كل مرة مقابل {goldPerSacrifice} ذهب.",
+  "BETTERREWARDS.NEOW.description.no_score": "زُر متجرًا خاصًا. لا توجد نتيجة سابقة، والتضحيات لا تمنح ذهبًا.",
+  "BETTERREWARDS.ENTER_SHOP.title": "ادخل المتجر",
+  "BETTERREWARDS.ENTER_SHOP.description": "غادر نيو وادخل متجر التاجر الخاص.",
+  "BETTERREWARDS.ENTER_SHOP.desc": "غادر نيو وادخل متجر التاجر الخاص.",
+  "BETTERREWARDS.SACRIFICE.locked.title": "يتعذر التضحية بـ {hpPercent}% من نقاط الصحة",
+  "BETTERREWARDS.SACRIFICE.locked.description": "هذه التضحية ستؤدي إلى موتك.",
+  "BETTERREWARDS.SACRIFICE.locked.desc": "هذه التضحية ستؤدي إلى موتك.",
+  "BETTERREWARDS.SHOP_PENDING.title": "في انتظار التاجر",
+  "BETTERREWARDS.SHOP_PENDING.desc": "التاجر ينتظر. ستدخل المتجر الخاص بعد أن ينتهي الجميع من نيو.",
+  "BETTERREWARDS.SACRIFICE.state.desc": "يعرض التاجر صفقة. ضحِّ بنقاط الصحة مقابل الذهب.\n\nالتضحيات: {sacrificesDone}/{maxRepeats}  |  الصحة: {currentHp}/{maxHp}  |  الذهب لكل تضحية: {goldPerSacrifice}",
+  "BETTERREWARDS.SACRIFICE.do.title": "ضحِّ بـ {hpCost} نقطة صحة مقابل {goldPerSacrifice} ذهب",
+  "BETTERREWARDS.SACRIFICE.do.desc": "اخسر {hpCost} نقطة صحة واحصل على {goldPerSacrifice} ذهب. ({sacrificeIndex}/{maxRepeats})"
+}

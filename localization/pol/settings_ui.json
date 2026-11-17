@@ -1,0 +1,17 @@
+{
+  "BETTERREWARDS.mod_title": "Lepsze nagrody",
+  "BETTERREWARDS-EVENT.title": "Wydarzenie",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "Procent poświęcanych PŻ",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Część twoich aktualnych PŻ tracona przy każdym poświęceniu (0.0–1.0). Ograniczona tak, by pojedynczy wybór nie przekroczył 1/N maksymalnych PŻ.",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Liczba poświęceń",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Ile razy możesz poświęcić PŻ w zamian za złoto.",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Wynik → złoto %",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Część wyniku poprzedniego podejścia zamieniana na złoto przy każdym poświęceniu (np. 0.25 = 25% wyniku na poświęcenie).",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Minimalny poprzedni wynik",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "Efektywny wynik poprzedniego podejścia wynosi co najmniej tę wartość, gwarantując minimum złota nawet przy pierwszym podejściu.",
+  "BETTERREWARDS-SHOP_REROLL.title": "Przetasowanie sklepu",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "Bazowy koszt przetasowania",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "Koszt w złocie pierwszego przetasowania sklepu.",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "Wzrost kosztu przetasowania",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "Mnożnik stosowany do kosztu przetasowania po każdym użyciu (np. 1.10 = +10% za każdym razem)."
+}

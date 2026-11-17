@@ -1,0 +1,8 @@
+{
+  "reroll.title": "Reroll de la tienda",
+  "reroll.description": "Sustituye el inventario del mercader por una nueva selección.",
+  "random_relic.title": "Reliquia aleatoria",
+  "random_relic.description": "Compra una reliquia aleatoria con las probabilidades de rareza y los precios de la tienda normal.",
+  "random_item.title": "Objeto aleatorio",
+  "random_item.description": "Compra una reliquia, una carta o una poción aleatoria con las proporciones de existencias, las probabilidades de rareza y los precios de la tienda normal."
+}

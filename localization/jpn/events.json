@@ -1,0 +1,16 @@
+{
+  "BETTERREWARDS.NEOW.title": "商人の取引",
+  "BETTERREWARDS.NEOW.description": "特別なショップを訪れる。最大{n}回まで犠牲にでき、毎回HPの{hpPercent}%を失い、{goldPerSacrifice}ゴールドを得る。",
+  "BETTERREWARDS.NEOW.description.no_score": "特別なショップを訪れる。前回のスコアがないため、犠牲にしてもゴールドは得られない。",
+  "BETTERREWARDS.ENTER_SHOP.title": "ショップに入る",
+  "BETTERREWARDS.ENTER_SHOP.description": "ネオを離れ、商人の特別なショップに入る。",
+  "BETTERREWARDS.ENTER_SHOP.desc": "ネオを離れ、商人の特別なショップに入る。",
+  "BETTERREWARDS.SACRIFICE.locked.title": "HPの{hpPercent}%を犠牲にできない",
+  "BETTERREWARDS.SACRIFICE.locked.description": "この犠牲を行うと死亡してしまう。",
+  "BETTERREWARDS.SACRIFICE.locked.desc": "この犠牲を行うと死亡してしまう。",
+  "BETTERREWARDS.SHOP_PENDING.title": "商人を待っています",
+  "BETTERREWARDS.SHOP_PENDING.desc": "商人は待っている。全員がネオとの選択を終えると、特別なショップに入る。",
+  "BETTERREWARDS.SACRIFICE.state.desc": "商人は取引を持ちかけている。HPを犠牲にしてゴールドを得る。\n\n犠牲：{sacrificesDone}/{maxRepeats}  |  HP：{currentHp}/{maxHp}  |  1回あたりのゴールド：{goldPerSacrifice}",
+  "BETTERREWARDS.SACRIFICE.do.title": "{hpCost} HPを犠牲にして{goldPerSacrifice}ゴールドを得る",
+  "BETTERREWARDS.SACRIFICE.do.desc": "{hpCost} HPを失い、{goldPerSacrifice}ゴールドを得る。（{sacrificeIndex}/{maxRepeats}）"
+}

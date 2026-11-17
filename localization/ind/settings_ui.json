@@ -1,0 +1,17 @@
+{
+  "BETTERREWARDS.mod_title": "Hadiah Lebih Baik",
+  "BETTERREWARDS-EVENT.title": "Peristiwa",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "Persentase pengorbanan HP",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Bagian HP saat ini yang hilang setiap pengorbanan (0.0–1.0). Dibatasi agar satu pilihan tidak melebihi 1/N HP maksimummu.",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Jumlah pengorbanan",
+  "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Berapa kali kamu boleh mengorbankan HP untuk emas.",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Skor → emas %",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Bagian skor run sebelumnya yang diubah menjadi emas setiap pengorbanan (mis. 0.25 = 25% skor per pengorbanan).",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Skor sebelumnya minimum",
+  "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "Skor efektif run sebelumnya setidaknya sebesar nilai ini, menjamin emas minimum bahkan pada permainan pertama.",
+  "BETTERREWARDS-SHOP_REROLL.title": "Reroll toko",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "Biaya dasar reroll",
+  "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "Biaya emas untuk reroll toko yang pertama.",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "Kenaikan biaya reroll",
+  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "Pengali yang diterapkan ke biaya reroll setelah setiap penggunaan (mis. 1.10 = +10% setiap kali)."
+}

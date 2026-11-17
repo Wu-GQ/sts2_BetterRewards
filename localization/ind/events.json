@@ -1,0 +1,16 @@
+{
+  "BETTERREWARDS.NEOW.title": "Tawar-menawar Sang Pedagang",
+  "BETTERREWARDS.NEOW.description": "Kunjungi toko khusus. Hingga {n} pengorbanan, {hpPercent}% HP setiap kali untuk {goldPerSacrifice} emas.",
+  "BETTERREWARDS.NEOW.description.no_score": "Kunjungi toko khusus. Tidak ada skor sebelumnya, pengorbanan tidak memberi emas.",
+  "BETTERREWARDS.ENTER_SHOP.title": "Masuk toko",
+  "BETTERREWARDS.ENTER_SHOP.description": "Tinggalkan Neow dan masuk ke toko khusus pedagang.",
+  "BETTERREWARDS.ENTER_SHOP.desc": "Tinggalkan Neow dan masuk ke toko khusus pedagang.",
+  "BETTERREWARDS.SACRIFICE.locked.title": "Tidak dapat mengorbankan {hpPercent}% HP",
+  "BETTERREWARDS.SACRIFICE.locked.description": "Pengorbanan ini akan membuatmu mati.",
+  "BETTERREWARDS.SACRIFICE.locked.desc": "Pengorbanan ini akan membuatmu mati.",
+  "BETTERREWARDS.SHOP_PENDING.title": "Menunggu pedagang",
+  "BETTERREWARDS.SHOP_PENDING.desc": "Pedagang sedang menunggu. Kamu akan masuk ke toko khusus setelah semua selesai dengan Neow.",
+  "BETTERREWARDS.SACRIFICE.state.desc": "Pedagang menawarkan tawar-menawar. Korbankan HP untuk emas.\n\nPengorbanan: {sacrificesDone}/{maxRepeats}  |  HP: {currentHp}/{maxHp}  |  Emas per pengorbanan: {goldPerSacrifice}",
+  "BETTERREWARDS.SACRIFICE.do.title": "Korbankan {hpCost} HP untuk {goldPerSacrifice} emas",
+  "BETTERREWARDS.SACRIFICE.do.desc": "Kehilangan {hpCost} HP dan dapatkan {goldPerSacrifice} emas. ({sacrificeIndex}/{maxRepeats})"
+}

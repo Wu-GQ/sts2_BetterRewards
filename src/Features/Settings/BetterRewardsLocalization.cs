@@ -10,7 +10,7 @@ namespace BetterRewards.Features.Settings;
 
 /// <summary>
 /// Loads BetterRewards strings for the current game language and merges them into
-/// LocManager tables. English is the fallback; Simplified Chinese uses the zhs tables.
+/// LocManager tables. English is the fallback; other official language tables overlay it when present.
 /// Dynamic values (scores, HP, gold) stay in LocString variables so translations can use SmartFormat.
 /// </summary>
 internal static class BetterRewardsLocalization
@@ -85,6 +85,22 @@ internal static class BetterRewardsLocalization
         return code switch
         {
             "zhs" or "zh" or "zh_cn" or "zh_hans" or "zh_sg" or "chs" or "cn" => "zhs",
+            "zht" or "zh_tw" or "zh_hk" or "zh_mo" or "zh_hant" or "cht" or "tw" => "zht",
+            "esp" or "es_419" or "es_mx" or "es_la" or "es_latam" => "esp",
+            "spa" or "es" or "es_es" => "spa",
+            "ptb" or "pt" or "pt_br" or "por" => "ptb",
+            "fra" or "fr" or "fre" => "fra",
+            "deu" or "de" or "ger" => "deu",
+            "ita" or "it" => "ita",
+            "jpn" or "ja" or "jp" => "jpn",
+            "kor" or "ko" or "kr" => "kor",
+            "pol" or "pl" => "pol",
+            "rus" or "ru" => "rus",
+            "tha" or "th" => "tha",
+            "tur" or "tr" => "tur",
+            "ind" or "id" or "idn" => "ind",
+            "ara" or "ar" => "ara",
+            "eng" or "en" or "en_us" or "en_gb" => "eng",
             _ => code
         };
     }
