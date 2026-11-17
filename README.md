@@ -4,15 +4,16 @@ This repository is a fork of [customjack/sts2_BetterRewards](https://github.com/
 
 The original mod is MIT licensed. Copyright (c) 2026 Jack Carlton. See [LICENSE](LICENSE).
 
-Adds a post-Neow event where you can sacrifice HP for gold, then spend it in a special shop with extra options beyond the normal merchant.
+Adds a bargain on the opening ancient (not only Neow) where you can sacrifice HP for gold, then spend it in a special shop with extra options beyond the normal merchant.
 
 **Features:**
-- After the Neow event, choose how much HP to sacrifice for gold
+- On the opening ancient, choose how much HP to sacrifice for gold
 - Special shop with extra actions:
   - **Reroll Shop** — replace the merchant stock with a fresh roll
   - **Random Relic** — buy a random relic at the regular shop's rarity odds, with a base price that increases by a fixed amount after each purchase
   - **Random Item** — buy a random relic, card, or potion at the regular shop's stock ratios and rarity odds, with a base price that increases by a fixed amount after each purchase
 - Reroll, random relic, and random item costs, and the sacrifice rate, are configurable through BaseLib's mod config screen
+- Event, settings, and shop text follow the game's official language
 
 **Requires:** [BaseLib](https://github.com/Alchyr/BaseLib-StS2) ([Steam Workshop item 3737335127](https://steamcommunity.com/sharedfiles/filedetails/?id=3737335127)). This fork targets BaseLib 3.4.8 or newer. That release also ships `BaseLibCompatibilityHelper`, which BaseLib itself depends on. Subscribe on the Workshop, or download the GitHub release and install every file it contains.
 
@@ -35,9 +36,7 @@ Do not publish this fork to the Steam Workshop from this tree.
 
 ## Usage
 
-After defeating Neow, a prompt appears letting you sacrifice HP for gold. The amount you can sacrifice and the gold conversion rate are both configurable. Once you have gold, you can spend it in the special shop at any point during the run.
-
-Open the shop from the in-run menu and use the extra action buttons to reroll, buy a random relic, or buy a random item.
+On the run's opening ancient, a bargain option appears letting you sacrifice HP for gold, even if another mod has replaced Neow. The amount you can sacrifice and the gold conversion rate are both configurable. After the bargain, you enter a special merchant shop with extra buttons to reroll, buy a random relic, or buy a random item.
 
 ## Configuration
 
@@ -84,11 +83,11 @@ ModManagerSettings marked every numeric setting with host overwrite. BaseLib 3.4
 **What to test in game:**
 1. The mod list shows BetterRewards, and BaseLib's config screen lists the Event, Shop reroll, Random relic, and Random item sliders.
 2. Change Minimum Previous Score, restart, and confirm the value survived in `mod_configs/BetterRewards.cfg`.
-3. Start a run, take the Neow bargain, and confirm HP loss and gold still follow the sliders.
+3. Start a run, take the opening-ancient bargain, and confirm HP loss and gold still follow the sliders. The option should appear even if another mod replaces Neow.
 4. Open the special shop and use reroll, random relic, and random item. Costs should start at the configured base and rise by the configured increment after each use.
 5. In a multiplayer lobby, confirm each client keeps its own config. Do not expect the host's settings to overwrite yours.
 
-Harmony patches for the Neow option, the special shop, and previous-run score sync are unchanged aside from reading the BaseLib-backed properties.
+Harmony patches for the opening-ancient option, the special shop, and previous-run score sync now read the BaseLib-backed properties.
 
 ## License
 
