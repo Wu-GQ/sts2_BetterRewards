@@ -5,11 +5,12 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Events;
+using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Logging;
-using MegaCrit.Sts2.Core.Models.Events;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Events;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
@@ -22,32 +23,41 @@ using System.Reflection;
 namespace BetterRewards.Features.Event;
 
 /// <summary>
-/// Patches Neow.GenerateInitialOptions to append the BetterRewards sacrifice/shop option.
+/// Appends the bargain to the opening ancient only.
+/// AncientEventModel.GenerateInitialOptionsWrapper is sealed and is the path every ancient uses,
+/// including one another mod substitutes for Neow. Priority.Last appends after other postfixes.
 /// </summary>
-[HarmonyPatch(typeof(Neow), "GenerateInitialOptions")]
-internal static class NeowGenerateInitialOptionsPatch
+[HarmonyPatch(typeof(AncientEventModel), "GenerateInitialOptionsWrapper")]
+[HarmonyPriority(Priority.Last)]
+internal static class OpeningAncientOptionsPatch
 {
     // Cached reflection accessor for EventModel.SetEventState (protected)
-    private static readonly MethodInfo? _setEventState = typeof(MegaCrit.Sts2.Core.Models.EventModel)
+    private static readonly MethodInfo? _setEventState = typeof(EventModel)
         .GetMethod("SetEventState", BindingFlags.NonPublic | BindingFlags.Instance);
 
     [HarmonyPostfix]
-    public static void Postfix(Neow __instance, ref IReadOnlyList<EventOption> __result)
+    public static void Postfix(AncientEventModel __instance, ref IReadOnlyList<EventOption> __result)
     {
         try
         {
             var owner = __instance.Owner;
-            if (owner == null)
+            var run = owner?.RunState;
+            if (owner == null || run == null || !IsOpeningAncientVisit(run))
             {
                 return;
             }
 
-            BetterRewardsNeowShopTransitionState.ResetForNeowStart();
+            if (!Hook.ShouldAllowAncient(run, owner, __instance))
+            {
+                return;
+            }
 
             if (__result.Any(option => option.TextKey == "BETTERREWARDS.NEOW"))
             {
                 return;
             }
+
+            BetterRewardsOpeningShopTransitionState.ResetForOpeningAncient();
 
             var options = new List<EventOption>(__result)
             {
@@ -57,13 +67,41 @@ internal static class NeowGenerateInitialOptionsPatch
         }
         catch (Exception ex)
         {
-            Log.Warn($"[BetterRewards] Failed to inject Neow option: {ex.Message}");
+            Log.Warn($"[BetterRewards] Failed to inject opening ancient option: {ex.Message}");
         }
     }
 
-    private static EventOption BuildBargainOption(Neow neow)
+    internal static bool IsOpeningAncientVisit(IRunState run)
     {
-        var previousScore    = PreviousRunScoreService.GetPreviousRunScore(neow.Owner?.RunState);
+        if (!run.CurrentMapCoord.HasValue)
+        {
+            return false;
+        }
+
+        var start = run.Map.StartingMapPoint.coord;
+        var here = run.CurrentMapCoord.Value;
+        return OpeningAncientRules.IsOpeningPosition(
+            run.CurrentActIndex,
+            run.ExtraFields.StartedWithNeow,
+            here.col,
+            here.row,
+            start.col,
+            start.row);
+    }
+
+    internal static bool IsCurrentOpeningAncientRoom(IRunState? run)
+    {
+        if (run == null || run.CurrentRoom is not EventRoom { CanonicalEvent: AncientEventModel })
+        {
+            return false;
+        }
+
+        return IsOpeningAncientVisit(run);
+    }
+
+    private static EventOption BuildBargainOption(EventModel ancient)
+    {
+        var previousScore    = PreviousRunScoreService.GetPreviousRunScore(ancient.Owner?.RunState);
         var hPct             = BetterRewardsSettings.HpSacrificePercent;
         var n                = BetterRewardsSettings.SacrificeRepeatCount;
         var sPct             = BetterRewardsSettings.ScoreToGoldPercent;
@@ -76,8 +114,8 @@ internal static class NeowGenerateInitialOptionsPatch
             : "BETTERREWARDS.NEOW.description.no_score";
 
         return new EventOption(
-            neow,
-            () => OnBargainChosen(neow, effectiveHPct, n, goldPerSacrifice, sacrificesDone: 0),
+            ancient,
+            () => OnBargainChosen(ancient, effectiveHPct, n, goldPerSacrifice, sacrificesDone: 0),
             BetterRewardsLocalization.EventString("BETTERREWARDS.NEOW.title"),
             BetterRewardsLocalization.EventString(
                 descriptionKey,
@@ -89,20 +127,20 @@ internal static class NeowGenerateInitialOptionsPatch
             Array.Empty<IHoverTip>());
     }
 
-    private static Task OnBargainChosen(Neow neow, double hPct, int maxRepeats, int goldPerSacrifice, int sacrificesDone)
+    private static Task OnBargainChosen(EventModel ancient, double hPct, int maxRepeats, int goldPerSacrifice, int sacrificesDone)
     {
-        var owner = neow.Owner;
+        var owner = ancient.Owner;
         if (owner == null)
         {
             return Task.CompletedTask;
         }
 
         BetterRewardsShopState.Reset();
-        ShowSacrificeState(neow, owner, hPct, maxRepeats, goldPerSacrifice, sacrificesDone);
+        ShowSacrificeState(ancient, owner, hPct, maxRepeats, goldPerSacrifice, sacrificesDone);
         return Task.CompletedTask;
     }
 
-    private static void ShowSacrificeState(Neow neow, MegaCrit.Sts2.Core.Entities.Players.Player owner, double hPct, int maxRepeats, int goldPerSacrifice, int sacrificesDone)
+    private static void ShowSacrificeState(EventModel ancient, MegaCrit.Sts2.Core.Entities.Players.Player owner, double hPct, int maxRepeats, int goldPerSacrifice, int sacrificesDone)
     {
         var hpCost   = (int)Math.Floor(owner.Creature.MaxHp * hPct);
         var wouldDie = hpCost >= owner.Creature.CurrentHp;
@@ -118,13 +156,13 @@ internal static class NeowGenerateInitialOptionsPatch
         if (canMore && !wouldDie)
         {
             options.Add(new EventOption(
-                neow,
+                ancient,
                 async () =>
                 {
                     var cost = (int)Math.Floor(owner.Creature.MaxHp * hPct);
                     await CreatureCmd.SetCurrentHp(owner.Creature, owner.Creature.CurrentHp - cost);
                     await PlayerCmd.GainGold(goldPerSacrifice, owner);
-                    ShowSacrificeState(neow, owner, hPct, maxRepeats, goldPerSacrifice, sacrificesDone + 1);
+                    ShowSacrificeState(ancient, owner, hPct, maxRepeats, goldPerSacrifice, sacrificesDone + 1);
                 },
                 BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.do.title", ("hpCost", hpCost), ("goldPerSacrifice", goldPerSacrifice), ("sacrificeIndex", sacrificesDone + 1), ("maxRepeats", maxRepeats)),
                 BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.do.desc", ("hpCost", hpCost), ("goldPerSacrifice", goldPerSacrifice), ("sacrificeIndex", sacrificesDone + 1), ("maxRepeats", maxRepeats)),
@@ -135,7 +173,7 @@ internal static class NeowGenerateInitialOptionsPatch
         {
             // Grayed out — null OnChosen makes IsLocked = true
             options.Add(new EventOption(
-                neow,
+                ancient,
                 null,
                 BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.locked.title", ("hpPercent", hpPercent)),
                 BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.locked.desc"),
@@ -144,11 +182,11 @@ internal static class NeowGenerateInitialOptionsPatch
         }
 
         options.Add(new EventOption(
-            neow,
+            ancient,
             async () =>
             {
-                BetterRewardsNeowShopTransitionState.MarkMerchantPending(owner.NetId);
-                ShowMerchantPendingState(neow);
+                BetterRewardsOpeningShopTransitionState.MarkMerchantPending(owner.NetId);
+                ShowMerchantPendingState(ancient);
                 await TryEnterPendingMerchantRoom("Enter shop option");
             },
             BetterRewardsLocalization.EventString("BETTERREWARDS.ENTER_SHOP.title"),
@@ -156,20 +194,20 @@ internal static class NeowGenerateInitialOptionsPatch
             "BETTERREWARDS.ENTER_SHOP",
             Array.Empty<IHoverTip>()));
 
-        CallSetEventState(neow, BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.state.desc", ("sacrificesDone", sacrificesDone), ("maxRepeats", maxRepeats), ("currentHp", owner.Creature.CurrentHp), ("maxHp", owner.Creature.MaxHp), ("goldPerSacrifice", goldPerSacrifice)), options);
+        CallSetEventState(ancient, BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.state.desc", ("sacrificesDone", sacrificesDone), ("maxRepeats", maxRepeats), ("currentHp", owner.Creature.CurrentHp), ("maxHp", owner.Creature.MaxHp), ("goldPerSacrifice", goldPerSacrifice)), options);
     }
 
-    private static void ShowMerchantPendingState(Neow neow)
+    private static void ShowMerchantPendingState(EventModel ancient)
     {
         NMapScreen.Instance?.SetTravelEnabled(enabled: false);
 
         CallSetEventState(
-            neow,
+            ancient,
             BetterRewardsLocalization.EventString("BETTERREWARDS.SHOP_PENDING.desc"),
             new[]
             {
                 new EventOption(
-                    neow,
+                    ancient,
                     null,
                     BetterRewardsLocalization.EventString("BETTERREWARDS.SHOP_PENDING.title"),
                     BetterRewardsLocalization.EventString("BETTERREWARDS.SHOP_PENDING.desc"),
@@ -178,7 +216,7 @@ internal static class NeowGenerateInitialOptionsPatch
             });
     }
 
-    private static void CallSetEventState(Neow neow, LocString description, IEnumerable<EventOption> options)
+    private static void CallSetEventState(EventModel ancient, LocString description, IEnumerable<EventOption> options)
     {
         if (_setEventState == null)
         {
@@ -186,25 +224,25 @@ internal static class NeowGenerateInitialOptionsPatch
             return;
         }
 
-        _setEventState.Invoke(neow, new object[] { description, options });
+        _setEventState.Invoke(ancient, new object[] { description, options });
     }
 
     internal static async Task TryEnterPendingMerchantRoom(string source)
     {
         var runManager = RunManager.Instance;
         var runState = runManager.DebugOnlyGetState();
-        if (runState?.CurrentRoom is not EventRoom { CanonicalEvent: Neow })
+        if (!IsCurrentOpeningAncientRoom(runState))
         {
             return;
         }
 
         var synchronizer = runManager.EventSynchronizer;
-        if (synchronizer == null || synchronizer.Events.Count == 0 || synchronizer.Events.Any(@event => !BetterRewardsNeowShopTransitionState.IsEventReadyForMerchantTransition(@event)))
+        if (synchronizer == null || synchronizer.Events.Count == 0 || synchronizer.Events.Any(@event => !BetterRewardsOpeningShopTransitionState.IsEventReadyForMerchantTransition(@event)))
         {
             return;
         }
 
-        if (!BetterRewardsNeowShopTransitionState.TryBeginMerchantTransition())
+        if (!BetterRewardsOpeningShopTransitionState.TryBeginMerchantTransition())
         {
             return;
         }
@@ -212,24 +250,24 @@ internal static class NeowGenerateInitialOptionsPatch
         try
         {
             BetterRewardsShopButtonsFeature.IsActiveShop = true;
-            Log.Info($"[BetterRewards] Entering special merchant room after Neow from '{source}'.");
+            Log.Info($"[BetterRewards] Entering special merchant room after the opening ancient from '{source}'.");
             await runManager.EnterRoom(new MerchantRoom());
         }
         catch (Exception ex)
         {
             BetterRewardsShopButtonsFeature.IsActiveShop = false;
-            BetterRewardsNeowShopTransitionState.CancelMerchantTransition();
+            BetterRewardsOpeningShopTransitionState.CancelMerchantTransition();
             Log.Warn($"[BetterRewards] Failed to enter special merchant room: {ex.Message}");
         }
     }
 }
 
-internal static class BetterRewardsNeowShopTransitionState
+internal static class BetterRewardsOpeningShopTransitionState
 {
     private static readonly HashSet<ulong> PendingMerchantPlayers = [];
     private static bool _merchantTransitionStarted;
 
-    public static void ResetForNeowStart()
+    public static void ResetForOpeningAncient()
     {
         PendingMerchantPlayers.Clear();
         _merchantTransitionStarted = false;
@@ -245,7 +283,7 @@ internal static class BetterRewardsNeowShopTransitionState
 
         PendingMerchantPlayers.Add(playerId);
         NMapScreen.Instance?.SetTravelEnabled(enabled: false);
-        Log.Info($"[BetterRewards] Special merchant room queued after Neow for player {playerId}.");
+        Log.Info($"[BetterRewards] Special merchant room queued after the opening ancient for player {playerId}.");
     }
 
     public static bool TryBeginMerchantTransition()
@@ -275,7 +313,7 @@ internal static class BetterRewardsNeowShopTransitionState
     public static bool ShouldBlockProceed()
     {
         return PendingMerchantPlayers.Count > 0
-            && RunManager.Instance?.DebugOnlyGetState()?.CurrentRoom is EventRoom { CanonicalEvent: Neow };
+            && OpeningAncientOptionsPatch.IsCurrentOpeningAncientRoom(RunManager.Instance?.DebugOnlyGetState());
     }
 
     public static bool IsEventReadyForMerchantTransition(MegaCrit.Sts2.Core.Models.EventModel eventModel)
@@ -332,27 +370,27 @@ internal static class NMerchantInventoryInitializePatch
 }
 
 [HarmonyPatch(typeof(EventRoom), "OnEventStateChanged")]
-internal static class EventRoomNeowMerchantTransitionPatch
+internal static class EventRoomOpeningAncientTransitionPatch
 {
     [HarmonyPostfix]
     public static void Postfix(EventRoom __instance)
     {
-        if (__instance.CanonicalEvent is not Neow)
+        if (__instance.CanonicalEvent is not AncientEventModel)
         {
             return;
         }
 
-        TaskHelper.RunSafely(NeowGenerateInitialOptionsPatch.TryEnterPendingMerchantRoom("EventRoom.OnEventStateChanged"));
+        TaskHelper.RunSafely(OpeningAncientOptionsPatch.TryEnterPendingMerchantRoom("EventRoom.OnEventStateChanged"));
     }
 }
 
 [HarmonyPatch(typeof(NEventRoom), nameof(NEventRoom.OptionButtonClicked))]
-internal static class BetterRewardsBlockNeowProceedWhileMerchantPendingPatch
+internal static class BetterRewardsBlockProceedWhileMerchantPendingPatch
 {
     [HarmonyPrefix]
     public static bool Prefix(EventOption option)
     {
-        if (!option.IsProceed || !BetterRewardsNeowShopTransitionState.ShouldBlockProceed())
+        if (!option.IsProceed || !BetterRewardsOpeningShopTransitionState.ShouldBlockProceed())
         {
             return true;
         }
@@ -368,7 +406,7 @@ internal static class BetterRewardsMerchantRoomExitPatch
     [HarmonyPostfix]
     public static void Postfix()
     {
-        BetterRewardsNeowShopTransitionState.ClearAfterMerchantExit();
+        BetterRewardsOpeningShopTransitionState.ClearAfterMerchantExit();
     }
 }
 
@@ -378,7 +416,7 @@ internal static class BetterRewardsResetSinglePlayerRunPatch
     [HarmonyPostfix]
     public static void Postfix()
     {
-        BetterRewardsNeowShopTransitionState.ResetForNeowStart();
+        BetterRewardsOpeningShopTransitionState.ResetForOpeningAncient();
     }
 }
 
@@ -388,7 +426,7 @@ internal static class BetterRewardsResetSavedSinglePlayerRunPatch
     [HarmonyPostfix]
     public static void Postfix()
     {
-        BetterRewardsNeowShopTransitionState.ResetForNeowStart();
+        BetterRewardsOpeningShopTransitionState.ResetForOpeningAncient();
     }
 }
 
@@ -398,7 +436,7 @@ internal static class BetterRewardsResetNewMultiplayerRunPatch
     [HarmonyPostfix]
     public static void Postfix()
     {
-        BetterRewardsNeowShopTransitionState.ResetForNeowStart();
+        BetterRewardsOpeningShopTransitionState.ResetForOpeningAncient();
     }
 }
 
@@ -408,7 +446,7 @@ internal static class BetterRewardsResetSavedMultiplayerRunPatch
     [HarmonyPostfix]
     public static void Postfix()
     {
-        BetterRewardsNeowShopTransitionState.ResetForNeowStart();
+        BetterRewardsOpeningShopTransitionState.ResetForOpeningAncient();
     }
 }
 
