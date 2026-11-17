@@ -414,12 +414,19 @@ internal static class BetterRewardsResetSavedMultiplayerRunPatch
 
 
 /// <summary>
-/// Shows a shop icon on BetterRewards event options, matching Neow relic blessings.
+/// Shows an embedded icon on BetterRewards event options through the relic icon slot.
+/// That slot, including %Outline, is what CznStyleUI styles. These are textures only:
+/// no relic model is created, so nothing is added to the compendium or the player's relic list.
 /// </summary>
 [HarmonyPatch(typeof(NEventOptionButton), "_Ready")]
 internal static class NEventOptionButtonReadyPatch
 {
-    private const string ShopIconPath = "res://images/packed/common_ui/map/icons/map_shop.png";
+    private const string FallbackShopIconPath = "res://images/packed/common_ui/map/icons/map_shop.png";
+    private const string NeowIconResourceName = "BetterRewards.MerchantTradeContractPng";
+    private const string SacrificeIconResourceName = "BetterRewards.LifeForGoldHeartPng";
+    private const string EnterShopIconResourceName = "BetterRewards.EnterShopDoorPng";
+
+    private static readonly Dictionary<string, Texture2D?> CustomIcons = new();
 
     [HarmonyPostfix]
     public static void Postfix(NEventOptionButton __instance)
@@ -439,7 +446,7 @@ internal static class NEventOptionButtonReadyPatch
                 return;
             }
 
-            var texture = ResourceLoader.Load<Texture2D>(ShopIconPath, cacheMode: ResourceLoader.CacheMode.Reuse);
+            var texture = TextureFor(textKey);
             if (texture == null)
             {
                 return;
@@ -453,6 +460,68 @@ internal static class NEventOptionButtonReadyPatch
         catch (Exception ex)
         {
             Log.Warn($"[BetterRewards] Failed to apply event option icon: {ex.Message}");
+        }
+    }
+
+    private static Texture2D? TextureFor(string textKey)
+    {
+        var resourceName = textKey switch
+        {
+            "BETTERREWARDS.NEOW" => NeowIconResourceName,
+            "BETTERREWARDS.SACRIFICE.do" or "BETTERREWARDS.SACRIFICE.locked" => SacrificeIconResourceName,
+            "BETTERREWARDS.ENTER_SHOP" => EnterShopIconResourceName,
+            // Waiting and any other BetterRewards option keep the vanilla shop map icon.
+            _ => null
+        };
+
+        if (resourceName == null)
+        {
+            return ResourceLoader.Load<Texture2D>(FallbackShopIconPath, cacheMode: ResourceLoader.CacheMode.Reuse);
+        }
+
+        if (CustomIcons.TryGetValue(resourceName, out var cached))
+        {
+            return cached ?? ResourceLoader.Load<Texture2D>(FallbackShopIconPath, cacheMode: ResourceLoader.CacheMode.Reuse);
+        }
+
+        var texture = LoadEmbeddedPngTexture(resourceName);
+        CustomIcons[resourceName] = texture;
+        return texture ?? ResourceLoader.Load<Texture2D>(FallbackShopIconPath, cacheMode: ResourceLoader.CacheMode.Reuse);
+    }
+
+    private static Texture2D? LoadEmbeddedPngTexture(string resourceName)
+    {
+        try
+        {
+            var assembly = typeof(NEventOptionButtonReadyPatch).Assembly;
+            using var stream = assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
+            {
+                Log.Warn($"[BetterRewards] Missing embedded event icon resource: {resourceName}");
+                return null;
+            }
+
+            var bytes = new byte[stream.Length];
+            var read = stream.Read(bytes, 0, bytes.Length);
+            if (read != bytes.Length)
+            {
+                Log.Warn($"[BetterRewards] Could not read full event icon resource: {resourceName}");
+                return null;
+            }
+
+            var image = new Image();
+            if (image.LoadPngFromBuffer(bytes) != Error.Ok)
+            {
+                Log.Warn($"[BetterRewards] Could not decode event icon resource: {resourceName}");
+                return null;
+            }
+
+            return ImageTexture.CreateFromImage(image);
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"[BetterRewards] Failed loading event icon resource {resourceName}: {ex.Message}");
+            return null;
         }
     }
 }

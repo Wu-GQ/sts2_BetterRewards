@@ -37,6 +37,9 @@
     <EmbeddedResource Include="resources/reroll_icon.png" LogicalName="BetterRewards.RerollIconPng" />
     <EmbeddedResource Include="resources/random_relic_icon.png" LogicalName="BetterRewards.RandomRelicIconPng" />
     <EmbeddedResource Include="resources/random_item_icon.png" LogicalName="BetterRewards.RandomItemIconPng" />
+    <EmbeddedResource Include="resources/merchant-trade-contract.png" LogicalName="BetterRewards.MerchantTradeContractPng" />
+    <EmbeddedResource Include="resources/life-for-gold-heart.png" LogicalName="BetterRewards.LifeForGoldHeartPng" />
+    <EmbeddedResource Include="resources/enter-shop-door.png" LogicalName="BetterRewards.EnterShopDoorPng" />
     <EmbeddedResource Include="localization/eng/settings_ui.json" LogicalName="BetterRewards.Loc.eng.settings_ui" />
     <EmbeddedResource Include="localization/zhs/settings_ui.json" LogicalName="BetterRewards.Loc.zhs.settings_ui" />
     <EmbeddedResource Include="localization/eng/events.json" LogicalName="BetterRewards.Loc.eng.events" />
