@@ -7,7 +7,7 @@ namespace BetterRewards.Core;
 public static class ModBootstrap
 {
     private const string HarmonyId = "betterrewards.harmony";
-    private const string BuildMarker = "2026-11-16-compat";
+    private const string BuildMarker = "2026-11-18-ritsulib-setfix";
 
     private static bool _initialized;
 

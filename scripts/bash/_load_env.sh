@@ -41,9 +41,9 @@ if [[ -n "${STS2_INSTALL_DIR:-}" ]]; then
   export STS2_INSTALL_DIR
 fi
 
-if [[ -n "${BASELIB_DIR:-}" ]]; then
-  BASELIB_DIR="$(normalize_path "${BASELIB_DIR}")"
-  export BASELIB_DIR
+if [[ -n "${RITSULIB_DIR:-}" ]]; then
+  RITSULIB_DIR="$(normalize_path "${RITSULIB_DIR}")"
+  export RITSULIB_DIR
 fi
 
 export MMS_ENV_FILE="${ENV_FILE}"

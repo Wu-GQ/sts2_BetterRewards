@@ -197,7 +197,7 @@ internal static class BetterRewardsLocalization
 
 /// <summary>
 /// Localization tables are not always ready during mod init. Merge again when the main menu
-/// is up, before the player can open BaseLib's config screen.
+/// is up, before the player can open RitsuLib's settings screen.
 /// </summary>
 [HarmonyPatch(typeof(NMainMenu), nameof(NMainMenu._Ready))]
 internal static class BetterRewardsSettingsLocalizationPatch
@@ -205,5 +205,8 @@ internal static class BetterRewardsSettingsLocalizationPatch
     public static void Postfix()
     {
         BetterRewardsLocalization.TryMerge();
+        // Register after LocManager and the vanilla settings screen exist, so a
+        // late settings_ui merge does not refresh RitsuLib bindings mid-setup.
+        BetterRewardsSettings.RegisterPageIfNeeded();
     }
 }

@@ -7,12 +7,15 @@
     <AssemblyName>BetterRewards</AssemblyName>
     <RootNamespace>BetterRewards</RootNamespace>
     <Sts2InstallDir Condition="'$(Sts2InstallDir)' == '' and '$(STS2_INSTALL_DIR)' != ''">$(STS2_INSTALL_DIR)</Sts2InstallDir>
-    <BaseLibDir Condition="'$(BaseLibDir)' == '' and '$(BASELIB_DIR)' != ''">$(BASELIB_DIR)</BaseLibDir>
-    <!-- First existing BaseLib.dll wins. Workshop and GitHub installs are usually under mods/BaseLib/. -->
-    <BaseLibDll Condition="'$(BaseLibDll)' == '' and '$(BaseLibDir)' != '' and Exists('$(BaseLibDir)/BaseLib.dll')">$(BaseLibDir)/BaseLib.dll</BaseLibDll>
-    <BaseLibDll Condition="'$(BaseLibDll)' == '' and Exists('$(Sts2InstallDir)/mods/BaseLib/BaseLib.dll')">$(Sts2InstallDir)/mods/BaseLib/BaseLib.dll</BaseLibDll>
-    <BaseLibDll Condition="'$(BaseLibDll)' == '' and Exists('$(Sts2InstallDir)/mods/BaseLib.dll')">$(Sts2InstallDir)/mods/BaseLib.dll</BaseLibDll>
+    <RitsuLibDir Condition="'$(RitsuLibDir)' == '' and '$(RITSULIB_DIR)' != ''">$(RITSULIB_DIR)</RitsuLibDir>
+    <!-- First existing RitsuLib bundle wins. Workshop installs usually live under steamapps/workshop/content. -->
+    <RitsuLibDir Condition="'$(RitsuLibDir)' == '' and Exists('$(Sts2InstallDir)/mods/STS2-RitsuLib/RitsuLib.References.props')">$(Sts2InstallDir)/mods/STS2-RitsuLib</RitsuLibDir>
+    <RitsuLibDir Condition="'$(RitsuLibDir)' == '' and Exists('$(Sts2InstallDir)/mods/RitsuLib/RitsuLib.References.props')">$(Sts2InstallDir)/mods/RitsuLib</RitsuLibDir>
+    <RitsuLibDir Condition="'$(RitsuLibDir)' == '' and Exists('$(Sts2InstallDir)/../../workshop/content/2868840/3747602295/RitsuLib.References.props')">$([MSBuild]::NormalizeDirectory('$(Sts2InstallDir)/../../workshop/content/2868840/3747602295'))</RitsuLibDir>
+    <RitsuLibReferenceTarget Condition="'$(RitsuLibReferenceTarget)' == ''">0.107.1</RitsuLibReferenceTarget>
   </PropertyGroup>
+
+  <Import Project="$(RitsuLibDir)/RitsuLib.References.props" Condition="'$(RitsuLibDir)' != '' and Exists('$(RitsuLibDir)/RitsuLib.References.props')" />
 
   <ItemGroup>
     <Reference Include="sts2">
@@ -25,10 +28,6 @@
     </Reference>
     <Reference Include="0Harmony">
       <HintPath>$(Sts2InstallDir)/data_sts2_windows_x86_64/0Harmony.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="BaseLib" Condition="'$(BaseLibDll)' != ''">
-      <HintPath>$(BaseLibDll)</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
@@ -49,6 +48,6 @@
   <Target Name="ValidateSts2InstallDir" BeforeTargets="ResolveReferences">
     <Error Condition="'$(Sts2InstallDir)' == ''" Text="Sts2InstallDir is not set. Define STS2_INSTALL_DIR in .env or pass -p:Sts2InstallDir=/path/to/Slay the Spire 2." />
     <Error Condition="!Exists('$(Sts2InstallDir)/data_sts2_windows_x86_64/sts2.dll')" Text="Could not find sts2.dll under '$(Sts2InstallDir)/data_sts2_windows_x86_64'. Check STS2_INSTALL_DIR in .env." />
-    <Error Condition="'$(BaseLibDll)' == ''" Text="Could not find BaseLib.dll. Install BaseLib from the Steam Workshop (item 3737335127) or from https://github.com/Alchyr/BaseLib-StS2/releases (v3.4.8 or newer, including BaseLibCompatibilityHelper), then set BASELIB_DIR to the folder that contains BaseLib.dll. Searched: '$(BaseLibDir)/BaseLib.dll', '$(Sts2InstallDir)/mods/BaseLib/BaseLib.dll', and '$(Sts2InstallDir)/mods/BaseLib.dll'." />
+    <Error Condition="'$(RitsuLibDir)' == '' or !Exists('$(RitsuLibDir)/RitsuLib.References.props')" Text="Could not find RitsuLib. Install STS2-RitsuLib from the Steam Workshop (item 3747602295) or from https://github.com/BAKAOLC/STS2-RitsuLib, then set RITSULIB_DIR to the folder that contains RitsuLib.References.props. Searched: '$(RITSULIB_DIR)', '$(Sts2InstallDir)/mods/STS2-RitsuLib', '$(Sts2InstallDir)/mods/RitsuLib', and the Workshop folder 3747602295." />
   </Target>
 </Project>

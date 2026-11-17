@@ -69,8 +69,8 @@ BUILD_OUT="${PROJECT_ROOT}/bin/${CONFIG}/${TFM}"
 ROOT_JSON="${PROJECT_ROOT}/${MOD_ID}.json"
 
 BUILD_ARGS=(-c "${CONFIG}" -p:Sts2InstallDir="${STS2_INSTALL_DIR}")
-if [[ -n "${BASELIB_DIR:-}" ]]; then
-  BUILD_ARGS+=(-p:BaseLibDir="${BASELIB_DIR}")
+if [[ -n "${RITSULIB_DIR:-}" ]]; then
+  BUILD_ARGS+=(-p:RitsuLibDir="${RITSULIB_DIR}")
 fi
 
 echo "Building ${MOD_ID} (${CONFIG})..."

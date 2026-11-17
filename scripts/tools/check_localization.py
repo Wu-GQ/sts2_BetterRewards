@@ -2,9 +2,9 @@
 """Check BetterRewards localization tables against the settings actually declared in code.
 
 Validates JSON syntax, official-language key parity for every table, and that each
-SimpleModConfig property/section has the keys BaseLib looks up by convention:
+settings property/section has the keys the settings UI looks up:
   {PREFIX}-{SLUG}.title, {PREFIX}-{SLUG}.hover.desc, {PREFIX}-{SECTION_SLUG}.title
-It also reports settings_ui keys that no property, section, or BaseLib convention uses.
+It also reports settings_ui keys that no property, section, or convention uses.
 """
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ PREFIX = "BETTERREWARDS"
 
 
 def slugify(text: str) -> str:
-    """Mirror BaseLib/MegaCrit StringHelper.Slugify for property and section names."""
+    """Mirror the previous BaseLib/MegaCrit StringHelper.Slugify used by existing keys."""
     chars: list[str] = []
     for index, char in enumerate(text.strip()):
         if char.isupper() and index > 0 and text[index - 1].isalnum():
@@ -43,8 +43,13 @@ def read_table(language: str, table: str) -> dict[str, str]:
 
 def declared_settings() -> tuple[list[str], list[str]]:
     source = SETTINGS_SRC.read_text(encoding="utf-8")
-    properties = re.findall(r"public static (?:double|int) (\w+)", source)
-    sections = re.findall(r'\[ConfigSection\("([^"]+)"\)', source)
+    model = re.search(r"class BetterRewardsSettingsModel\s*\{(.*?)^\s*public void CopyFrom", source, re.S | re.M)
+    if model:
+        properties = re.findall(r"public (?:double|int) (\w+)\s*\{", model.group(1))
+    else:
+        properties = re.findall(r"public (?:double|int) (\w+)\s*\{", source)
+    sections_match = re.search(r"ConfigSectionNames\s*=\s*\[(.*?)\]", source, re.S)
+    sections = re.findall(r'"([^"]+)"', sections_match.group(1)) if sections_match else []
     return properties, sections
 
 
@@ -52,7 +57,7 @@ def main() -> int:
     problems: list[str] = []
     properties, sections = declared_settings()
 
-    loaded: dict[str, dict[str, dict[str, str]]] = {}
+    loaded: dict[tuple[str, str], dict[str, str]] = {}
     for language in LANGS:
         for table in TABLES:
             try:

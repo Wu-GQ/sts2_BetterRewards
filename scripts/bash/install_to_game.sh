@@ -65,7 +65,7 @@ rm -f "${GAME_MOD_DIR}/mod_manifest.json"
 if [[ -f "${SRC_PCK}" ]]; then
   cp -f "${SRC_PCK}" "${DST_PCK}"
 else
-  echo "Missing ${SRC_PCK}. BetterRewards.pck carries the mod icon BaseLib's config list expects. Run scripts/bash/build_and_stage.sh from a checkout that still has ${MOD_ID}.pck, or rebuild the pack with scripts/bash/make_pck.sh." >&2
+  echo "Missing ${SRC_PCK}. BetterRewards.pck carries the mod icon. Run scripts/bash/build_and_stage.sh from a checkout that still has ${MOD_ID}.pck, or rebuild the pack with scripts/bash/make_pck.sh." >&2
   exit 1
 fi
 
