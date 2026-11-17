@@ -12,6 +12,16 @@
   "BETTERREWARDS-SHOP_REROLL.title": "Reroll de la tienda",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "Coste base del reroll",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "Coste en oro del primer reroll de la tienda.",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "Aumento del coste de reroll",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "Multiplicador aplicado al coste del reroll tras cada uso (p. ej., 1.10 = +10% cada vez)."
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.title": "Incremento del coste de reroll",
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.hover.desc": "Oro que se suma al coste del reroll tras cada uso (p. ej., 50 suma 50 de oro cada vez).",
+  "BETTERREWARDS-RANDOM_RELIC.title": "Reliquia aleatoria",
+  "BETTERREWARDS-RELIC_BASE_COST.title": "Coste base de reliquia aleatoria",
+  "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "Coste en oro de la primera compra de una reliquia aleatoria.",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.title": "Incremento del coste de reliquia aleatoria",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.hover.desc": "Oro que se suma al coste de la reliquia tras cada compra (p. ej., 50 suma 50 de oro cada vez).",
+  "BETTERREWARDS-RANDOM_ITEM.title": "Objeto aleatorio",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Coste base de objeto aleatorio",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "Coste en oro de la primera compra de un objeto aleatorio.",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "Incremento del coste de objeto aleatorio",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Oro que se suma al coste del objeto aleatorio tras cada compra (p. ej., 25 suma 25 de oro cada vez)."
 }

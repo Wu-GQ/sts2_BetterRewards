@@ -12,6 +12,16 @@
   "BETTERREWARDS-SHOP_REROLL.title": "Dükkân yenileme",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "Yenileme temel maliyeti",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "İlk dükkân yenilemesinin altın maliyeti.",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "Yenileme maliyeti çarpanı",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "Her kullanımdan sonra yenileme maliyetine uygulanan çarpan (ör. 1.10 = her seferinde +%10)."
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.title": "Yenileme maliyeti artışı",
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.hover.desc": "Her kullanımdan sonra yenileme maliyetine eklenen sabit değer (ör. 50 = her seferinde +50 altın).",
+  "BETTERREWARDS-RANDOM_RELIC.title": "Rastgele relik",
+  "BETTERREWARDS-RELIC_BASE_COST.title": "Rastgele relik temel maliyeti",
+  "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "İlk rastgele relik satın alımının altın maliyeti.",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.title": "Rastgele relik maliyeti artışı",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.hover.desc": "Her satın alımdan sonra relik maliyetine eklenen sabit değer (ör. 50 = her seferinde +50 altın).",
+  "BETTERREWARDS-RANDOM_ITEM.title": "Rastgele eşya",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Rastgele eşya temel maliyeti",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "İlk rastgele eşya satın alımının altın maliyeti.",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "Rastgele eşya maliyeti artışı",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Her satın alımdan sonra rastgele eşya maliyetine eklenen sabit değer (ör. 25 = her seferinde +25 altın)."
 }

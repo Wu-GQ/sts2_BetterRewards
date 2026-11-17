@@ -12,6 +12,16 @@
   "BETTERREWARDS-SHOP_REROLL.title": "Przetasowanie sklepu",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "Bazowy koszt przetasowania",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "Koszt w złocie pierwszego przetasowania sklepu.",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "Wzrost kosztu przetasowania",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "Mnożnik stosowany do kosztu przetasowania po każdym użyciu (np. 1.10 = +10% za każdym razem)."
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.title": "Przyrost kosztu przetasowania",
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.hover.desc": "Stała wartość dodawana do kosztu przetasowania po każdym użyciu (np. 50 = +50 złota za każdym razem).",
+  "BETTERREWARDS-RANDOM_RELIC.title": "Losowy relikt",
+  "BETTERREWARDS-RELIC_BASE_COST.title": "Bazowy koszt losowego reliktu",
+  "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "Koszt w złocie pierwszego zakupu losowego reliktu.",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.title": "Przyrost kosztu losowego reliktu",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.hover.desc": "Stała wartość dodawana do kosztu reliktu po każdym zakupie (np. 50 = +50 złota za każdym razem).",
+  "BETTERREWARDS-RANDOM_ITEM.title": "Losowy przedmiot",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Bazowy koszt losowego przedmiotu",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "Koszt w złocie pierwszego zakupu losowego przedmiotu.",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "Przyrost kosztu losowego przedmiotu",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Stała wartość dodawana do kosztu losowego przedmiotu po każdym zakupie (np. 25 = +25 złota za każdym razem)."
 }

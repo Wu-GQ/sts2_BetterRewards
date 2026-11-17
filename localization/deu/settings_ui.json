@@ -12,6 +12,16 @@
   "BETTERREWARDS-SHOP_REROLL.title": "Laden-Reroll",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "Reroll-Grundkosten",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "Goldkosten für den ersten Laden-Reroll.",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "Reroll-Kostensteigerung",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "Multiplikator, der nach jeder Nutzung auf die Reroll-Kosten angewendet wird (z. B. 1.10 = +10 % jedes Mal)."
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.title": "Reroll-Kostenerhöhung",
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.hover.desc": "Fester Betrag, der nach jeder Nutzung zu den Reroll-Kosten addiert wird (z. B. 50 = +50 Gold jedes Mal).",
+  "BETTERREWARDS-RANDOM_RELIC.title": "Zufälliges Relikt",
+  "BETTERREWARDS-RELIC_BASE_COST.title": "Grundkosten für zufälliges Relikt",
+  "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "Goldkosten für den ersten Kauf eines zufälligen Relikts.",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.title": "Kostenerhöhung für zufälliges Relikt",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.hover.desc": "Fester Betrag, der nach jedem Kauf zu den Relikt-Kosten addiert wird (z. B. 50 = +50 Gold jedes Mal).",
+  "BETTERREWARDS-RANDOM_ITEM.title": "Zufälliger Gegenstand",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Grundkosten für zufälligen Gegenstand",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "Goldkosten für den ersten Kauf eines zufälligen Gegenstands.",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "Kostenerhöhung für zufälligen Gegenstand",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Fester Betrag, der nach jedem Kauf zu den Gegenstandskosten addiert wird (z. B. 25 = +25 Gold jedes Mal)."
 }

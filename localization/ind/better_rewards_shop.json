@@ -2,7 +2,7 @@
   "reroll.title": "Reroll toko",
   "reroll.description": "Ganti stok pedagang dengan pilihan baru.",
   "random_relic.title": "Relik acak",
-  "random_relic.description": "Beli relik acak dengan peluang kelangkaan dan harga toko biasa.",
+  "random_relic.description": "Beli relik acak dengan peluang kelangkaan toko biasa.",
   "random_item.title": "Item acak",
-  "random_item.description": "Beli relik, kartu, atau ramuan acak dengan rasio stok, peluang kelangkaan, dan harga toko biasa."
+  "random_item.description": "Beli relik, kartu, atau ramuan acak dengan rasio stok dan peluang kelangkaan toko biasa."
 }

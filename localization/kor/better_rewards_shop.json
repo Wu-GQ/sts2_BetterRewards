@@ -2,7 +2,7 @@
   "reroll.title": "상점 리롤",
   "reroll.description": "상인의 상품을 새로운 재고로 교체합니다.",
   "random_relic.title": "무작위 유물",
-  "random_relic.description": "일반 상점의 희귀도 확률과 가격으로 무작위 유물을 구매합니다.",
+  "random_relic.description": "일반 상점의 희귀도 확률로 무작위 유물을 구매합니다.",
   "random_item.title": "무작위 아이템",
-  "random_item.description": "일반 상점의 재고 비율, 희귀도 확률, 가격으로 무작위 유물, 카드 또는 포션을 구매합니다."
+  "random_item.description": "일반 상점의 재고 비율과 희귀도 확률로 무작위 유물, 카드 또는 포션을 구매합니다."
 }

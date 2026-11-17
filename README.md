@@ -10,9 +10,9 @@ Adds a post-Neow event where you can sacrifice HP for gold, then spend it in a s
 - After the Neow event, choose how much HP to sacrifice for gold
 - Special shop with extra actions:
   - **Reroll Shop** — replace the merchant stock with a fresh roll
-  - **Random Relic** — buy a random relic at the regular shop's odds and prices
-  - **Random Item** — buy a random relic, card, or potion
-- Reroll costs and the sacrifice rate are configurable through BaseLib's mod config screen
+  - **Random Relic** — buy a random relic at the regular shop's rarity odds, with a base price that increases by a fixed amount after each purchase
+  - **Random Item** — buy a random relic, card, or potion at the regular shop's stock ratios and rarity odds, with a base price that increases by a fixed amount after each purchase
+- Reroll, random relic, and random item costs, and the sacrifice rate, are configurable through BaseLib's mod config screen
 
 **Requires:** [BaseLib](https://github.com/Alchyr/BaseLib-StS2) ([Steam Workshop item 3737335127](https://steamcommunity.com/sharedfiles/filedetails/?id=3737335127)). This fork targets BaseLib 3.4.8 or newer. That release also ships `BaseLibCompatibilityHelper`, which BaseLib itself depends on. Subscribe on the Workshop, or download the GitHub release and install every file it contains.
 
@@ -41,7 +41,7 @@ Open the shop from the in-run menu and use the extra action buttons to reroll, b
 
 ## Configuration
 
-Settings are BaseLib `SimpleModConfig` sliders in two sections, Event and Shop reroll.
+Settings are BaseLib `SimpleModConfig` sliders in four sections: Event, Shop reroll, Random relic, and Random item.
 
 BaseLib saves them to `mod_configs/BetterRewards.cfg` in the game's user data folder. On Windows that is `%AppData%\SlayTheSpire2\mod_configs\BetterRewards.cfg`. Values saved by ModManagerSettings are not imported; set them again once.
 
@@ -52,13 +52,17 @@ BaseLib saves them to `mod_configs/BetterRewards.cfg` in the game's user data fo
 | Score → Gold % | 0.25 | 0.00–1.00, step 0.01 |
 | Minimum Previous Score | 1000 | 1000–10000, step 50 |
 | Reroll Base Cost | 150 | 50–1000, step 5 |
-| Reroll Cost Scaling | 1.10 | 1.00–5.00, step 0.05 |
+| Reroll Cost Increment | 50 | 0–500, step 5 |
+| Random Relic Base Cost | 300 | 50–1000, step 5 |
+| Random Relic Cost Increment | 50 | 0–500, step 5 |
+| Random Item Base Cost | 75 | 50–1000, step 5 |
+| Random Item Cost Increment | 25 | 0–500, step 5 |
 
-The random relic and random item buttons have no settings of their own. They use the regular merchant shop's rarity odds, stock ratios, and prices.
+Random relic and random item rarity still follows the regular merchant shop, and random item types still use the 3:7:3 stock ratio. Their prices are a configurable base cost that increases by a fixed amount after each purchase, not the official price of the rolled item.
 
 ### Multiplayer
 
-ModManagerSettings marked every numeric setting with host overwrite. BaseLib 3.4.8 stores each player's config locally and does not sync it to the host or the clients. This fork does not add a separate sync system. In multiplayer, each player uses their own saved reroll costs and sacrifice values. Previous-run score sharing is unchanged.
+ModManagerSettings marked every numeric setting with host overwrite. BaseLib 3.4.8 stores each player's config locally and does not sync it to the host or the clients. This fork does not add a separate sync system. In multiplayer, each player uses their own saved reroll, random relic, random item, and sacrifice values. Previous-run score sharing is unchanged.
 
 ## Developer notes
 
@@ -78,10 +82,10 @@ ModManagerSettings marked every numeric setting with host overwrite. BaseLib 3.4
 `build_and_stage.sh` compiles `BetterRewards.dll` against the game assemblies and `BaseLib.dll`, then copies the dll, `BetterRewards.json`, `BetterRewards.pck`, and `mod_image.png` into `dist/BetterRewards`. The pack only contains the mod icon. Rebuild it with `./scripts/bash/make_pck.sh` if a newer game rejects the committed pack. That script needs Godot.
 
 **What to test in game:**
-1. The mod list shows BetterRewards, and BaseLib's config screen lists the Event and Shop reroll sliders.
+1. The mod list shows BetterRewards, and BaseLib's config screen lists the Event, Shop reroll, Random relic, and Random item sliders.
 2. Change Minimum Previous Score, restart, and confirm the value survived in `mod_configs/BetterRewards.cfg`.
 3. Start a run, take the Neow bargain, and confirm HP loss and gold still follow the sliders.
-4. Open the special shop and use reroll, random relic, and random item. Costs should scale from the configured base and multiplier.
+4. Open the special shop and use reroll, random relic, and random item. Costs should start at the configured base and rise by the configured increment after each use.
 5. In a multiplayer lobby, confirm each client keeps its own config. Do not expect the host's settings to overwrite yours.
 
 Harmony patches for the Neow option, the special shop, and previous-run score sync are unchanged aside from reading the BaseLib-backed properties.

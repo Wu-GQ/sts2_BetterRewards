@@ -12,6 +12,16 @@
   "BETTERREWARDS-SHOP_REROLL.title": "إعادة رمي المتجر",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "التكلفة الأساسية لإعادة الرمي",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "تكلفة الذهب لأول إعادة رمي للمتجر.",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "تزايد تكلفة إعادة الرمي",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "المضاعف المطبَّق على تكلفة إعادة الرمي بعد كل استخدام (مثلًا 1.10 = +10% في كل مرة)."
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.title": "زيادة تكلفة إعادة الرمي",
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.hover.desc": "القيمة المضافة إلى تكلفة إعادة الرمي بعد كل استخدام (مثلًا 50 = +50 ذهب في كل مرة).",
+  "BETTERREWARDS-RANDOM_RELIC.title": "أثر عشوائي",
+  "BETTERREWARDS-RELIC_BASE_COST.title": "التكلفة الأساسية للأثر العشوائي",
+  "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "تكلفة الذهب لأول شراء لأثر عشوائي.",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.title": "زيادة تكلفة الأثر العشوائي",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.hover.desc": "القيمة المضافة إلى تكلفة الأثر بعد كل شراء (مثلًا 50 = +50 ذهب في كل مرة).",
+  "BETTERREWARDS-RANDOM_ITEM.title": "غرض عشوائي",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "التكلفة الأساسية للغرض العشوائي",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "تكلفة الذهب لأول شراء لغرض عشوائي.",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "زيادة تكلفة الغرض العشوائي",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "القيمة المضافة إلى تكلفة الغرض العشوائي بعد كل شراء (مثلًا 25 = +25 ذهب في كل مرة)."
 }

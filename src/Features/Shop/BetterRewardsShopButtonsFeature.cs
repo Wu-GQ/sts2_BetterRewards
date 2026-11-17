@@ -121,12 +121,12 @@ internal static class BetterRewardsShopButtonsFeature
         var relicButton = MakeIconAction(
             "random_relic",
             _randomRelicIconTexture,
-            GetPreparedRelicCost,
+            () => BetterRewardsShopState.CurrentRelicCost,
             merchantInventory);
         var randomButton = MakeIconAction(
             "random_item",
             _randomItemIconTexture,
-            GetPreparedItemCost,
+            () => BetterRewardsShopState.CurrentRandomItemCost,
             merchantInventory);
 
         buttons = new[] { rerollButton, relicButton, randomButton };
@@ -156,7 +156,7 @@ internal static class BetterRewardsShopButtonsFeature
                 return;
             }
 
-            var cost = GetPreparedRelicCost();
+            var cost = BetterRewardsShopState.CurrentRelicCost;
             if (player.Gold < cost)
             {
                 return;
@@ -173,7 +173,7 @@ internal static class BetterRewardsShopButtonsFeature
                 return;
             }
 
-            var cost = GetPreparedItemCost();
+            var cost = BetterRewardsShopState.CurrentRandomItemCost;
             if (player.Gold < cost)
             {
                 return;
@@ -357,7 +357,7 @@ internal static class BetterRewardsShopButtonsFeature
             return;
         }
 
-        var cost = entry.Cost;
+        var cost = BetterRewardsShopState.CurrentRelicCost;
         if (player.Gold < cost)
         {
             return;
@@ -370,6 +370,7 @@ internal static class BetterRewardsShopButtonsFeature
         Log.Info($"[BetterRewards] Random Relic → {relic.Rarity} relic: {relic.Id} for {cost} gold");
         await RelicCmd.Obtain(mutable, player);
 
+        BetterRewardsShopState.RecordRelicUse();
         _preparedRelic = null;
         EnsurePreparedRelic(player);
         refreshLabels();
@@ -386,7 +387,7 @@ internal static class BetterRewardsShopButtonsFeature
             return;
         }
 
-        var cost = offer.Cost;
+        var cost = BetterRewardsShopState.CurrentRandomItemCost;
         if (player.Gold < cost)
         {
             return;
@@ -447,6 +448,7 @@ internal static class BetterRewardsShopButtonsFeature
 
         if (granted)
         {
+            BetterRewardsShopState.RecordRandomItemUse();
             _preparedItem = null;
             EnsurePreparedItem(player);
         }
@@ -511,30 +513,6 @@ internal static class BetterRewardsShopButtonsFeature
     {
         _preparedRelic = null;
         _preparedItem = null;
-    }
-
-    private static int GetPreparedRelicCost()
-    {
-        var player = GetLocalPlayer();
-        if (player == null)
-        {
-            return 0;
-        }
-
-        EnsurePreparedRelic(player);
-        return _preparedRelic?.Cost ?? 0;
-    }
-
-    private static int GetPreparedItemCost()
-    {
-        var player = GetLocalPlayer();
-        if (player == null)
-        {
-            return 0;
-        }
-
-        EnsurePreparedItem(player);
-        return _preparedItem?.Cost ?? 0;
     }
 
     private static void EnsurePreparedRelic(Player player)

@@ -12,6 +12,16 @@
   "BETTERREWARDS-SHOP_REROLL.title": "รีโรลร้านค้า",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "ค่าใช้จ่ายพื้นฐานของรีโรล",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "ทองที่ใช้ในการรีโรลร้านค้าครั้งแรก",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "อัตราเพิ่มค่าใช้จ่ายรีโรล",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "ตัวคูณที่นำไปคูณกับค่าใช้จ่ายรีโรลหลังใช้งานแต่ละครั้ง (เช่น 1.10 คือเพิ่มขึ้น 10% ทุกครั้ง)"
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.title": "ค่าเพิ่มค่าใช้จ่ายรีโรล",
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.hover.desc": "ค่าที่บวกเข้ากับค่าใช้จ่ายรีโรลหลังใช้งานแต่ละครั้ง (เช่น 50 คือเพิ่มขึ้น 50 ทองทุกครั้ง)",
+  "BETTERREWARDS-RANDOM_RELIC.title": "เรลิกสุ่ม",
+  "BETTERREWARDS-RELIC_BASE_COST.title": "ค่าใช้จ่ายพื้นฐานของเรลิกสุ่ม",
+  "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "ทองที่ใช้ในการซื้อเรลิกสุ่มครั้งแรก",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.title": "ค่าเพิ่มค่าใช้จ่ายเรลิกสุ่ม",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.hover.desc": "ค่าที่บวกเข้ากับค่าใช้จ่ายเรลิกหลังซื้อแต่ละครั้ง (เช่น 50 คือเพิ่มขึ้น 50 ทองทุกครั้ง)",
+  "BETTERREWARDS-RANDOM_ITEM.title": "ไอเทมสุ่ม",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "ค่าใช้จ่ายพื้นฐานของไอเทมสุ่ม",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "ทองที่ใช้ในการซื้อไอเทมสุ่มครั้งแรก",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "ค่าเพิ่มค่าใช้จ่ายไอเทมสุ่ม",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "ค่าที่บวกเข้ากับค่าใช้จ่ายไอเทมสุ่มหลังซื้อแต่ละครั้ง (เช่น 25 คือเพิ่มขึ้น 25 ทองทุกครั้ง)"
 }

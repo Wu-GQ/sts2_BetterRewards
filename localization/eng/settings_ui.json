@@ -12,6 +12,16 @@
   "BETTERREWARDS-SHOP_REROLL.title": "Shop reroll",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "Reroll Base Cost",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "Gold cost for the first shop reroll.",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "Reroll Cost Scaling",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "Multiplier applied to reroll cost after each use (e.g. 1.10 = +10% each time)."
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.title": "Reroll Cost Increment",
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.hover.desc": "Gold added to the reroll cost after each use (e.g. 50 adds 50 gold each time).",
+  "BETTERREWARDS-RANDOM_RELIC.title": "Random relic",
+  "BETTERREWARDS-RELIC_BASE_COST.title": "Random Relic Base Cost",
+  "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "Gold cost for the first random relic purchase.",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.title": "Random Relic Cost Increment",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.hover.desc": "Gold added to the relic cost after each purchase (e.g. 50 adds 50 gold each time).",
+  "BETTERREWARDS-RANDOM_ITEM.title": "Random item",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Random Item Base Cost",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "Gold cost for the first random item purchase.",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "Random Item Cost Increment",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Gold added to the random item cost after each purchase (e.g. 25 adds 25 gold each time)."
 }

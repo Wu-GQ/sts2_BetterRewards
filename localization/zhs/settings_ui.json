@@ -12,6 +12,16 @@
   "BETTERREWARDS-SHOP_REROLL.title": "商店刷新",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "刷新基础花费",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "第一次刷新商店所需的金币。",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "刷新花费倍率",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "每次刷新后，花费乘以该倍率（例如 1.10 表示每次增加 10%）。"
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.title": "刷新花费加值",
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.hover.desc": "每次刷新后，花费增加该数值（例如 50 表示每次增加 50 金币）。",
+  "BETTERREWARDS-RANDOM_RELIC.title": "随机遗物",
+  "BETTERREWARDS-RELIC_BASE_COST.title": "随机遗物基础花费",
+  "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "第一次购买随机遗物所需的金币。",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.title": "随机遗物花费加值",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.hover.desc": "每次购买后，花费增加该数值（例如 50 表示每次增加 50 金币）。",
+  "BETTERREWARDS-RANDOM_ITEM.title": "随机物品",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "随机物品基础花费",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "第一次购买随机物品所需的金币。",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "随机物品花费加值",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "每次购买后，花费增加该数值（例如 25 表示每次增加 25 金币）。"
 }

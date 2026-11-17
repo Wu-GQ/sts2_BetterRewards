@@ -6,8 +6,9 @@ namespace BetterRewards.Features.Settings;
 /// BetterRewards configuration. BaseLib builds the settings UI from these properties,
 /// loads them at startup, and saves them to the game's user://mod_configs/BetterRewards.cfg.
 /// Gameplay reads the static properties directly.
-/// Random relic and random item buttons follow the regular merchant shop: rarity odds,
-/// item type ratios of 3 relics / 7 cards / 3 potions, and official shop prices.
+/// Random relic and random item buttons follow the regular merchant shop for rarity odds
+/// and item type ratios of 3 relics / 7 cards / 3 potions. Their gold cost uses a
+/// configurable base price that increases by a fixed amount after each purchase.
 /// </summary>
 [ConfigHoverTipsByDefault]
 internal sealed class BetterRewardsSettings : SimpleModConfig
@@ -65,11 +66,11 @@ internal sealed class BetterRewardsSettings : SimpleModConfig
         set => _shopRerollBaseCost = Math.Clamp(value, 50.0, 1000.0);
     }
 
-    [ConfigSlider(1.0, 5.0, 0.05, Format = "{0:0.00}")]
-    public static double ShopRerollCostScaling
+    [ConfigSlider(0, 500, 5, Format = "{0:0}")]
+    public static double ShopRerollCostIncrement
     {
-        get => _shopRerollCostScaling;
-        set => _shopRerollCostScaling = Math.Max(1.0, value);
+        get => _shopRerollCostIncrement;
+        set => _shopRerollCostIncrement = Math.Clamp(value, 0.0, 500.0);
     }
 
     private static double _hpSacrificePercent = 0.20;
@@ -77,6 +78,47 @@ internal sealed class BetterRewardsSettings : SimpleModConfig
     private static double _scoreToGoldPercent = 0.25;
     private static int _minPreviousScore = 1000;
 
+
+    // --- Shop: random relic ---
+
+    [ConfigSection("Random relic")]
+    [ConfigSlider(50, 1000, 5, Format = "{0:0}")]
+    public static double RelicBaseCost
+    {
+        get => _relicBaseCost;
+        set => _relicBaseCost = Math.Clamp(value, 50.0, 1000.0);
+    }
+
+    [ConfigSlider(0, 500, 5, Format = "{0:0}")]
+    public static double RelicCostIncrement
+    {
+        get => _relicCostIncrement;
+        set => _relicCostIncrement = Math.Clamp(value, 0.0, 500.0);
+    }
+
+    // --- Shop: random item ---
+
+    [ConfigSection("Random item")]
+    [ConfigSlider(50, 1000, 5, Format = "{0:0}")]
+    public static double RandomItemBaseCost
+    {
+        get => _randomItemBaseCost;
+        set => _randomItemBaseCost = Math.Clamp(value, 50.0, 1000.0);
+    }
+
+    [ConfigSlider(0, 500, 5, Format = "{0:0}")]
+    public static double RandomItemCostIncrement
+    {
+        get => _randomItemCostIncrement;
+        set => _randomItemCostIncrement = Math.Clamp(value, 0.0, 500.0);
+    }
+
     private static double _shopRerollBaseCost = 150.0;
-    private static double _shopRerollCostScaling = 1.10;
+    private static double _shopRerollCostIncrement = 50.0;
+
+    private static double _relicBaseCost = 300.0;
+    private static double _relicCostIncrement = 50.0;
+
+    private static double _randomItemBaseCost = 75.0;
+    private static double _randomItemCostIncrement = 25.0;
 }

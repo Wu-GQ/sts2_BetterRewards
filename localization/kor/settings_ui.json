@@ -12,6 +12,16 @@
   "BETTERREWARDS-SHOP_REROLL.title": "상점 리롤",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "리롤 기본 비용",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "첫 번째 상점 리롤에 필요한 골드입니다.",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "리롤 비용 배율",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "리롤할 때마다 비용에 곱해지는 배율입니다(예: 1.10은 매번 10% 증가)."
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.title": "리롤 비용 증가량",
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.hover.desc": "리롤할 때마다 비용에 더해지는 값입니다(예: 50은 매번 50 골드 증가).",
+  "BETTERREWARDS-RANDOM_RELIC.title": "무작위 유물",
+  "BETTERREWARDS-RELIC_BASE_COST.title": "무작위 유물 기본 비용",
+  "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "첫 번째 무작위 유물 구매에 필요한 골드입니다.",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.title": "무작위 유물 비용 증가량",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.hover.desc": "구매할 때마다 비용에 더해지는 값입니다(예: 50은 매번 50 골드 증가).",
+  "BETTERREWARDS-RANDOM_ITEM.title": "무작위 아이템",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "무작위 아이템 기본 비용",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "첫 번째 무작위 아이템 구매에 필요한 골드입니다.",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "무작위 아이템 비용 증가량",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "구매할 때마다 비용에 더해지는 값입니다(예: 25는 매번 25 골드 증가)."
 }

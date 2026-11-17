@@ -12,6 +12,16 @@
   "BETTERREWARDS-SHOP_REROLL.title": "ショップリロール",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "リロール基本コスト",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "最初のショップリロールに必要なゴールド。",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "リロールコスト倍率",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "リロールするたびにコストに乗算される倍率（例：1.10は毎回10%増加）。"
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.title": "リロールコスト増加量",
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.hover.desc": "リロールするたびにコストへ加算される値（例：50は毎回50ゴールド増加）。",
+  "BETTERREWARDS-RANDOM_RELIC.title": "ランダムレリック",
+  "BETTERREWARDS-RELIC_BASE_COST.title": "ランダムレリック基本コスト",
+  "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "最初のランダムレリック購入に必要なゴールド。",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.title": "ランダムレリックコスト増加量",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.hover.desc": "購入するたびにコストへ加算される値（例：50は毎回50ゴールド増加）。",
+  "BETTERREWARDS-RANDOM_ITEM.title": "ランダムアイテム",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "ランダムアイテム基本コスト",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "最初のランダムアイテム購入に必要なゴールド。",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "ランダムアイテムコスト増加量",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "購入するたびにコストへ加算される値（例：25は毎回25ゴールド増加）。"
 }

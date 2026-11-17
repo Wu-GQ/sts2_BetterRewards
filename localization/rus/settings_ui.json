@@ -12,6 +12,16 @@
   "BETTERREWARDS-SHOP_REROLL.title": "Обновление магазина",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.title": "Базовая стоимость обновления",
   "BETTERREWARDS-SHOP_REROLL_BASE_COST.hover.desc": "Стоимость в золоте первого обновления магазина.",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.title": "Рост стоимости обновления",
-  "BETTERREWARDS-SHOP_REROLL_COST_SCALING.hover.desc": "Множитель, применяемый к стоимости обновления после каждого использования (напр. 1.10 = +10% каждый раз)."
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.title": "Прирост стоимости обновления",
+  "BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.hover.desc": "Значение, добавляемое к стоимости обновления после каждого использования (напр. 50 = +50 золота каждый раз).",
+  "BETTERREWARDS-RANDOM_RELIC.title": "Случайная реликвия",
+  "BETTERREWARDS-RELIC_BASE_COST.title": "Базовая стоимость случайной реликвии",
+  "BETTERREWARDS-RELIC_BASE_COST.hover.desc": "Стоимость в золоте первой покупки случайной реликвии.",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.title": "Прирост стоимости случайной реликвии",
+  "BETTERREWARDS-RELIC_COST_INCREMENT.hover.desc": "Значение, добавляемое к стоимости реликвии после каждой покупки (напр. 50 = +50 золота каждый раз).",
+  "BETTERREWARDS-RANDOM_ITEM.title": "Случайный предмет",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Базовая стоимость случайного предмета",
+  "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "Стоимость в золоте первой покупки случайного предмета.",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "Прирост стоимости случайного предмета",
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Значение, добавляемое к стоимости случайного предмета после каждой покупки (напр. 25 = +25 золота каждый раз)."
 }
