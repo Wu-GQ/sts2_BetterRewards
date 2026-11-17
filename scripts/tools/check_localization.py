@@ -1,0 +1,93 @@
+#!/usr/bin/env python3
+"""Check BetterRewards localization tables against the settings actually declared in code.
+
+Validates JSON syntax, eng/zhs key parity for every table, and that each
+SimpleModConfig property/section has the keys BaseLib looks up by convention:
+  {PREFIX}-{SLUG}.title, {PREFIX}-{SLUG}.hover.desc, {PREFIX}-{SECTION_SLUG}.title
+It also reports settings_ui keys that no property, section, or BaseLib convention uses.
+"""
+from __future__ import annotations
+
+import json
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+LOC = ROOT / "localization"
+SETTINGS_SRC = ROOT / "src" / "Features" / "Settings" / "BetterRewardsSettings.cs"
+TABLES = ("settings_ui", "events", "better_rewards_shop")
+LANGS = ("eng", "zhs")
+PREFIX = "BETTERREWARDS"
+
+
+def slugify(text: str) -> str:
+    """Mirror BaseLib/MegaCrit StringHelper.Slugify for property and section names."""
+    chars: list[str] = []
+    for index, char in enumerate(text.strip()):
+        if char.isupper() and index > 0 and text[index - 1].isalnum():
+            chars.append("_")
+        chars.append(char)
+    slug = re.sub(r"\s+", "_", "".join(chars).upper())
+    return re.sub(r"[^A-Z0-9_]", "", slug)
+
+
+def read_table(language: str, table: str) -> dict[str, str]:
+    path = LOC / language / f"{table}.json"
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def declared_settings() -> tuple[list[str], list[str]]:
+    source = SETTINGS_SRC.read_text(encoding="utf-8")
+    properties = re.findall(r"public static (?:double|int) (\w+)", source)
+    sections = re.findall(r'\[ConfigSection\("([^"]+)"\)', source)
+    return properties, sections
+
+
+def main() -> int:
+    problems: list[str] = []
+    properties, sections = declared_settings()
+
+    loaded: dict[str, dict[str, dict[str, str]]] = {}
+    for language in LANGS:
+        for table in TABLES:
+            try:
+                loaded[(language, table)] = read_table(language, table)
+            except json.JSONDecodeError as error:
+                problems.append(f"{language}/{table}.json is not valid JSON: {error}")
+
+    for table in TABLES:
+        eng = loaded.get(("eng", table), {})
+        zhs = loaded.get(("zhs", table), {})
+        for key in sorted(set(eng) - set(zhs)):
+            problems.append(f"{table}: missing zhs key {key}")
+        for key in sorted(set(zhs) - set(eng)):
+            problems.append(f"{table}: missing eng key {key}")
+
+    for language in LANGS:
+        loc = loaded.get((language, "settings_ui"), {})
+        expected: set[str] = {f"{PREFIX}.mod_title"}
+        for prop in properties:
+            expected.add(f"{PREFIX}-{slugify(prop)}.title")
+            expected.add(f"{PREFIX}-{slugify(prop)}.hover.desc")
+        for section in sections:
+            expected.add(f"{PREFIX}-{slugify(section)}.title")
+
+        for key in sorted(expected - set(loc)):
+            problems.append(f"{language}/settings_ui.json is missing {key}")
+        for key in sorted(set(loc) - expected):
+            problems.append(f"{language}/settings_ui.json has unused key {key}")
+
+    if problems:
+        print("Localization check failed:")
+        for problem in problems:
+            print(f"  - {problem}")
+        return 1
+
+    print(f"OK: {len(properties)} settings, {len(sections)} sections, all tables parse,")
+    print("    eng/zhs keys match, and settings_ui has no unused keys.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
