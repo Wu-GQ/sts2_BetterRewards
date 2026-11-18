@@ -463,6 +463,7 @@ internal static class NEventOptionButtonReadyPatch
     private const string NeowIconResourceName = "BetterRewards.MerchantTradeContractPng";
     private const string SacrificeIconResourceName = "BetterRewards.LifeForGoldHeartPng";
     private const string EnterShopIconResourceName = "BetterRewards.EnterShopDoorPng";
+    private const string WaitMerchantIconResourceName = "BetterRewards.WaitMerchantHourglassPng";
 
     private static readonly Dictionary<string, Texture2D?> CustomIcons = new();
 
@@ -508,7 +509,8 @@ internal static class NEventOptionButtonReadyPatch
             "BETTERREWARDS.NEOW" => NeowIconResourceName,
             "BETTERREWARDS.SACRIFICE.do" or "BETTERREWARDS.SACRIFICE.locked" => SacrificeIconResourceName,
             "BETTERREWARDS.ENTER_SHOP" => EnterShopIconResourceName,
-            // Waiting and any other BetterRewards option keep the vanilla shop map icon.
+            "BETTERREWARDS.SHOP_PENDING" => WaitMerchantIconResourceName,
+            // Any other BetterRewards option keeps the vanilla shop map icon.
             _ => null
         };
 

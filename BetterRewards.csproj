@@ -39,6 +39,7 @@
     <EmbeddedResource Include="resources/merchant-trade-contract.png" LogicalName="BetterRewards.MerchantTradeContractPng" />
     <EmbeddedResource Include="resources/life-for-gold-heart.png" LogicalName="BetterRewards.LifeForGoldHeartPng" />
     <EmbeddedResource Include="resources/enter-shop-door.png" LogicalName="BetterRewards.EnterShopDoorPng" />
+    <EmbeddedResource Include="resources/wait-merchant-hourglass.png" LogicalName="BetterRewards.WaitMerchantHourglassPng" />
     <LocalizationJson Include="localization/*/*.json" />
     <EmbeddedResource Include="@(LocalizationJson)">
       <LogicalName>BetterRewards.Loc.$([System.IO.Path]::GetFileName($([System.IO.Path]::GetDirectoryName(%(FullPath))))).$([System.IO.Path]::GetFileNameWithoutExtension(%(Identity)))</LogicalName>
