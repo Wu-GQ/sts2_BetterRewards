@@ -724,7 +724,10 @@ internal static class BetterRewardsShopButtonsFeature
             new LocString(LocTableName, $"{id}.title"),
             new LocString(LocTableName, $"{id}.description"));
         var tipSet = NHoverTipSet.CreateAndShow(owner, tip);
-        tipSet.GlobalPosition = owner.GlobalPosition + new Vector2(ActionIconSize + 8f, -40f);
+        if (tipSet != null)
+        {
+            tipSet.GlobalPosition = owner.GlobalPosition + new Vector2(ActionIconSize + 8f, -40f);
+        }
     }
 
     private static void HideHoverTip(Control owner)
