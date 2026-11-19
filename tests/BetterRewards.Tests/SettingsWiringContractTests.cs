@@ -300,6 +300,30 @@ public sealed class SettingsWiringContractTests
     }
 
     [Fact]
+    public void Official_mod_details_description_uses_the_localized_mod_desc()
+    {
+        var source = ReadSource("src", "Features", "Settings", "BetterRewardsModInfoLocalizationPatch.cs");
+        Assert.Contains("NModInfoContainer", source, StringComparison.Ordinal);
+        Assert.Contains("nameof(NModInfoContainer.Fill)", source, StringComparison.Ordinal);
+        Assert.Contains("BETTERREWARDS.mod_desc", source, StringComparison.Ordinal);
+        Assert.Contains("BetterRewardsLocalization.SettingsTable", source, StringComparison.Ordinal);
+
+        const string expected =
+            "Adds an opening-ancient bargain where you can sacrifice HP for gold, then shop in a special store with reroll, random relics, and random items.";
+        Assert.Contains(expected, source, StringComparison.Ordinal);
+
+        foreach (var relative in new[] { "BetterRewards.json", "mod_manifest.json" })
+        {
+            using var stream = File.OpenRead(Path.Combine(RepoRoot, relative));
+            using var document = JsonDocument.Parse(stream);
+            var description = document.RootElement.GetProperty("description").GetString() ?? "";
+            Assert.Equal(expected, description);
+            Assert.DoesNotContain("Steam Workshop", description, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("This fork", description, StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
+    [Fact]
     public void Player_facing_settings_copy_does_not_mention_settings_json()
     {
         foreach (var language in Languages)
