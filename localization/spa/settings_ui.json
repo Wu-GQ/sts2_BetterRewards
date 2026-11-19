@@ -23,5 +23,13 @@
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Coste base de objeto aleatorio",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "Coste en oro de la primera compra de un objeto aleatorio.",
   "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "Incremento del coste de objeto aleatorio",
-  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Oro que se suma al coste del objeto aleatorio tras cada compra (p. ej., 25 suma 25 de oro cada vez)."
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Oro que se suma al coste del objeto aleatorio tras cada compra (p. ej., 25 suma 25 de oro cada vez).",
+  "BETTERREWARDS-RESET.title": "Restablecer",
+  "BETTERREWARDS-RESET_ALL.title": "Restaurar todos los ajustes predeterminados",
+  "BETTERREWARDS-RESET_ALL.button": "Restaurar predeterminados",
+  "BETTERREWARDS-RESET_ALL.hover.desc": "Restaura los diez ajustes de BetterRewards del settings.json local de este mod a sus valores predeterminados y guarda de inmediato. No modifica los ajustes de otros mods, el historial de partidas, los archivos de guardado ni la instantánea de ajustes de la partida actual.",
+  "BETTERREWARDS-RESET_CONFIRM.title": "¿Restaurar los ajustes predeterminados?",
+  "BETTERREWARDS-RESET_CONFIRM.button": "Restaurar predeterminados",
+  "BETTERREWARDS-RESET_CANCEL.button": "Cancelar",
+  "BETTERREWARDS-RESET_CONFIRM.hover.desc": "Los diez ajustes de BetterRewards vuelven a sus valores predeterminados y se guardan ahora. Esto no reinicia la partida actual, otros mods, el historial de partidas ni los archivos de guardado."
 }

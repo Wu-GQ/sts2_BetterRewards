@@ -1,3 +1,5 @@
+using Godot;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Runs;
 using STS2RitsuLib;
 using STS2RitsuLib.Data;
@@ -164,7 +166,66 @@ internal static class BetterRewardsSettings
                 .AddSlider("random_item_cost_increment", Title("BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title", "Random Item Cost Increment"), randomItemCostIncrement,
                     minValue: 0.0, maxValue: 500.0, step: 5.0,
                     valueFormatter: static v => v.ToString("0"),
-                    description: Desc("RANDOM_ITEM_COST_INCREMENT", "Gold added to the random item cost after each purchase (e.g. 25 adds 25 gold each time)."))));
+                    description: Desc("RANDOM_ITEM_COST_INCREMENT", "Gold added to the random item cost after each purchase (e.g. 25 adds 25 gold each time).")))
+            .AddSection("reset", section => section
+                .WithTitle(Title("BETTERREWARDS-RESET.title", "Reset"))
+                .AddButton(
+                    "restore_all_defaults",
+                    Title("BETTERREWARDS-RESET_ALL.title", "Restore all default settings"),
+                    Title("BETTERREWARDS-RESET_ALL.button", "Restore defaults"),
+                    host => ConfirmAndResetAllSettings(host),
+                    ModSettingsButtonTone.Danger,
+                    Desc("RESET_ALL", "Restores the ten BetterRewards settings in this mod's local settings.json to their defaults and saves immediately. Other mods' settings, run history, save files and the current run's settings snapshot are left untouched."))));
+    }
+
+    /// <summary>
+    /// Asks before overwriting, then restores only this mod's local settings.
+    /// <para>
+    /// Cancelling or dismissing the dialog runs no write at all. Confirming writes the ten
+    /// defaults, persists them at once, then refreshes the page so every slider and the
+    /// framework's reset menus reflect the new values.
+    /// </para>
+    /// </summary>
+    private static void ConfirmAndResetAllSettings(IModSettingsUiActionHost host)
+    {
+        var root = Engine.GetMainLoop() is SceneTree { Root: { } sceneRoot } ? sceneRoot : null;
+        if (root == null)
+        {
+            Log.Warn("[BetterRewards] Could not resolve the scene root; skipping the reset confirmation dialog.");
+            return;
+        }
+
+        ModSettingsUiFactory.ShowStyledConfirm(
+            root,
+            Title("BETTERREWARDS-RESET_CONFIRM.title", "Restore default settings?").Resolve(),
+            Desc("RESET_CONFIRM", "All ten BetterRewards settings go back to their defaults and are saved now. This does not reset the current run, other mods, run history or save files.").Resolve(),
+            Title("BETTERREWARDS-RESET_CANCEL.button", "Cancel").Resolve(),
+            Title("BETTERREWARDS-RESET_CONFIRM.button", "Restore defaults").Resolve(),
+            confirmIsDanger: true,
+            onConfirm: () =>
+            {
+                BetterRewardsResetCoordinator.ResetAllLocalSettings(LocalSettingsStore.Instance);
+                host.RequestRefreshAfterDataModelBatchChange();
+            });
+    }
+
+    /// <summary>
+    /// Adapts the mod's global local settings store to the reset port.
+    /// Writes go through the same data key the sliders use, so the UI and the reset cannot diverge.
+    /// </summary>
+    private sealed class LocalSettingsStore : IBetterRewardsSettingsStore
+    {
+        public static readonly LocalSettingsStore Instance = new();
+
+        public void UpdateLocalModel(Action<BetterRewardsSettingsModel> mutate)
+        {
+            ModDataStore.For(ModId).Modify(DataKey, mutate);
+        }
+
+        public void SaveLocalModel()
+        {
+            ModDataStore.For(ModId).Save(DataKey);
+        }
     }
 
     private static void OnPreparing(RunSavedDataPreparingEvent evt)
@@ -226,20 +287,24 @@ internal static class BetterRewardsSettings
         return true;
     }
 
-    private static ModSettingsValueBinding<BetterRewardsSettingsModel, double> BindDouble(
+    private static IModSettingsValueBinding<double> BindDouble(
         Func<BetterRewardsSettingsModel, double> getter,
         Action<BetterRewardsSettingsModel, double> setter)
     {
-        return new ModSettingsValueBinding<BetterRewardsSettingsModel, double>(
-            ModId, DataKey, SaveScope.Global, getter, setter);
+        return ModSettingsBindings.WithDefault(
+            new ModSettingsValueBinding<BetterRewardsSettingsModel, double>(
+                ModId, DataKey, SaveScope.Global, getter, setter),
+            () => getter(new BetterRewardsSettingsModel()));
     }
 
-    private static ModSettingsValueBinding<BetterRewardsSettingsModel, int> BindInt(
+    private static IModSettingsValueBinding<int> BindInt(
         Func<BetterRewardsSettingsModel, int> getter,
         Action<BetterRewardsSettingsModel, int> setter)
     {
-        return new ModSettingsValueBinding<BetterRewardsSettingsModel, int>(
-            ModId, DataKey, SaveScope.Global, getter, setter);
+        return ModSettingsBindings.WithDefault(
+            new ModSettingsValueBinding<BetterRewardsSettingsModel, int>(
+                ModId, DataKey, SaveScope.Global, getter, setter),
+            () => getter(new BetterRewardsSettingsModel()));
     }
 
     private static ModSettingsText Title(string key, string fallback) =>
@@ -252,45 +317,5 @@ internal static class BetterRewardsSettings
             fallback);
 }
 
-internal sealed class BetterRewardsSettingsModel
-{
-    public double HpSacrificePercent { get; set; } = 0.20;
-    public int SacrificeRepeatCount { get; set; } = 4;
-    public double ScoreToGoldPercent { get; set; } = 0.25;
-    public int MinPreviousScore { get; set; } = 1000;
-    public double ShopRerollBaseCost { get; set; } = 150.0;
-    public double ShopRerollCostIncrement { get; set; } = 50.0;
-    public double RelicBaseCost { get; set; } = 300.0;
-    public double RelicCostIncrement { get; set; } = 50.0;
-    public double RandomItemBaseCost { get; set; } = 75.0;
-    public double RandomItemCostIncrement { get; set; } = 25.0;
-
-    public void CopyFrom(BetterRewardsSettingsModel source)
-    {
-        HpSacrificePercent = source.HpSacrificePercent;
-        SacrificeRepeatCount = source.SacrificeRepeatCount;
-        ScoreToGoldPercent = source.ScoreToGoldPercent;
-        MinPreviousScore = source.MinPreviousScore;
-        ShopRerollBaseCost = source.ShopRerollBaseCost;
-        ShopRerollCostIncrement = source.ShopRerollCostIncrement;
-        RelicBaseCost = source.RelicBaseCost;
-        RelicCostIncrement = source.RelicCostIncrement;
-        RandomItemBaseCost = source.RandomItemBaseCost;
-        RandomItemCostIncrement = source.RandomItemCostIncrement;
-        Clamp();
-    }
-
-    public void Clamp()
-    {
-        HpSacrificePercent = Math.Clamp(HpSacrificePercent, 0.0, 1.0);
-        SacrificeRepeatCount = Math.Clamp(SacrificeRepeatCount, 1, 10);
-        ScoreToGoldPercent = Math.Clamp(ScoreToGoldPercent, 0.0, 1.0);
-        MinPreviousScore = Math.Clamp(MinPreviousScore, 1000, 10000);
-        ShopRerollBaseCost = Math.Clamp(ShopRerollBaseCost, 50.0, 1000.0);
-        ShopRerollCostIncrement = Math.Clamp(ShopRerollCostIncrement, 0.0, 500.0);
-        RelicBaseCost = Math.Clamp(RelicBaseCost, 50.0, 1000.0);
-        RelicCostIncrement = Math.Clamp(RelicCostIncrement, 0.0, 500.0);
-        RandomItemBaseCost = Math.Clamp(RandomItemBaseCost, 50.0, 1000.0);
-        RandomItemCostIncrement = Math.Clamp(RandomItemCostIncrement, 0.0, 500.0);
-    }
-}
+// BetterRewardsSettingsModel lives in BetterRewardsSettingsModel.cs so the defaults and
+// clamp ranges stay testable without the game or RitsuLib.

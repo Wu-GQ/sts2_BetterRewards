@@ -23,5 +23,13 @@
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Bazowy koszt losowego przedmiotu",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "Koszt w złocie pierwszego zakupu losowego przedmiotu.",
   "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "Przyrost kosztu losowego przedmiotu",
-  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Stała wartość dodawana do kosztu losowego przedmiotu po każdym zakupie (np. 25 = +25 złota za każdym razem)."
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Stała wartość dodawana do kosztu losowego przedmiotu po każdym zakupie (np. 25 = +25 złota za każdym razem).",
+  "BETTERREWARDS-RESET.title": "Resetuj",
+  "BETTERREWARDS-RESET_ALL.title": "Przywróć wszystkie ustawienia domyślne",
+  "BETTERREWARDS-RESET_ALL.button": "Przywróć domyślne",
+  "BETTERREWARDS-RESET_ALL.hover.desc": "Przywraca dziesięć ustawień BetterRewards w lokalnym settings.json tego moda do wartości domyślnych i od razu zapisuje. Ustawienia innych modów, historia przebiegów, pliki zapisu ani migawka ustawień bieżącego przebiegu nie są zmieniane.",
+  "BETTERREWARDS-RESET_CONFIRM.title": "Przywrócić ustawienia domyślne?",
+  "BETTERREWARDS-RESET_CONFIRM.button": "Przywróć domyślne",
+  "BETTERREWARDS-RESET_CANCEL.button": "Anuluj",
+  "BETTERREWARDS-RESET_CONFIRM.hover.desc": "Dziesięć ustawień BetterRewards wraca do wartości domyślnych i jest od razu zapisywanych. Nie resetuje to bieżącego przebiegu, innych modów, historii przebiegów ani plików zapisu."
 }

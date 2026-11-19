@@ -23,5 +23,13 @@
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "ค่าใช้จ่ายพื้นฐานของไอเทมสุ่ม",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "ทองที่ใช้ในการซื้อไอเทมสุ่มครั้งแรก",
   "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "ค่าเพิ่มค่าใช้จ่ายไอเทมสุ่ม",
-  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "ค่าที่บวกเข้ากับค่าใช้จ่ายไอเทมสุ่มหลังซื้อแต่ละครั้ง (เช่น 25 คือเพิ่มขึ้น 25 ทองทุกครั้ง)"
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "ค่าที่บวกเข้ากับค่าใช้จ่ายไอเทมสุ่มหลังซื้อแต่ละครั้ง (เช่น 25 คือเพิ่มขึ้น 25 ทองทุกครั้ง)",
+  "BETTERREWARDS-RESET.title": "รีเซ็ต",
+  "BETTERREWARDS-RESET_ALL.title": "คืนค่าการตั้งค่าเริ่มต้นทั้งหมด",
+  "BETTERREWARDS-RESET_ALL.button": "คืนค่าเริ่มต้น",
+  "BETTERREWARDS-RESET_ALL.hover.desc": "คืนค่าการตั้งค่า BetterRewards ทั้งสิบรายการใน settings.json ภายในเครื่องของมอดนี้กลับเป็นค่าเริ่มต้นและบันทึกทันที การตั้งค่าของมอดอื่น ประวัติการเล่น ไฟล์เซฟ และสแนปช็อตการตั้งค่าของรอบที่กำลังเล่นอยู่จะไม่ถูกแตะต้อง",
+  "BETTERREWARDS-RESET_CONFIRM.title": "คืนค่าการตั้งค่าเริ่มต้นหรือไม่",
+  "BETTERREWARDS-RESET_CONFIRM.button": "คืนค่าเริ่มต้น",
+  "BETTERREWARDS-RESET_CANCEL.button": "ยกเลิก",
+  "BETTERREWARDS-RESET_CONFIRM.hover.desc": "การตั้งค่า BetterRewards ทั้งสิบรายการจะกลับเป็นค่าเริ่มต้นและบันทึกทันที การดำเนินการนี้จะไม่รีเซ็ตรอบที่กำลังเล่นอยู่ มอดอื่น ประวัติการเล่น หรือไฟล์เซฟ"
 }

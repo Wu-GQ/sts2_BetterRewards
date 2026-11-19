@@ -23,5 +23,13 @@
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Biaya dasar item acak",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "Biaya emas untuk pembelian item acak yang pertama.",
   "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "Kenaikan biaya item acak",
-  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Emas yang ditambahkan ke biaya item acak setelah setiap pembelian (mis. 25 menambah 25 emas setiap kali)."
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Emas yang ditambahkan ke biaya item acak setelah setiap pembelian (mis. 25 menambah 25 emas setiap kali).",
+  "BETTERREWARDS-RESET.title": "Atur ulang",
+  "BETTERREWARDS-RESET_ALL.title": "Pulihkan semua pengaturan bawaan",
+  "BETTERREWARDS-RESET_ALL.button": "Pulihkan bawaan",
+  "BETTERREWARDS-RESET_ALL.hover.desc": "Mengembalikan sepuluh pengaturan BetterRewards di settings.json lokal mod ini ke nilai bawaannya dan langsung menyimpan. Pengaturan mod lain, riwayat permainan, berkas simpanan, dan cuplikan pengaturan permainan yang sedang berjalan tidak diubah.",
+  "BETTERREWARDS-RESET_CONFIRM.title": "Pulihkan pengaturan bawaan?",
+  "BETTERREWARDS-RESET_CONFIRM.button": "Pulihkan bawaan",
+  "BETTERREWARDS-RESET_CANCEL.button": "Batal",
+  "BETTERREWARDS-RESET_CONFIRM.hover.desc": "Sepuluh pengaturan BetterRewards kembali ke nilai bawaannya dan langsung disimpan. Ini tidak mengatur ulang permainan yang sedang berjalan, mod lain, riwayat permainan, atau berkas simpanan."
 }

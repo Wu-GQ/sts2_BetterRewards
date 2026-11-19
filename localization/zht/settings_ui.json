@@ -23,5 +23,13 @@
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "隨機物品基礎花費",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "第一次購買隨機物品所需的金幣。",
   "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "隨機物品花費加值",
-  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "每次購買後，花費增加該數值（例如 25 表示每次增加 25 金幣）。"
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "每次購買後，花費增加該數值（例如 25 表示每次增加 25 金幣）。",
+  "BETTERREWARDS-RESET.title": "重設",
+  "BETTERREWARDS-RESET_ALL.title": "還原全部預設設定",
+  "BETTERREWARDS-RESET_ALL.button": "還原預設值",
+  "BETTERREWARDS-RESET_ALL.hover.desc": "將本模組本機 settings.json 中的十項設定還原為預設值並立即儲存。不會更動其他模組的設定、歷史戰績、存檔檔案，也不會更動目前這局的設定快照。",
+  "BETTERREWARDS-RESET_CONFIRM.title": "還原預設設定？",
+  "BETTERREWARDS-RESET_CONFIRM.button": "還原預設值",
+  "BETTERREWARDS-RESET_CANCEL.button": "取消",
+  "BETTERREWARDS-RESET_CONFIRM.hover.desc": "十項 BetterRewards 設定將還原為預設值並立即儲存。這不會重設目前這一局、其他模組、歷史戰績或存檔檔案。"
 }

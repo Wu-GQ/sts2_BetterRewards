@@ -33,6 +33,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- The mod project uses the SDK's default Compile glob, which would otherwise pull in
+         tests/**/*.cs (and its obj/ output) and fail on missing xunit references. -->
+    <Compile Remove="tests/**" />
+    <Compile Remove="dist/**" />
+    <Compile Remove="decompile/**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="resources/reroll_icon.png" LogicalName="BetterRewards.RerollIconPng" />
     <EmbeddedResource Include="resources/random_relic_icon.png" LogicalName="BetterRewards.RandomRelicIconPng" />
     <EmbeddedResource Include="resources/random_item_icon.png" LogicalName="BetterRewards.RandomItemIconPng" />

@@ -23,5 +23,13 @@
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "ランダムアイテム基本コスト",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "最初のランダムアイテム購入に必要なゴールド。",
   "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "ランダムアイテムコスト増加量",
-  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "購入するたびにコストへ加算される値（例：25は毎回25ゴールド増加）。"
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "購入するたびにコストへ加算される値（例：25は毎回25ゴールド増加）。",
+  "BETTERREWARDS-RESET.title": "リセット",
+  "BETTERREWARDS-RESET_ALL.title": "すべての既定設定に戻す",
+  "BETTERREWARDS-RESET_ALL.button": "既定値に戻す",
+  "BETTERREWARDS-RESET_ALL.hover.desc": "このMODのローカル settings.json にあるBetterRewardsの10項目の設定を既定値に戻し、すぐに保存します。他のMODの設定、走行履歴、セーブファイル、進行中のランの設定スナップショットには触れません。",
+  "BETTERREWARDS-RESET_CONFIRM.title": "既定設定に戻しますか？",
+  "BETTERREWARDS-RESET_CONFIRM.button": "既定値に戻す",
+  "BETTERREWARDS-RESET_CANCEL.button": "キャンセル",
+  "BETTERREWARDS-RESET_CONFIRM.hover.desc": "BetterRewards の10項目の設定を既定値に戻してすぐに保存します。進行中のラン、他のMOD、走行履歴、セーブファイルはリセットされません。"
 }

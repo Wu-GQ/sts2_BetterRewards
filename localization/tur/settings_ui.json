@@ -23,5 +23,13 @@
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Rastgele eşya temel maliyeti",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "İlk rastgele eşya satın alımının altın maliyeti.",
   "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "Rastgele eşya maliyeti artışı",
-  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Her satın alımdan sonra rastgele eşya maliyetine eklenen sabit değer (ör. 25 = her seferinde +25 altın)."
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Her satın alımdan sonra rastgele eşya maliyetine eklenen sabit değer (ör. 25 = her seferinde +25 altın).",
+  "BETTERREWARDS-RESET.title": "Sıfırla",
+  "BETTERREWARDS-RESET_ALL.title": "Tüm varsayılan ayarları geri yükle",
+  "BETTERREWARDS-RESET_ALL.button": "Varsayılanları geri yükle",
+  "BETTERREWARDS-RESET_ALL.hover.desc": "Bu modun yerel settings.json dosyasındaki on BetterRewards ayarını varsayılan değerlerine döndürür ve hemen kaydeder. Diğer modların ayarları, oyun geçmişi, kayıt dosyaları ve sürmekte olan oyunun ayar anlık görüntüsü değiştirilmez.",
+  "BETTERREWARDS-RESET_CONFIRM.title": "Varsayılan ayarlar geri yüklensin mi?",
+  "BETTERREWARDS-RESET_CONFIRM.button": "Varsayılanları geri yükle",
+  "BETTERREWARDS-RESET_CANCEL.button": "İptal",
+  "BETTERREWARDS-RESET_CONFIRM.hover.desc": "On BetterRewards ayarının tümü varsayılan değerlerine döner ve hemen kaydedilir. Bu işlem sürmekte olan oyunu, diğer modları, oyun geçmişini veya kayıt dosyalarını sıfırlamaz."
 }

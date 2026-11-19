@@ -23,5 +23,13 @@
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Costo base dell'oggetto casuale",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "Costo in oro del primo acquisto di un oggetto casuale.",
   "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "Incremento del costo dell'oggetto casuale",
-  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Oro aggiunto al costo dell'oggetto casuale dopo ogni acquisto (es. 25 = +25 oro ogni volta)."
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Oro aggiunto al costo dell'oggetto casuale dopo ogni acquisto (es. 25 = +25 oro ogni volta).",
+  "BETTERREWARDS-RESET.title": "Ripristina",
+  "BETTERREWARDS-RESET_ALL.title": "Ripristina tutte le impostazioni predefinite",
+  "BETTERREWARDS-RESET_ALL.button": "Ripristina predefiniti",
+  "BETTERREWARDS-RESET_ALL.hover.desc": "Riporta le dieci impostazioni di BetterRewards nel settings.json locale di questa mod ai valori predefiniti e salva subito. Le impostazioni delle altre mod, la cronologia delle partite, i salvataggi e l'istantanea delle impostazioni della partita in corso non vengono toccati.",
+  "BETTERREWARDS-RESET_CONFIRM.title": "Ripristinare le impostazioni predefinite?",
+  "BETTERREWARDS-RESET_CONFIRM.button": "Ripristina predefiniti",
+  "BETTERREWARDS-RESET_CANCEL.button": "Annulla",
+  "BETTERREWARDS-RESET_CONFIRM.hover.desc": "Le dieci impostazioni di BetterRewards tornano ai valori predefiniti e vengono salvate subito. Questo non reimposta la partita in corso, le altre mod, la cronologia delle partite o i salvataggi."
 }

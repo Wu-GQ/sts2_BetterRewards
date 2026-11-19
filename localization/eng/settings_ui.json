@@ -23,5 +23,13 @@
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Random Item Base Cost",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "Gold cost for the first random item purchase.",
   "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "Random Item Cost Increment",
-  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Gold added to the random item cost after each purchase (e.g. 25 adds 25 gold each time)."
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Gold added to the random item cost after each purchase (e.g. 25 adds 25 gold each time).",
+  "BETTERREWARDS-RESET.title": "Reset",
+  "BETTERREWARDS-RESET_ALL.title": "Restore all default settings",
+  "BETTERREWARDS-RESET_ALL.button": "Restore defaults",
+  "BETTERREWARDS-RESET_ALL.hover.desc": "Restores the ten BetterRewards settings in this mod's local settings.json to their defaults and saves immediately. Other mods' settings, run history, save files and the current run's settings snapshot are left untouched.",
+  "BETTERREWARDS-RESET_CONFIRM.title": "Restore default settings?",
+  "BETTERREWARDS-RESET_CONFIRM.button": "Restore defaults",
+  "BETTERREWARDS-RESET_CANCEL.button": "Cancel",
+  "BETTERREWARDS-RESET_CONFIRM.hover.desc": "All ten BetterRewards settings go back to their defaults and are saved now. This does not reset the current run, other mods, run history or save files."
 }

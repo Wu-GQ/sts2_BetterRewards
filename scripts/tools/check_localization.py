@@ -16,6 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 LOC = ROOT / "localization"
 SETTINGS_SRC = ROOT / "src" / "Features" / "Settings" / "BetterRewardsSettings.cs"
+MODEL_SRC = ROOT / "src" / "Features" / "Settings" / "BetterRewardsSettingsModel.cs"
 TABLES = ("settings_ui", "events", "better_rewards_shop")
 LANGS = (
     "eng", "zhs", "zht",
@@ -23,6 +24,19 @@ LANGS = (
     "pol", "ptb", "rus", "spa", "tha", "tur", "ara",
 )
 PREFIX = "BETTERREWARDS"
+
+# Settings strings that are not derived from a model property or a section name:
+# the reset section label, its button, and the confirmation dialog.
+FIXED_SETTINGS_KEYS = frozenset({
+    f"{PREFIX}-RESET.title",
+    f"{PREFIX}-RESET_ALL.title",
+    f"{PREFIX}-RESET_ALL.button",
+    f"{PREFIX}-RESET_ALL.hover.desc",
+    f"{PREFIX}-RESET_CONFIRM.title",
+    f"{PREFIX}-RESET_CONFIRM.button",
+    f"{PREFIX}-RESET_CONFIRM.hover.desc",
+    f"{PREFIX}-RESET_CANCEL.button",
+})
 
 
 def slugify(text: str) -> str:
@@ -43,11 +57,16 @@ def read_table(language: str, table: str) -> dict[str, str]:
 
 def declared_settings() -> tuple[list[str], list[str]]:
     source = SETTINGS_SRC.read_text(encoding="utf-8")
-    model = re.search(r"class BetterRewardsSettingsModel\s*\{(.*?)^\s*public void CopyFrom", source, re.S | re.M)
+    # The model moved into its own game-free file; fall back to it so the checker keeps
+    # validating the same property list after the split.
+    model_source = source
+    if MODEL_SRC.exists():
+        model_source = MODEL_SRC.read_text(encoding="utf-8")
+    model = re.search(r"class BetterRewardsSettingsModel\s*\{(.*?)^\s*public void CopyFrom", model_source, re.S | re.M)
     if model:
         properties = re.findall(r"public (?:double|int) (\w+)\s*\{", model.group(1))
     else:
-        properties = re.findall(r"public (?:double|int) (\w+)\s*\{", source)
+        properties = re.findall(r"public (?:double|int) (\w+)\s*\{", model_source)
     sections_match = re.search(r"ConfigSectionNames\s*=\s*\[(.*?)\]", source, re.S)
     sections = re.findall(r'"([^"]+)"', sections_match.group(1)) if sections_match else []
     return properties, sections
@@ -84,6 +103,9 @@ def main() -> int:
             expected.add(f"{PREFIX}-{slugify(prop)}.hover.desc")
         for section in sections:
             expected.add(f"{PREFIX}-{slugify(section)}.title")
+        # Keys used by the reset section and its confirmation dialog, which are addressed
+        # directly by name rather than derived from a property or section slug.
+        expected |= FIXED_SETTINGS_KEYS
 
         for key in sorted(expected - set(loc)):
             problems.append(f"{language}/settings_ui.json is missing {key}")

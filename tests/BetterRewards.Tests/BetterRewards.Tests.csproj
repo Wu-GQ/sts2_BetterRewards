@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Pure-logic regression tests for BetterRewards settings defaults.
+    These tests deliberately do NOT reference sts2.dll, GodotSharp or RitsuLib:
+    only dependency-free source files are linked in, so the suite can run on any
+    machine. Anything that needs the game or RitsuLib is covered by the static
+    contract tests instead, which read source text and never pretend to be an
+    integration test.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>BetterRewards.Tests</RootNamespace>
+    <AssemblyName>BetterRewards.Tests</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="*.cs" />
+    <Compile Include="../../src/Features/Settings/BetterRewardsSettingsModel.cs" Link="Linked/BetterRewardsSettingsModel.cs" />
+    <Compile Include="../../src/Features/Settings/BetterRewardsResetCoordinator.cs" Link="Linked/BetterRewardsResetCoordinator.cs" />
+    <Compile Include="../../src/Features/Settings/BetterRewardsSettingsDefaults.cs" Link="Linked/BetterRewardsSettingsDefaults.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+</Project>

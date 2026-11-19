@@ -23,5 +23,13 @@
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "Grundkosten für zufälligen Gegenstand",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "Goldkosten für den ersten Kauf eines zufälligen Gegenstands.",
   "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "Kostenerhöhung für zufälligen Gegenstand",
-  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Fester Betrag, der nach jedem Kauf zu den Gegenstandskosten addiert wird (z. B. 25 = +25 Gold jedes Mal)."
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "Fester Betrag, der nach jedem Kauf zu den Gegenstandskosten addiert wird (z. B. 25 = +25 Gold jedes Mal).",
+  "BETTERREWARDS-RESET.title": "Zurücksetzen",
+  "BETTERREWARDS-RESET_ALL.title": "Alle Standardeinstellungen wiederherstellen",
+  "BETTERREWARDS-RESET_ALL.button": "Standard wiederherstellen",
+  "BETTERREWARDS-RESET_ALL.hover.desc": "Setzt die zehn BetterRewards-Einstellungen in der lokalen settings.json dieses Mods auf ihre Standardwerte zurück und speichert sofort. Einstellungen anderer Mods, der Laufverlauf, Speicherstände und der Einstellungs-Schnappschuss des laufenden Runs bleiben unberührt.",
+  "BETTERREWARDS-RESET_CONFIRM.title": "Standardeinstellungen wiederherstellen?",
+  "BETTERREWARDS-RESET_CONFIRM.button": "Standard wiederherstellen",
+  "BETTERREWARDS-RESET_CANCEL.button": "Abbrechen",
+  "BETTERREWARDS-RESET_CONFIRM.hover.desc": "Alle zehn BetterRewards-Einstellungen werden auf ihre Standardwerte zurückgesetzt und sofort gespeichert. Der laufende Run, andere Mods, der Laufverlauf und Speicherstände werden nicht zurückgesetzt."
 }

@@ -23,5 +23,13 @@
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "무작위 아이템 기본 비용",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "첫 번째 무작위 아이템 구매에 필요한 골드입니다.",
   "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "무작위 아이템 비용 증가량",
-  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "구매할 때마다 비용에 더해지는 값입니다(예: 25는 매번 25 골드 증가)."
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "구매할 때마다 비용에 더해지는 값입니다(예: 25는 매번 25 골드 증가).",
+  "BETTERREWARDS-RESET.title": "초기화",
+  "BETTERREWARDS-RESET_ALL.title": "모든 기본 설정 복원",
+  "BETTERREWARDS-RESET_ALL.button": "기본값 복원",
+  "BETTERREWARDS-RESET_ALL.hover.desc": "이 모드의 로컬 settings.json에 있는 BetterRewards 설정 10개를 기본값으로 복원하고 즉시 저장합니다. 다른 모드의 설정, 런 기록, 세이브 파일, 진행 중인 런의 설정 스냅숏은 건드리지 않습니다.",
+  "BETTERREWARDS-RESET_CONFIRM.title": "기본 설정을 복원할까요?",
+  "BETTERREWARDS-RESET_CONFIRM.button": "기본값 복원",
+  "BETTERREWARDS-RESET_CANCEL.button": "취소",
+  "BETTERREWARDS-RESET_CONFIRM.hover.desc": "BetterRewards 설정 10개가 기본값으로 돌아가고 즉시 저장됩니다. 진행 중인 런, 다른 모드, 런 기록, 세이브 파일은 초기화되지 않습니다."
 }

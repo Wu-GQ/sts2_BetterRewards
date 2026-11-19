@@ -23,5 +23,13 @@
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.title": "随机物品基础花费",
   "BETTERREWARDS-RANDOM_ITEM_BASE_COST.hover.desc": "第一次购买随机物品所需的金币。",
   "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title": "随机物品花费加值",
-  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "每次购买后，花费增加该数值（例如 25 表示每次增加 25 金币）。"
+  "BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.hover.desc": "每次购买后，花费增加该数值（例如 25 表示每次增加 25 金币）。",
+  "BETTERREWARDS-RESET.title": "重置",
+  "BETTERREWARDS-RESET_ALL.title": "恢复全部默认设置",
+  "BETTERREWARDS-RESET_ALL.button": "恢复默认值",
+  "BETTERREWARDS-RESET_ALL.hover.desc": "把本模组本地 settings.json 中的十项设置恢复为默认值并立即保存。不会改动其他模组的设置、历史战绩、存档文件，也不会改动当前局的设置快照。",
+  "BETTERREWARDS-RESET_CONFIRM.title": "恢复默认设置？",
+  "BETTERREWARDS-RESET_CONFIRM.button": "恢复默认值",
+  "BETTERREWARDS-RESET_CANCEL.button": "取消",
+  "BETTERREWARDS-RESET_CONFIRM.hover.desc": "十项 BetterRewards 设置将恢复为默认值并立即保存。这不会重置当前这一局、其他模组、历史战绩或存档文件。"
 }
