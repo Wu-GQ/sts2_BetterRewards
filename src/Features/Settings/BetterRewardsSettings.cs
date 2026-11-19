@@ -118,13 +118,14 @@ internal static class BetterRewardsSettings
         RitsuLibFramework.RegisterModSettings(ModId, page => page
             .WithTitle(Title("BETTERREWARDS.mod_title", "Better Rewards"))
             .WithModDisplayName(Title("BETTERREWARDS.mod_title", "Better Rewards"))
+            .WithDescription(Title("BETTERREWARDS.mod_desc", "Adds an opening-ancient bargain where you can sacrifice HP for gold, then shop in a special store with reroll, random relics, and random items."))
             .WithVisibleOnHostSurfaces(ModSettingsHostSurface.MainMenu | ModSettingsHostSurface.RunPause)
             .AddSection("event", section => section
                 .WithTitle(Title("BETTERREWARDS-EVENT.title", "Event"))
                 .AddSlider("hp_sacrifice_percent", Title("BETTERREWARDS-HP_SACRIFICE_PERCENT.title", "HP Sacrifice %"), hpSacrificePercent,
                     minValue: 0.0, maxValue: 1.0, step: 0.01,
                     valueFormatter: static v => v.ToString("0.00"),
-                    description: Desc("HP_SACRIFICE_PERCENT", "Fraction of your current HP lost per sacrifice (0.0–1.0). Capped so a single choice cannot exceed 1/N of your max HP."))
+                    description: Desc("HP_SACRIFICE_PERCENT", "Fraction of your current HP lost per sacrifice (0.0–1.0). A single sacrifice cannot exceed your max HP divided by Sacrifice Repeats."))
                 .AddIntSlider("sacrifice_repeat_count", Title("BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title", "Sacrifice Repeats"), sacrificeRepeatCount,
                     minValue: 1, maxValue: 10, step: 1,
                     valueFormatter: static v => v.ToString("0"),
@@ -175,7 +176,7 @@ internal static class BetterRewardsSettings
                     Title("BETTERREWARDS-RESET_ALL.button", "Restore defaults"),
                     host => ConfirmAndResetAllSettings(host),
                     ModSettingsButtonTone.Danger,
-                    Desc("RESET_ALL", "Restores the ten BetterRewards settings in this mod's local settings.json to their defaults and saves immediately. Other mods' settings, run history, save files and the current run's settings snapshot are left untouched."))));
+                    Desc("RESET_ALL", "Restores the ten BetterRewards settings to their defaults and saves immediately. Other mods' settings, run history, save files and the current run's settings snapshot are left untouched."))));
     }
 
     /// <summary>

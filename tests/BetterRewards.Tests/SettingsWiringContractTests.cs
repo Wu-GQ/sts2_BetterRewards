@@ -282,6 +282,39 @@ public sealed class SettingsWiringContractTests
         Assert.Contains("BetterRewardsLocalization.SettingsTable", source, StringComparison.Ordinal);
     }
 
+
+    [Fact]
+    public void Page_description_is_localized_instead_of_the_manifest_fallback()
+    {
+        var source = SettingsSource;
+        Assert.Contains("WithDescription(", source, StringComparison.Ordinal);
+        Assert.Contains("BETTERREWARDS.mod_desc", source, StringComparison.Ordinal);
+        Assert.Contains("BetterRewardsLocalization.SettingsTable", source, StringComparison.Ordinal);
+
+        foreach (var language in Languages)
+        {
+            var keys = ReadKeys(SettingsUiPath(language));
+            Assert.True(keys.Contains("BETTERREWARDS.mod_desc"),
+                $"{language}/settings_ui.json is missing BETTERREWARDS.mod_desc");
+        }
+    }
+
+    [Fact]
+    public void Player_facing_settings_copy_does_not_mention_settings_json()
+    {
+        foreach (var language in Languages)
+        {
+            using var stream = File.OpenRead(SettingsUiPath(language));
+            using var document = JsonDocument.Parse(stream);
+            foreach (var property in document.RootElement.EnumerateObject())
+            {
+                var value = property.Value.GetString() ?? "";
+                Assert.DoesNotContain("settings.json", value, StringComparison.OrdinalIgnoreCase);
+                Assert.DoesNotContain("setting.json", value, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+    }
+
     private static HashSet<string> ReadKeys(string path)
     {
         using var stream = File.OpenRead(path);

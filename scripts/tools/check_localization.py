@@ -97,7 +97,7 @@ def main() -> int:
 
     for language in LANGS:
         loc = loaded.get((language, "settings_ui"), {})
-        expected: set[str] = {f"{PREFIX}.mod_title"}
+        expected: set[str] = {f"{PREFIX}.mod_title", f"{PREFIX}.mod_desc"}
         for prop in properties:
             expected.add(f"{PREFIX}-{slugify(prop)}.title")
             expected.add(f"{PREFIX}-{slugify(prop)}.hover.desc")
