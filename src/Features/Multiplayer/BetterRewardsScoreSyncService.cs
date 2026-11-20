@@ -234,6 +234,8 @@ internal static class NetClientGameServiceAttachBetterRewardsScorePatch
     public static void Postfix(NetClientGameService __instance)
     {
         BetterRewardsScoreSyncService.EnsureAttached(__instance, "NetClientGameService::.ctor");
+        BetterRewardsSettingsSyncService.EnsureAttached(__instance, "NetClientGameService::.ctor");
+        BetterRewardsShopSyncService.EnsureAttached(__instance, "NetClientGameService::.ctor");
     }
 }
 
@@ -249,6 +251,8 @@ internal static class NetHostGameServiceAttachBetterRewardsScorePatch
     public static void Postfix(NetHostGameService __instance)
     {
         BetterRewardsScoreSyncService.EnsureAttached(__instance, "NetHostGameService::.ctor");
+        BetterRewardsSettingsSyncService.EnsureAttached(__instance, "NetHostGameService::.ctor");
+        BetterRewardsShopSyncService.EnsureAttached(__instance, "NetHostGameService::.ctor");
     }
 }
 
@@ -259,6 +263,7 @@ internal static class RunManagerSetUpNewMultiPlayerBetterRewardsPatch
     public static void Postfix(RunState state)
     {
         BetterRewardsScoreSyncService.RefreshForCurrentRun(state, "RunManager.SetUpNewMultiplayer");
+        BetterRewardsSettingsSyncService.RefreshFromHostLocal("RunManager.SetUpNewMultiplayer");
     }
 }
 
@@ -269,6 +274,7 @@ internal static class RunManagerSetUpSavedMultiPlayerBetterRewardsPatch
     public static void Postfix(RunState state)
     {
         BetterRewardsScoreSyncService.RefreshForCurrentRun(state, "RunManager.SetUpSavedMultiplayer");
+        BetterRewardsSettingsSyncService.RefreshFromHostLocal("RunManager.SetUpSavedMultiplayer");
     }
 }
 
@@ -293,6 +299,7 @@ internal static class StartRunLobbyJoinBetterRewardsScoreSnapshotPatch
             senderId,
             __instance.Players.Select(player => player.id),
             "StartRunLobby join");
+        BetterRewardsSettingsSyncService.SendSnapshotTo(__instance.NetService, senderId, "StartRunLobby join");
     }
 }
 
@@ -317,5 +324,6 @@ internal static class StartRunLobbyReadyBetterRewardsScoreSnapshotPatch
             senderId,
             __instance.Players.Select(player => player.id),
             "StartRunLobby ready");
+        BetterRewardsSettingsSyncService.SendSnapshotTo(__instance.NetService, senderId, "StartRunLobby ready");
     }
 }

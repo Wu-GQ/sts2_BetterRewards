@@ -1,3 +1,4 @@
+using BetterRewards.Features.Multiplayer;
 using Godot;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Runs;
@@ -42,9 +43,19 @@ internal static class BetterRewardsSettings
     {
         get
         {
+            if (BetterRewardsSettingsSyncService.TryGetCached(out var cached))
+            {
+                return cached;
+            }
+
             if (TryGetMultiplayerRunSettings(out var snapshot))
             {
                 return snapshot;
+            }
+
+            if (BetterRewardsNetSupport.IsMultiplayerRun())
+            {
+                LogLocalFallbackOnce();
             }
 
             return Local;
@@ -61,6 +72,19 @@ internal static class BetterRewardsSettings
     public static double RelicCostIncrement => Current.RelicCostIncrement;
     public static double RandomItemBaseCost => Current.RandomItemBaseCost;
     public static double RandomItemCostIncrement => Current.RandomItemCostIncrement;
+
+    private static bool _loggedLocalFallback;
+
+    private static void LogLocalFallbackOnce()
+    {
+        if (_loggedLocalFallback)
+        {
+            return;
+        }
+
+        _loggedLocalFallback = true;
+        Log.Warn("[BetterRewards] Multiplayer settings snapshot was missing; falling back to local settings.");
+    }
 
     public static void Register()
     {
@@ -238,6 +262,7 @@ internal static class BetterRewardsSettings
 
         var local = Local;
         RunSettings.Modify(evt.RunState, data => data.CopyFrom(local));
+        BetterRewardsSettingsSyncService.CacheAndBroadcast(local, "OnPreparing");
     }
 
     private static void OnLobbyStaging(RunSavedDataLobbyStagingEvent evt)
@@ -254,22 +279,19 @@ internal static class BetterRewardsSettings
 
         var local = Local;
         RunSettings.Lobby.Modify(evt.Lobby, data => data.CopyFrom(local));
+        BetterRewardsSettingsSyncService.CacheAndBroadcast(local, "OnLobbyStaging");
     }
 
     private static bool TryGetMultiplayerRunSettings(out BetterRewardsSettingsModel snapshot)
     {
         snapshot = null!;
-        if (RunManager.Instance?.DebugOnlyGetState() is not RunState run)
+        var run = BetterRewardsNetSupport.TryGetRunState();
+        if (run is not RunState runState || !BetterRewardsNetSupport.IsMultiplayerRun(runState) || RunSettings is null)
         {
             return false;
         }
 
-        if (run.Players.Count <= 1)
-        {
-            return false;
-        }
-
-        return RunSettings is not null && RunSettings.TryGet(run, out snapshot);
+        return RunSettings.TryGet(runState, out snapshot);
     }
 
     private static bool IsHostEvent(object evt)
@@ -284,7 +306,12 @@ internal static class BetterRewardsSettings
             }
         }
 
-        // Preparing/lobby events are documented as the authoritative write window.
+        // In a connected multiplayer session, only the host may write the shared snapshot.
+        if (BetterRewardsNetSupport.IsConnectedMultiplayer())
+        {
+            return BetterRewardsNetSupport.IsHost();
+        }
+
         return true;
     }
 

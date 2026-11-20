@@ -28,6 +28,13 @@ internal static class BetterRewardsShopState
     public static void RecordRelicUse() => RelicUseCount++;
     public static void RecordRandomItemUse() => RandomItemUseCount++;
 
+    public static void ApplyUseCounts(int rerollUseCount, int relicUseCount, int randomItemUseCount)
+    {
+        RerollUseCount = Math.Max(0, rerollUseCount);
+        RelicUseCount = Math.Max(0, relicUseCount);
+        RandomItemUseCount = Math.Max(0, randomItemUseCount);
+    }
+
     private static int ComputeCost(double baseCost, double increment, int uses)
     {
         // cost = baseCost + increment * uses, rounded to nearest int

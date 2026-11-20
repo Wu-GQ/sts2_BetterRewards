@@ -1,4 +1,5 @@
 using System.Reflection;
+using BetterRewards.Features.Multiplayer;
 using BetterRewards.Features.Settings;
 using Godot;
 using MegaCrit.Sts2.addons.mega_text;
@@ -244,6 +245,70 @@ internal static class BetterRewardsShopButtonsFeature
         }
     }
 
+    internal static void RefreshActiveLabels() => _activeRefreshAction?.Invoke();
+
+    internal static void RefreshAfterRemoteInventoryChange(NMerchantInventory nInventory)
+    {
+        ShowStockedSlots(nInventory);
+        RefreshCardRemovalNode(nInventory);
+        RefreshActiveLabels();
+    }
+
+    internal static void AnimateRemoteCardToDeck(CardModel card, Player player) => AnimateCardToDeck(card, player);
+
+    internal static void SetCardRemovalUsed(MerchantCardRemovalEntry entry, bool used)
+    {
+        _setCardRemovalUsed?.Invoke(entry, [used]);
+    }
+
+    internal static void ShowStockedSlots(NMerchantInventory nInventory)
+    {
+        foreach (var slot in nInventory.GetAllSlots())
+        {
+            if (slot.Entry.IsStocked)
+            {
+                slot.Visible = true;
+            }
+        }
+    }
+
+    internal static void RefreshCardRemovalNode(NMerchantInventory nInventory)
+    {
+        var cardRemoval = nInventory.Inventory?.CardRemovalEntry;
+        if (cardRemoval == null)
+        {
+            return;
+        }
+
+        var usedProperty = typeof(MerchantCardRemovalEntry).GetProperty("Used", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var used = usedProperty?.GetValue(cardRemoval) is true;
+        var cardRemovalNode = nInventory.GetNodeOrNull<NMerchantCardRemoval>("%MerchantCardRemoval");
+        if (cardRemovalNode == null)
+        {
+            return;
+        }
+
+        if (!used)
+        {
+            _isUnavailableField?.SetValue(cardRemovalNode, false);
+            if (_animatorField?.GetValue(cardRemovalNode) is AnimationPlayer animator)
+            {
+                animator.CurrentAnimation = "Used";
+                animator.Seek(0.0, true);
+                animator.Stop();
+            }
+
+            var hitbox = cardRemovalNode.Hitbox;
+            if (hitbox != null)
+            {
+                hitbox.MouseFilter = Control.MouseFilterEnum.Stop;
+                cardRemovalNode.FocusMode = Control.FocusModeEnum.All;
+            }
+        }
+
+        cardRemoval.OnMerchantInventoryUpdated();
+    }
+
     // Stores the most recent RefreshLabels delegate so the Initialize patch can subscribe it.
     private static Action? _activeRefreshAction;
 
@@ -334,15 +399,10 @@ internal static class BetterRewardsShopButtonsFeature
 
         // NMerchantCard.UpdateVisual sets Visible=false on purchase but never re-shows it.
         // After re-populating all entries, force all slots visible again.
-        foreach (var slot in nInventory.GetAllSlots())
-        {
-            if (slot.Entry.IsStocked)
-            {
-                slot.Visible = true;
-            }
-        }
+        ShowStockedSlots(nInventory);
 
         refreshLabels();
+        BetterRewardsShopSyncService.BroadcastReroll(player, inventory, cost);
         Log.Info("[BetterRewards] Shop rerolled in-place.");
     }
 
@@ -371,6 +431,7 @@ internal static class BetterRewardsShopButtonsFeature
         await RelicCmd.Obtain(mutable, player);
 
         BetterRewardsShopState.RecordRelicUse();
+        BetterRewardsShopSyncService.BroadcastGrant(player, BetterRewardsShopGrantKind.Relic, relic.Id.ToString() ?? string.Empty, cost);
         _preparedRelic = null;
         EnsurePreparedRelic(player);
         refreshLabels();
@@ -449,6 +510,20 @@ internal static class BetterRewardsShopButtonsFeature
         if (granted)
         {
             BetterRewardsShopState.RecordRandomItemUse();
+            var grantedId = offer.Type switch
+            {
+                RandomItemType.Relic => offer.Relic?.Model?.Id.ToString() ?? string.Empty,
+                RandomItemType.Card => offer.Card?.CreationResult?.Card.Id.ToString() ?? string.Empty,
+                RandomItemType.Potion => offer.Potion?.Model?.Id.ToString() ?? string.Empty,
+                _ => string.Empty,
+            };
+            var grantKind = offer.Type switch
+            {
+                RandomItemType.Relic => BetterRewardsShopGrantKind.Relic,
+                RandomItemType.Card => BetterRewardsShopGrantKind.Card,
+                _ => BetterRewardsShopGrantKind.Potion,
+            };
+            BetterRewardsShopSyncService.BroadcastGrant(player, grantKind, grantedId, cost);
             _preparedItem = null;
             EnsurePreparedItem(player);
         }

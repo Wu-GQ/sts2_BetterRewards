@@ -1,4 +1,5 @@
 using BetterRewards.Features.Settings;
+using BetterRewards.Features.Multiplayer;
 using BetterRewards.Features.Shop;
 using Godot;
 using HarmonyLib;
@@ -115,7 +116,7 @@ internal static class OpeningAncientOptionsPatch
 
         return new EventOption(
             ancient,
-            () => OnBargainChosen(ancient, effectiveHPct, n, goldPerSacrifice, sacrificesDone: 0),
+            () => OnBargainChosen(ancient, sacrificesDone: 0),
             BetterRewardsLocalization.EventString("BETTERREWARDS.NEOW.title"),
             BetterRewardsLocalization.EventString(
                 descriptionKey,
@@ -127,7 +128,7 @@ internal static class OpeningAncientOptionsPatch
             Array.Empty<IHoverTip>());
     }
 
-    private static Task OnBargainChosen(EventModel ancient, double hPct, int maxRepeats, int goldPerSacrifice, int sacrificesDone)
+    private static Task OnBargainChosen(EventModel ancient, int sacrificesDone)
     {
         var owner = ancient.Owner;
         if (owner == null)
@@ -136,12 +137,22 @@ internal static class OpeningAncientOptionsPatch
         }
 
         BetterRewardsShopState.Reset();
-        ShowSacrificeState(ancient, owner, hPct, maxRepeats, goldPerSacrifice, sacrificesDone);
+        ShowSacrificeState(ancient, owner, sacrificesDone);
         return Task.CompletedTask;
     }
 
-    private static void ShowSacrificeState(EventModel ancient, MegaCrit.Sts2.Core.Entities.Players.Player owner, double hPct, int maxRepeats, int goldPerSacrifice, int sacrificesDone)
+    private static (double HPct, int MaxRepeats, int GoldPerSacrifice) GetLiveSacrificeTerms(EventModel ancient)
     {
+        var maxRepeats = BetterRewardsSettings.SacrificeRepeatCount;
+        var hPct = Math.Min(BetterRewardsSettings.HpSacrificePercent, 1.0 / maxRepeats);
+        var previousScore = PreviousRunScoreService.GetPreviousRunScore(ancient.Owner?.RunState);
+        var goldPerSacrifice = (int)Math.Floor(previousScore * BetterRewardsSettings.ScoreToGoldPercent);
+        return (hPct, maxRepeats, goldPerSacrifice);
+    }
+
+    private static void ShowSacrificeState(EventModel ancient, MegaCrit.Sts2.Core.Entities.Players.Player owner, int sacrificesDone)
+    {
+        var (hPct, maxRepeats, goldPerSacrifice) = GetLiveSacrificeTerms(ancient);
         var hpCost   = (int)Math.Floor(owner.Creature.MaxHp * hPct);
         var wouldDie = hpCost >= owner.Creature.CurrentHp;
         var canMore  = sacrificesDone < maxRepeats;
@@ -159,10 +170,11 @@ internal static class OpeningAncientOptionsPatch
                 ancient,
                 async () =>
                 {
-                    var cost = (int)Math.Floor(owner.Creature.MaxHp * hPct);
+                    var (liveHPct, _, liveGold) = GetLiveSacrificeTerms(ancient);
+                    var cost = (int)Math.Floor(owner.Creature.MaxHp * liveHPct);
                     await CreatureCmd.SetCurrentHp(owner.Creature, owner.Creature.CurrentHp - cost);
-                    await PlayerCmd.GainGold(goldPerSacrifice, owner);
-                    ShowSacrificeState(ancient, owner, hPct, maxRepeats, goldPerSacrifice, sacrificesDone + 1);
+                    await PlayerCmd.GainGold(liveGold, owner);
+                    ShowSacrificeState(ancient, owner, sacrificesDone + 1);
                 },
                 BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.do.title", ("hpCost", hpCost), ("goldPerSacrifice", goldPerSacrifice), ("sacrificeIndex", sacrificesDone + 1), ("maxRepeats", maxRepeats)),
                 BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.do.desc", ("hpCost", hpCost), ("goldPerSacrifice", goldPerSacrifice), ("sacrificeIndex", sacrificesDone + 1), ("maxRepeats", maxRepeats)),
@@ -361,6 +373,7 @@ internal static class NMerchantInventoryInitializePatch
         try
         {
             BetterRewardsShopButtonsFeature.TrySubscribePurchaseEvents(__instance);
+            BetterRewardsShopSyncService.TryApplyPendingReroll(__instance);
         }
         catch (Exception ex)
         {
