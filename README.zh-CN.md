@@ -25,7 +25,7 @@ This repository is a fork of Jack Carlton's [customjack/sts2_BetterRewards](http
 
 ## 安装
 
-**从创意工坊安装（推荐）：** 订阅 [创意工坊上的 BetterRewards](https://steamcommunity.com/sharedfiles/filedetails/?id=3747602295)——RitsuLib 会作为依赖一并安装——然后在游戏内模组列表中同时启用两者。
+**从创意工坊安装（推荐）：** 订阅 [创意工坊上的 BetterRewards](https://steamcommunity.com/sharedfiles/filedetails/?id=3843413828)——RitsuLib 会作为依赖一并安装——然后在游戏内模组列表中同时启用两者。
 
 **从本地构建安装：**
 1. 先在创意工坊订阅 RitsuLib。启动一次游戏，确认 `STS2-RitsuLib` 已加载。

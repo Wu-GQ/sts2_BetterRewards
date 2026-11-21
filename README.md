@@ -25,7 +25,7 @@ Adds a bargain on the opening ancient where you can sacrifice HP for gold, then 
 
 ## Install
 
-**From the Steam Workshop (recommended):** subscribe to [BetterRewards on the Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3747602295) — RitsuLib comes with it as a dependency — then enable both mods in the in-game mod list.
+**From the Steam Workshop (recommended):** subscribe to [BetterRewards on the Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3843413828) — RitsuLib comes with it as a dependency — then enable both mods in the in-game mod list.
 
 **From a local build:**
 1. Subscribe to RitsuLib on the Workshop first. Launch once and confirm `STS2-RitsuLib` loads.
