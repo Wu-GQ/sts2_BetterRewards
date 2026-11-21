@@ -70,7 +70,7 @@ What is shared, and therefore replayed on every peer, is the run state the purch
 
 ## Developer notes
 
-**Requirements:** .NET 9 SDK, a local Slay the Spire 2 install (public 0.107.x or newer; the manifest asks for `0.107.1`), and RitsuLib 0.6.14 or newer. This tree does not vendor `sts2.dll` or RitsuLib assemblies.
+**Requirements:** .NET 9 SDK, a local Slay the Spire 2 install (the manifest asks for `0.113.1`; this fork was built and tested on `v0.113.1`), and RitsuLib 0.6.14 or newer. This tree does not vendor `sts2.dll` or RitsuLib assemblies.
 
 **Setup:**
 1. Copy `.env.example` to `.env`.

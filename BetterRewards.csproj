@@ -12,7 +12,10 @@
     <RitsuLibDir Condition="'$(RitsuLibDir)' == '' and Exists('$(Sts2InstallDir)/mods/STS2-RitsuLib/RitsuLib.References.props')">$(Sts2InstallDir)/mods/STS2-RitsuLib</RitsuLibDir>
     <RitsuLibDir Condition="'$(RitsuLibDir)' == '' and Exists('$(Sts2InstallDir)/mods/RitsuLib/RitsuLib.References.props')">$(Sts2InstallDir)/mods/RitsuLib</RitsuLibDir>
     <RitsuLibDir Condition="'$(RitsuLibDir)' == '' and Exists('$(Sts2InstallDir)/../../workshop/content/2868840/3747602295/RitsuLib.References.props')">$([MSBuild]::NormalizeDirectory('$(Sts2InstallDir)/../../workshop/content/2868840/3747602295'))</RitsuLibDir>
-    <RitsuLibReferenceTarget Condition="'$(RitsuLibReferenceTarget)' == ''">0.107.1</RitsuLibReferenceTarget>
+    <!-- Compile-time RitsuLib reference, which must name an exact folder under
+         RitsuLib/compat. It stays 0.113.0 because that is the newest compat target the
+         bundle ships; the runtime requirement is min_game_version in the manifests. -->
+    <RitsuLibReferenceTarget Condition="'$(RitsuLibReferenceTarget)' == ''">0.113.0</RitsuLibReferenceTarget>
   </PropertyGroup>
 
   <Import Project="$(RitsuLibDir)/RitsuLib.References.props" Condition="'$(RitsuLibDir)' != '' and Exists('$(RitsuLibDir)/RitsuLib.References.props')" />
