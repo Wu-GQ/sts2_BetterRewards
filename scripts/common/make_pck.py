@@ -62,7 +62,14 @@ def resolve_mod_id(manifest: dict) -> str:
     return mod_id
 
 
-def generate_import_artifacts(godot_exe: str, mod_id: str, source_image: Path, temp_prefix: str) -> tuple[Path, Path, str] | None:
+def generate_import_artifacts(
+    godot_exe: str,
+    mod_id: str,
+    source_image: Path,
+    temp_prefix: str,
+    compress_mode: int = 1,
+    lossy_quality: float = 0.85,
+) -> tuple[Path, Path, str] | None:
     with tempfile.TemporaryDirectory() as temp_dir_raw:
         temp_dir = Path(temp_dir_raw)
         mod_dir = temp_dir / mod_id
@@ -86,6 +93,21 @@ def generate_import_artifacts(godot_exe: str, mod_id: str, source_image: Path, t
         if not wait_for_file(import_file):
             return None
 
+        # The mod icon is a full-colour illustration, so lossless VRAM-free
+        # compression leaves a ~300 KB .ctex. Lossy WebP at 0.85 is visually
+        # indistinguishable at the 500x380 the mod screen draws it at and is
+        # roughly five times smaller.
+        import_file.write_text(
+            apply_import_params(
+                import_file.read_text(encoding="utf-8"),
+                {"compress/mode": compress_mode, "compress/lossy_quality": lossy_quality},
+            ),
+            encoding="utf-8",
+        )
+        for stale in (temp_dir / ".godot" / "imported").glob("*"):
+            stale.unlink()
+        run([godot_exe, "--headless", "--editor", "--quit", "--path", str(temp_dir)], quiet=True)
+
         import_text = import_file.read_text(encoding="utf-8")
         ctex_rel_path = parse_ctex_path(import_text)
         if not ctex_rel_path:
@@ -101,6 +123,18 @@ def generate_import_artifacts(godot_exe: str, mod_id: str, source_image: Path, t
         shutil.copy2(import_file, stable_import)
         shutil.copy2(ctex_path, stable_ctex)
         return stable_import, stable_ctex, ctex_rel_path
+
+
+def apply_import_params(import_text: str, params: dict[str, object]) -> str:
+    """Rewrite importer settings in a Godot .import file in place."""
+    for key, value in params.items():
+        pattern = re.compile(rf"^{re.escape(key)}=.*$", flags=re.MULTILINE)
+        replacement = f"{key}={value}"
+        if pattern.search(import_text):
+            import_text = pattern.sub(replacement, import_text)
+        else:
+            import_text = import_text.rstrip("\n") + "\n" + replacement + "\n"
+    return import_text
 
 
 def wait_for_file(path: Path, timeout_seconds: float = 5.0) -> bool:

@@ -44,14 +44,19 @@ func _init() -> void:
 		return
 
 	if image_src != "" and FileAccess.file_exists(image_src):
-		# Only the namespaced path is packed. The game (NModInfoContainer.Fill) and
-		# RitsuLib both load "res://<mod id>/mod_image.png", so a second copy at
-		# "res://mod_image.png" would only double the pack size with no reader.
-		err = packer.add_file("res://%s/mod_image.png" % mod_id, image_src)
-		if err != OK:
-			printerr("Failed to add namespaced mod_image.png, code: ", err)
-			quit(14)
-			return
+		# Only the namespaced path is packed, and only when the importer artifacts
+		# are missing. With a .import file present, Godot resolves
+		# "res://<mod id>/mod_image.png" through the remap to the .ctex, so packing
+		# the source PNG as well just ships the same picture twice.
+		var have_import := image_import_src != "" and FileAccess.file_exists(image_import_src) \
+			and image_ctex_src != "" and FileAccess.file_exists(image_ctex_src) \
+			and image_ctex_target != ""
+		if not have_import:
+			err = packer.add_file("res://%s/mod_image.png" % mod_id, image_src)
+			if err != OK:
+				printerr("Failed to add namespaced mod_image.png, code: ", err)
+				quit(14)
+				return
 
 		if image_import_src != "" and FileAccess.file_exists(image_import_src):
 			err = packer.add_file("res://%s/mod_image.png.import" % mod_id, image_import_src)

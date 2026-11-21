@@ -71,6 +71,10 @@ fi
 
 if [[ -f "${DIST_DIR}/mod_image.png" ]]; then
   cp -f "${DIST_DIR}/mod_image.png" "${GAME_MOD_DIR}/mod_image.png"
+else
+  # Older installs staged a loose icon that nothing reads; keep local mod folders
+  # from silently keeping a stale copy.
+  rm -f "${GAME_MOD_DIR}/mod_image.png"
 fi
 
 if ! cmp -s "${SRC_DLL}" "${DST_DLL}"; then

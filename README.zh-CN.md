@@ -36,8 +36,7 @@ This repository is a fork of Jack Carlton's [customjack/sts2_BetterRewards](http
 6. 确认 `mods/BetterRewards` 中包含这些文件：
    - `BetterRewards.dll`
    - `BetterRewards.json`
-   - `BetterRewards.pck`（模组图标）
-   - `mod_image.png`
+   - `BetterRewards.pck`（模组图标，以导入后的 `.ctex` 形式打包）
 7. 启动《杀戮尖塔 2》。如果提示启用模组，请接受并重新启动。
 8. 在游戏中启用 `BetterRewards`。打开 RitsuLib 的模组设置（主菜单快捷入口或暂停菜单中的入口），然后选择 BetterRewards。
 
@@ -88,7 +87,9 @@ RitsuLib 会把它们保存为游戏用户数据目录下的 `settings.json`。�
 ./scripts/bash/install_to_game.sh
 ```
 
-`build_and_stage.sh` 会针对游戏程序集和 RitsuLib 编译 `BetterRewards.dll`，然后将 dll、`BetterRewards.json`、`BetterRewards.pck` 和 `mod_image.png` 复制到 `dist/BetterRewards`。pck 包里只有模组图标，且只放在游戏实际读取的那一个路径（`res://BetterRewards/mod_image.png`）。改动 `mod_image.png` 之后，或遇到更新后的游戏拒绝已提交的 pck 时，可用 `./scripts/bash/make_pck.sh` 重新打包。该脚本需要 Godot 4.5。
+`build_and_stage.sh` 会针对游戏程序集和 RitsuLib 编译 `BetterRewards.dll`，然后将 dll、`BetterRewards.json` 和 `BetterRewards.pck` 复制到 `dist/BetterRewards`。pck 里用 `.import` 重映射加导入后的 `.ctex` 承载模组图标，Godot 正是通过这条重映射解析 `res://BetterRewards/mod_image.png`，因此不再打包源 PNG，也不再随包附带散装的 `mod_image.png`（没有任何代码读它）。改动 `mod_image.png` 之后，或遇到更新后的游戏拒绝已提交的 pck 时，可用 `./scripts/bash/make_pck.sh` 重新打包。导入器采用 0.85 的有损 WebP，在模组界面 603x380 的实际显示尺寸下肉眼无差别，而 pck 从约 680 KB 降到约 60 KB。该脚本需要 Godot 4.5。
+
+`resources/` 里的内嵌图标刻意做成 256 px 并做调色板量化，因为商店按钮只把图标画在 80x80 的控件里，事件选项图标更是 60x60。新增图标后请运行 `python scripts/tools/optimize_icons.py`，加 `--check` 可只查看当前尺寸。
 
 **建议在游戏中测试：**
 1. 模组列表中能看到 BetterRewards，RitsuLib 的设置界面中能看到事件、商店刷新、随机遗物、随机物品这些滑条。

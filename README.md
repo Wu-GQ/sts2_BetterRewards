@@ -36,8 +36,7 @@ Adds a bargain on the opening ancient where you can sacrifice HP for gold, then 
 6. Confirm these files are present in `mods/BetterRewards`:
    - `BetterRewards.dll`
    - `BetterRewards.json`
-   - `BetterRewards.pck` (mod icon)
-   - `mod_image.png`
+   - `BetterRewards.pck` (mod icon, packaged as an imported `.ctex`)
 7. Launch Slay the Spire 2. If prompted to enable mods, accept and relaunch.
 8. In-game, enable `BetterRewards`. Open RitsuLib's mod settings (the main-menu shortcut or the pause-menu entry) and select BetterRewards.
 
@@ -88,7 +87,9 @@ What is shared, and therefore replayed on every peer, is the run state the purch
 ./scripts/bash/install_to_game.sh
 ```
 
-`build_and_stage.sh` compiles `BetterRewards.dll` against the game assemblies and RitsuLib, then copies the dll, `BetterRewards.json`, `BetterRewards.pck`, and `mod_image.png` into `dist/BetterRewards`. The pack holds only the mod icon, at the one path the game reads it from (`res://BetterRewards/mod_image.png`). Rebuild it with `./scripts/bash/make_pck.sh` after changing `mod_image.png`, or if a newer game rejects the committed pack. That script needs Godot 4.5.
+`build_and_stage.sh` compiles `BetterRewards.dll` against the game assemblies and RitsuLib, then copies the dll, `BetterRewards.json`, and `BetterRewards.pck` into `dist/BetterRewards`. The pack carries the mod icon as a `.import` remap plus the imported `.ctex`; Godot resolves `res://BetterRewards/mod_image.png` through that remap, so the source PNG is not packed and no loose `mod_image.png` is shipped (nothing reads one). Rebuild with `./scripts/bash/make_pck.sh` after changing `mod_image.png`, or if a newer game rejects the committed pack. The importer uses lossy WebP at 0.85, which is visually indistinguishable at the 603x380 the mod screen draws the icon at and keeps the pack near 60 KB instead of 680 KB. That script needs Godot 4.5.
+
+The embedded UI icons in `resources/` are deliberately 256 px and palette-quantised, because the shop buttons draw them in 80x80 controls and the event option icon in a 60x60 one. Run `python scripts/tools/optimize_icons.py` after adding an icon, or pass `--check` to print the current sizes.
 
 **What to test in game:**
 1. The mod list shows BetterRewards, and RitsuLib's settings screen lists the Event, Shop reroll, Random relic, and Random item sliders.

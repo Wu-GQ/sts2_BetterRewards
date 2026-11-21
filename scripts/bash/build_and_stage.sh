@@ -82,9 +82,10 @@ cp -f "${PROJECT_ROOT}/mod_manifest.json" "${DIST_DIR}/${MOD_ID}.json"
 cp -f "${PROJECT_ROOT}/mod_manifest.json" "${ROOT_JSON}"
 rm -f "${DIST_DIR}/mod_manifest.json"
 
-if [[ -f "${PROJECT_ROOT}/mod_image.png" ]]; then
-  cp -f "${PROJECT_ROOT}/mod_image.png" "${DIST_DIR}/mod_image.png"
-fi
+# The mod icon ships inside the PCK, as a .import remap plus the imported .ctex,
+# which is the only form Godot resolves for "res://<mod id>/mod_image.png".
+# A loose copy next to the DLL is dead weight: the game never reads it.
+rm -f "${DIST_DIR}/mod_image.png"
 
 if [[ -f "${PROJECT_ROOT}/${MOD_ID}.pck" ]]; then
   cp -f "${PROJECT_ROOT}/${MOD_ID}.pck" "${DIST_DIR}/${MOD_ID}.pck"
