@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "จำนวนครั้งที่เสียสละได้",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "จำนวนครั้งที่สามารถเสียสละ HP เพื่อแลกทองได้",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "คะแนน → ทอง %",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "สัดส่วนของคะแนนรอบก่อนหน้าที่แปลงเป็นทองต่อการเสียสละหนึ่งครั้ง (เช่น 0.25 = 25% ของคะแนนต่อการเสียสละ)",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "สัดส่วนของคะแนนรอบก่อนหน้าที่แปลงเป็นทองต่อการเสียสละหนึ่งครั้ง (เช่น 0.5 = 50% ของคะแนนต่อการเสียสละ)",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "คะแนนรอบก่อนหน้าขั้นต่ำ",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "คะแนนรอบก่อนหน้าที่มีผลจะไม่ต่ำกว่าค่านี้ จึงยังได้รับทองขั้นต่ำแม้ในการเล่นครั้งแรก",
   "BETTERREWARDS-SHOP_REROLL.title": "รีโรลร้านค้า",

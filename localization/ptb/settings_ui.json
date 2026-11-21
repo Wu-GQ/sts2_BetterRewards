@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Repetições de sacrifício",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Quantas vezes você pode sacrificar PV em troca de ouro.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Pontuação → ouro %",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Fração da pontuação da run anterior convertida em ouro a cada sacrifício (ex.: 0.25 = 25% da pontuação por sacrifício).",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Fração da pontuação da run anterior convertida em ouro a cada sacrifício (ex.: 0.5 = 50% da pontuação por sacrifício).",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Pontuação anterior mínima",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "A pontuação efetiva da run anterior é no mínimo este valor, garantindo ouro mínimo mesmo na primeira partida.",
   "BETTERREWARDS-SHOP_REROLL.title": "Reroll da loja",

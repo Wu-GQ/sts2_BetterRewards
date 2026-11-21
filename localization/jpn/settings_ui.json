@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "犠牲回数",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "HPをゴールドに交換できる回数。",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "スコア→ゴールド割合",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "犠牲1回ごとに、前回のランのスコアをこの割合でゴールドに変換します（例：0.25は、1回あたりスコアの25%）。",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "犠牲1回ごとに、前回のランのスコアをこの割合でゴールドに変換します（例：0.5は、1回あたりスコアの50%）。",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "前回スコアの下限",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "前回のランの有効スコアはこの値を下回らず、初回プレイでも最低限のゴールドを得られます。",
   "BETTERREWARDS-SHOP_REROLL.title": "ショップリロール",

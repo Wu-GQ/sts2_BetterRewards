@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Sacrifice Repeats",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "How many times you may sacrifice HP for gold.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Score → Gold %",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Fraction of your previous run's score converted to gold per sacrifice (e.g. 0.25 = 25% of score per sacrifice).",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Fraction of your previous run's score converted to gold per sacrifice (e.g. 0.5 = 50% of score per sacrifice).",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Minimum Previous Score",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "The effective previous-run score is at least this value, guaranteeing a minimum gold opportunity even on the first run.",
   "BETTERREWARDS-SHOP_REROLL.title": "Shop reroll",

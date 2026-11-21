@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "可牺牲次数",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "可以用生命兑换金币的次数。",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "得分兑换金币比例",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "每次牺牲将上一局得分按该比例兑换为金币（例如 0.25 表示每次兑换上一局得分的 25%）。",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "每次牺牲将上一局得分按该比例兑换为金币（例如 0.5 表示每次兑换上一局得分的 50%）。",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "最低上一局得分",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "上一局有效得分不会低于该值，即使是第一次游戏，也保证有最低金币可兑换。",
   "BETTERREWARDS-SHOP_REROLL.title": "商店刷新",

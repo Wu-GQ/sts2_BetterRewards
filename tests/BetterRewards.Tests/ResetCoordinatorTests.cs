@@ -41,7 +41,7 @@ public sealed class ResetCoordinatorTests
             HpSacrificePercent = 0.85,
             SacrificeRepeatCount = 8,
             ScoreToGoldPercent = 0.75,
-            MinPreviousScore = 8000,
+            MinPreviousScore = 1500,
             ShopRerollBaseCost = 950.0,
             ShopRerollCostIncrement = 450.0,
             RelicBaseCost = 950.0,
@@ -64,7 +64,7 @@ public sealed class ResetCoordinatorTests
             HpSacrificePercent = 0.85,
             SacrificeRepeatCount = 8,
             ScoreToGoldPercent = 0.75,
-            MinPreviousScore = 8000,
+            MinPreviousScore = 1500,
             ShopRerollBaseCost = 950.0,
             ShopRerollCostIncrement = 450.0,
             RelicBaseCost = 950.0,
@@ -78,7 +78,7 @@ public sealed class ResetCoordinatorTests
         var model = store.Model;
         Assert.Equal(0.20, model.HpSacrificePercent);
         Assert.Equal(4, model.SacrificeRepeatCount);
-        Assert.Equal(0.25, model.ScoreToGoldPercent);
+        Assert.Equal(0.5, model.ScoreToGoldPercent);
         Assert.Equal(1000, model.MinPreviousScore);
         Assert.Equal(150.0, model.ShopRerollBaseCost);
         Assert.Equal(50.0, model.ShopRerollCostIncrement);
@@ -98,7 +98,7 @@ public sealed class ResetCoordinatorTests
         var model = store.Model;
         Assert.Equal(0.20, model.HpSacrificePercent);
         Assert.Equal(4, model.SacrificeRepeatCount);
-        Assert.Equal(0.25, model.ScoreToGoldPercent);
+        Assert.Equal(0.5, model.ScoreToGoldPercent);
         Assert.Equal(1000, model.MinPreviousScore);
         Assert.Equal(150.0, model.ShopRerollBaseCost);
         Assert.Equal(50.0, model.ShopRerollCostIncrement);

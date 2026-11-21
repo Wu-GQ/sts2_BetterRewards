@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "희생 횟수",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "HP를 골드로 교환할 수 있는 횟수입니다.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "점수 → 골드 비율",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "희생 1회마다 이전 런의 점수를 이 비율로 골드로 변환합니다(예: 0.25는 회당 점수의 25%).",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "희생 1회마다 이전 런의 점수를 이 비율로 골드로 변환합니다(예: 0.5는 회당 점수의 50%).",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "이전 점수 최솟값",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "이전 런의 유효 점수는 이 값 미만이 되지 않으며, 첫 플레이에서도 최소한의 골드를 받을 수 있습니다.",
   "BETTERREWARDS-SHOP_REROLL.title": "상점 리롤",

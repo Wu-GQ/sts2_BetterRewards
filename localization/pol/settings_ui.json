@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Liczba poświęceń",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Ile razy możesz poświęcić PŻ w zamian za złoto.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Wynik → złoto %",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Część wyniku poprzedniego podejścia zamieniana na złoto przy każdym poświęceniu (np. 0.25 = 25% wyniku na poświęcenie).",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Część wyniku poprzedniego podejścia zamieniana na złoto przy każdym poświęceniu (np. 0.5 = 50% wyniku na poświęcenie).",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Minimalny poprzedni wynik",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "Efektywny wynik poprzedniego podejścia wynosi co najmniej tę wartość, gwarantując minimum złota nawet przy pierwszym podejściu.",
   "BETTERREWARDS-SHOP_REROLL.title": "Przetasowanie sklepu",

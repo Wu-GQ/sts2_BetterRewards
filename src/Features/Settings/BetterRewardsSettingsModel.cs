@@ -12,7 +12,7 @@ internal sealed class BetterRewardsSettingsModel
 {
     public double HpSacrificePercent { get; set; } = 0.20;
     public int SacrificeRepeatCount { get; set; } = 4;
-    public double ScoreToGoldPercent { get; set; } = 0.25;
+    public double ScoreToGoldPercent { get; set; } = 0.5;
     public int MinPreviousScore { get; set; } = 1000;
     public double ShopRerollBaseCost { get; set; } = 150.0;
     public double ShopRerollCostIncrement { get; set; } = 50.0;
@@ -40,8 +40,8 @@ internal sealed class BetterRewardsSettingsModel
     {
         HpSacrificePercent = Math.Clamp(HpSacrificePercent, 0.0, 1.0);
         SacrificeRepeatCount = Math.Clamp(SacrificeRepeatCount, 1, 10);
-        ScoreToGoldPercent = Math.Clamp(ScoreToGoldPercent, 0.0, 1.0);
-        MinPreviousScore = Math.Clamp(MinPreviousScore, 1000, 10000);
+        ScoreToGoldPercent = Math.Clamp(ScoreToGoldPercent, 0.01, 1.0);
+        MinPreviousScore = Math.Clamp(MinPreviousScore, 0, 2000);
         ShopRerollBaseCost = Math.Clamp(ShopRerollBaseCost, 50.0, 1000.0);
         ShopRerollCostIncrement = Math.Clamp(ShopRerollCostIncrement, 0.0, 500.0);
         RelicBaseCost = Math.Clamp(RelicBaseCost, 50.0, 1000.0);

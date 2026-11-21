@@ -17,7 +17,7 @@ public sealed class SettingsDefaultsTests
 
         Assert.Equal(0.20, model.HpSacrificePercent);
         Assert.Equal(4, model.SacrificeRepeatCount);
-        Assert.Equal(0.25, model.ScoreToGoldPercent);
+        Assert.Equal(0.5, model.ScoreToGoldPercent);
         Assert.Equal(1000, model.MinPreviousScore);
         Assert.Equal(150.0, model.ShopRerollBaseCost);
         Assert.Equal(50.0, model.ShopRerollCostIncrement);
@@ -96,7 +96,7 @@ public sealed class SettingsDefaultsTests
             HpSacrificePercent = 0.9,
             SacrificeRepeatCount = 9,
             ScoreToGoldPercent = 0.9,
-            MinPreviousScore = 9000,
+            MinPreviousScore = 1500,
             ShopRerollBaseCost = 900.0,
             ShopRerollCostIncrement = 400.0,
             RelicBaseCost = 900.0,
@@ -109,7 +109,7 @@ public sealed class SettingsDefaultsTests
 
         Assert.Equal(0.20, model.HpSacrificePercent);
         Assert.Equal(4, model.SacrificeRepeatCount);
-        Assert.Equal(0.25, model.ScoreToGoldPercent);
+        Assert.Equal(0.5, model.ScoreToGoldPercent);
         Assert.Equal(1000, model.MinPreviousScore);
         Assert.Equal(150.0, model.ShopRerollBaseCost);
         Assert.Equal(50.0, model.ShopRerollCostIncrement);
@@ -128,7 +128,7 @@ public sealed class SettingsDefaultsTests
             HpSacrificePercent = -5.0,
             SacrificeRepeatCount = -5,
             ScoreToGoldPercent = -5.0,
-            MinPreviousScore = 0,
+            MinPreviousScore = -50,
             ShopRerollBaseCost = 0.0,
             ShopRerollCostIncrement = -50.0,
             RelicBaseCost = 0.0,
@@ -140,8 +140,8 @@ public sealed class SettingsDefaultsTests
 
         Assert.Equal(0.0, low.HpSacrificePercent);
         Assert.Equal(1, low.SacrificeRepeatCount);
-        Assert.Equal(0.0, low.ScoreToGoldPercent);
-        Assert.Equal(1000, low.MinPreviousScore);
+        Assert.Equal(0.01, low.ScoreToGoldPercent);
+        Assert.Equal(0, low.MinPreviousScore);
         Assert.Equal(50.0, low.ShopRerollBaseCost);
         Assert.Equal(0.0, low.ShopRerollCostIncrement);
         Assert.Equal(50.0, low.RelicBaseCost);
@@ -168,7 +168,7 @@ public sealed class SettingsDefaultsTests
         Assert.Equal(1.0, high.HpSacrificePercent);
         Assert.Equal(10, high.SacrificeRepeatCount);
         Assert.Equal(1.0, high.ScoreToGoldPercent);
-        Assert.Equal(10000, high.MinPreviousScore);
+        Assert.Equal(2000, high.MinPreviousScore);
         Assert.Equal(1000.0, high.ShopRerollBaseCost);
         Assert.Equal(500.0, high.ShopRerollCostIncrement);
         Assert.Equal(1000.0, high.RelicBaseCost);
@@ -185,7 +185,7 @@ public sealed class SettingsDefaultsTests
 
         Assert.Equal(0.20, model.HpSacrificePercent);
         Assert.Equal(4, model.SacrificeRepeatCount);
-        Assert.Equal(0.25, model.ScoreToGoldPercent);
+        Assert.Equal(0.5, model.ScoreToGoldPercent);
         Assert.Equal(1000, model.MinPreviousScore);
         Assert.Equal(150.0, model.ShopRerollBaseCost);
         Assert.Equal(50.0, model.ShopRerollCostIncrement);

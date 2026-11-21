@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Nombre de sacrifices",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Nombre de fois où vous pouvez sacrifier des PV contre de l'or.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Score → or %",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Fraction du score de la partie précédente convertie en or à chaque sacrifice (par ex. 0.25 = 25 % du score par sacrifice).",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Fraction du score de la partie précédente convertie en or à chaque sacrifice (par ex. 0.5 = 50 % du score par sacrifice).",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Score précédent minimum",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "Le score effectif de la partie précédente est au moins égal à cette valeur, ce qui garantit un minimum d'or même dès la première partie.",
   "BETTERREWARDS-SHOP_REROLL.title": "Reroll de boutique",

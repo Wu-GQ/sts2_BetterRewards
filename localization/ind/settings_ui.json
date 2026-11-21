@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Jumlah pengorbanan",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Berapa kali kamu boleh mengorbankan HP untuk emas.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Skor → emas %",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Bagian skor run sebelumnya yang diubah menjadi emas setiap pengorbanan (mis. 0.25 = 25% skor per pengorbanan).",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Bagian skor run sebelumnya yang diubah menjadi emas setiap pengorbanan (mis. 0.5 = 50% skor per pengorbanan).",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Skor sebelumnya minimum",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "Skor efektif run sebelumnya setidaknya sebesar nilai ini, menjamin emas minimum bahkan pada permainan pertama.",
   "BETTERREWARDS-SHOP_REROLL.title": "Reroll toko",

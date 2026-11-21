@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Число жертв",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Сколько раз можно жертвовать ОЗ в обмен на золото.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Счёт → золото %",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Доля счёта предыдущего забега, превращаемая в золото при каждой жертве (напр. 0.25 = 25% счёта за жертву).",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Доля счёта предыдущего забега, превращаемая в золото при каждой жертве (напр. 0.5 = 50% счёта за жертву).",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Минимальный предыдущий счёт",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "Эффективный счёт предыдущего забега не ниже этого значения, что гарантирует минимум золота даже в первом забеге.",
   "BETTERREWARDS-SHOP_REROLL.title": "Обновление магазина",
