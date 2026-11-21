@@ -3,7 +3,7 @@
   "BETTERREWARDS.mod_desc": "Ajoute un marché à l'événement antique d'ouverture : vous pouvez sacrifier des PV contre de l'or, puis faire vos achats dans une boutique spéciale avec reroll, reliques aléatoires et objets aléatoires.",
   "BETTERREWARDS-EVENT.title": "Événement",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "% de PV sacrifiés",
-  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Fraction de vos PV actuels perdue à chaque sacrifice (0.0–1.0). Un seul sacrifice ne peut pas dépasser vos PV max divisés par le nombre de sacrifices.",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Fraction de vos PV max perdus à chaque sacrifice (0.0–1.0). Un seul sacrifice ne peut pas dépasser vos PV max divisés par le nombre de sacrifices.",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Nombre de sacrifices",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Nombre de fois où vous pouvez sacrifier des PV contre de l'or.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Score → or %",

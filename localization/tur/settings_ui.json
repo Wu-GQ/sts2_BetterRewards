@@ -3,7 +3,7 @@
   "BETTERREWARDS.mod_desc": "Açılıştaki antik olaya bir pazarlık ekler: can karşılığında altın feda edip, dükkân yenileme, rastgele relik ve rastgele eşya sunan özel bir dükkânda alışveriş yapabilirsiniz.",
   "BETTERREWARDS-EVENT.title": "Olay",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "Fedakârlık can oranı",
-  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Her fedakârlıkta kaybedilen mevcut can oranı (0.0–1.0). Tek bir fedakârlık, maksimum canın fedakârlık sayısına bölümünü aşamaz.",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Her fedakârlıkta kaybedilen maksimum can oranı (0.0–1.0). Tek bir fedakârlık, maksimum canın fedakârlık sayısına bölümünü aşamaz.",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Fedakârlık sayısı",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Canı altın karşılığında kaç kez feda edebileceğin.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Skor → altın %",

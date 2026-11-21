@@ -3,7 +3,7 @@
   "BETTERREWARDS.mod_desc": "يضيف صفقة إلى حدث القدماء في بداية اللعبة: يمكنك التضحية بنقاط الحياة مقابل الذهب، ثم التسوق في متجر خاص يضم إعادة رمي المتجر وآثارًا عشوائية وأغراضًا عشوائية.",
   "BETTERREWARDS-EVENT.title": "حدث",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "نسبة التضحية بالصحة",
-  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "حصة نقاط صحتك الحالية التي تُفقد في كل تضحية (0.0–1.0). لا يمكن لتضحية واحدة أن تتجاوز نقاط صحتك القصوى مقسومة على عدد التضحيات.",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "حصة نقاط صحتك القصوى التي تُفقد في كل تضحية (0.0–1.0). لا يمكن لتضحية واحدة أن تتجاوز نقاط صحتك القصوى مقسومة على عدد التضحيات.",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "عدد التضحيات",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "كم مرة يمكنك التضحية بنقاط الصحة مقابل الذهب.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "النتيجة ← الذهب %",

@@ -3,7 +3,7 @@
   "BETTERREWARDS.mod_desc": "Menambahkan tawar-menawar di peristiwa kuno awal: kamu dapat mengorbankan HP untuk emas, lalu berbelanja di toko khusus dengan reroll, relik acak, dan item acak.",
   "BETTERREWARDS-EVENT.title": "Peristiwa",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "Persentase pengorbanan HP",
-  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Bagian HP saat ini yang hilang setiap pengorbanan (0.0–1.0). Satu pengorbanan tidak boleh melebihi HP maksimum dibagi jumlah pengorbanan.",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Bagian HP maksimum yang hilang setiap pengorbanan (0.0–1.0). Satu pengorbanan tidak boleh melebihi HP maksimum dibagi jumlah pengorbanan.",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Jumlah pengorbanan",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Berapa kali kamu boleh mengorbankan HP untuk emas.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Skor → emas %",

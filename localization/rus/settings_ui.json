@@ -3,7 +3,7 @@
   "BETTERREWARDS.mod_desc": "Добавляет сделку в стартовое древнее событие: вы можете пожертвовать ОЗ в обмен на золото, а затем делать покупки в особом магазине с обновлением магазина, случайными реликвиями и случайными предметами.",
   "BETTERREWARDS-EVENT.title": "Событие",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "Доля жертвуемых ОЗ",
-  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Доля текущих ОЗ, теряемая при каждой жертве (0.0–1.0). Одна жертва не может превысить ваши максимальные ОЗ, делённые на число жертв.",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Доля максимальных ОЗ, теряемая при каждой жертве (0.0–1.0). Одна жертва не может превысить ваши максимальные ОЗ, делённые на число жертв.",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Число жертв",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Сколько раз можно жертвовать ОЗ в обмен на золото.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Счёт → золото %",

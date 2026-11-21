@@ -3,7 +3,7 @@
   "BETTERREWARDS.mod_desc": "시작 고대 이벤트에 거래를 추가합니다. 체력을 희생해 골드를 얻은 뒤, 상점 리롤, 무작위 유물, 무작위 아이템이 있는 특별 상점에서 쇼핑할 수 있습니다.",
   "BETTERREWARDS-EVENT.title": "이벤트",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "HP 희생 비율",
-  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "희생 1회마다 잃는 현재 HP의 비율(0.0–1.0). 한 번의 희생은 최대 HP를 희생 횟수로 나눈 값을 넘지 않습니다.",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "희생 1회마다 잃는 최대 HP의 비율(0.0–1.0). 한 번의 희생은 최대 HP를 희생 횟수로 나눈 값을 넘지 않습니다.",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "희생 횟수",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "HP를 골드로 교환할 수 있는 횟수입니다.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "점수 → 골드 비율",

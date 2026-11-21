@@ -3,7 +3,7 @@
   "BETTERREWARDS.mod_desc": "เพิ่มข้อตกลงในเหตุการณ์โบราณตอนเปิดเกม ให้คุณเสียสละพลังชีวิตเพื่อแลกทอง แล้วไปซื้อของในร้านพิเศษที่มีรีโรลร้านค้า เรลิกสุ่ม และไอเทมสุ่ม",
   "BETTERREWARDS-EVENT.title": "เหตุการณ์",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "สัดส่วนการเสียสละ HP",
-  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "สัดส่วนของ HP ปัจจุบันที่เสียในแต่ละครั้งของการเสียสละ (0.0–1.0) การเสียสละหนึ่งครั้งจะไม่เกิน HP สูงสุดหารด้วยจำนวนครั้งที่เสียสละได้",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "สัดส่วนของ HP สูงสุดที่เสียในแต่ละครั้งของการเสียสละ (0.0–1.0) การเสียสละหนึ่งครั้งจะไม่เกิน HP สูงสุดหารด้วยจำนวนครั้งที่เสียสละได้",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "จำนวนครั้งที่เสียสละได้",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "จำนวนครั้งที่สามารถเสียสละ HP เพื่อแลกทองได้",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "คะแนน → ทอง %",

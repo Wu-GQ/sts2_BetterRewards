@@ -3,7 +3,7 @@
   "BETTERREWARDS.mod_desc": "Añade un trato al evento antiguo inicial: puedes sacrificar PV a cambio de oro y luego comprar en una tienda especial con reroll, reliquias aleatorias y objetos aleatorios.",
   "BETTERREWARDS-EVENT.title": "Evento",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "% de PV sacrificados",
-  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Fracción de tus PV actuales que pierdes en cada sacrificio (0.0–1.0). Un solo sacrificio no puede superar tus PV máximos divididos entre las repeticiones de sacrificio.",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Fracción de tus PV máximos que pierdes en cada sacrificio (0.0–1.0). Un solo sacrificio no puede superar tus PV máximos divididos entre las repeticiones de sacrificio.",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Repeticiones de sacrificio",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Cuántas veces puedes sacrificar PV a cambio de oro.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Puntuación → oro %",

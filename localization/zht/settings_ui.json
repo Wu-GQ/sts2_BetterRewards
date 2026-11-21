@@ -3,7 +3,7 @@
   "BETTERREWARDS.mod_desc": "在開局遠古事件中新增一項交易：你可以用生命換取金幣，然後進入帶有刷新、隨機遺物和隨機物品的特殊商店。",
   "BETTERREWARDS-EVENT.title": "事件",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "生命犧牲比例",
-  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "每次犧牲扣除目前生命的比例（0.0–1.0）。單次犧牲不會超過最大生命除以可犧牲次數。",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "每次犧牲扣除最大生命的比例（0.0–1.0）。單次犧牲不會超過最大生命除以可犧牲次數。",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "可犧牲次數",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "可以用生命兌換金幣的次數。",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "得分兌換金幣比例",

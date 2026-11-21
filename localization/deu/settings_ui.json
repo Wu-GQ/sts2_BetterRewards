@@ -3,7 +3,7 @@
   "BETTERREWARDS.mod_desc": "Fügt dem Antiken-Eröffnungsereignis einen Handel hinzu, bei dem du LP gegen Gold opfern und anschließend in einem Spezialladen mit Laden-Reroll, zufälligen Relikten und zufälligen Gegenständen einkaufen kannst.",
   "BETTERREWARDS-EVENT.title": "Ereignis",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "LP-Opferanteil",
-  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Anteil deiner aktuellen LP, der pro Opfer verloren geht (0.0–1.0). Eine einzelne Wahl kostet höchstens deine maximalen LP geteilt durch die Opferwiederholungen.",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Anteil deiner maximalen LP, der pro Opfer verloren geht (0.0–1.0). Eine einzelne Wahl kostet höchstens deine maximalen LP geteilt durch die Opferwiederholungen.",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Opferwiederholungen",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Wie oft du LP gegen Gold opfern darfst.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Punktestand → Gold %",

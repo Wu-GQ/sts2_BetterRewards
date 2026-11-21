@@ -2,7 +2,9 @@
 
 [English](README.md) | **简体中文**
 
-本仓库是 Jack Carlton 的 [customjack/sts2_BetterRewards](https://github.com/customjack/sts2_BetterRewards) 的 fork。玩法仍属于原作者。本 fork 使用 [RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib) 管理设置和联机同步。它不是上游项目，也尚未发布到 Steam 创意工坊。
+This repository is a fork of Jack Carlton's [customjack/sts2_BetterRewards](https://github.com/customjack/sts2_BetterRewards). Gameplay is his. This fork uses [RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib) for settings and in-run multiplayer sync. It is not the upstream project.
+
+欢迎提交 issue 与 pull request：Bug 反馈、平衡建议、翻译修正、新点子都可以。反馈崩溃或联机分歧时请附上 `godot.log`。
 
 原模组采用 MIT 许可。Copyright (c) 2026 Jack Carlton。详见 [LICENSE](LICENSE)。
 
@@ -21,6 +23,9 @@
 
 ## 安装
 
+**从创意工坊安装（推荐）：** 订阅 [创意工坊上的 BetterRewards](https://steamcommunity.com/sharedfiles/filedetails/?id=3747602295)——RitsuLib 会作为依赖一并安装——然后在游戏内模组列表中同时启用两者。
+
+**从本地构建安装：**
 1. 先在创意工坊订阅 RitsuLib。启动一次游戏，确认 `STS2-RitsuLib` 已加载。
 2. 关闭《杀戮尖塔 2》。
 3. 在 Steam 中，右键 `Slay the Spire 2` -> `属性` -> `已安装文件` -> `浏览`。
@@ -33,8 +38,6 @@
    - `mod_image.png`
 7. 启动《杀戮尖塔 2》。如果提示启用模组，请接受并重新启动。
 8. 在游戏中启用 `BetterRewards`。打开 RitsuLib 的模组设置（主菜单快捷入口或暂停菜单中的入口），然后选择 BetterRewards。
-
-请不要从这个目录把本 fork 发布到 Steam 创意工坊。
 
 ## 使用
 

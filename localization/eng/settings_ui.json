@@ -3,7 +3,7 @@
   "BETTERREWARDS.mod_desc": "Adds an opening-ancient bargain where you can sacrifice HP for gold, then shop in a special store with reroll, random relics, and random items.",
   "BETTERREWARDS-EVENT.title": "Event",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "HP Sacrifice %",
-  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Fraction of your current HP lost per sacrifice (0.0–1.0). A single sacrifice cannot exceed your max HP divided by Sacrifice Repeats.",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "Share of your max HP paid per sacrifice (0.0–1.0). A single sacrifice cannot exceed your max HP divided by Sacrifice Repeats.",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Sacrifice Repeats",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "How many times you may sacrifice HP for gold.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Score → Gold %",

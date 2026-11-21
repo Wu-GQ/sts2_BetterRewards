@@ -2,7 +2,9 @@
 
 **English** | [简体中文](README.zh-CN.md)
 
-This repository is a fork of [customjack/sts2_BetterRewards](https://github.com/customjack/sts2_BetterRewards) by Jack Carlton. Gameplay is his. This fork uses [RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib) for settings and in-run multiplayer sync. It is not the upstream project, and it is not published on the Steam Workshop.
+This repository is a fork of [customjack/sts2_BetterRewards](https://github.com/customjack/sts2_BetterRewards) by Jack Carlton. Gameplay is his. This fork uses [RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib) for settings and in-run multiplayer sync. It is not the upstream project.
+
+Issues and pull requests are welcome: bug reports, balance feedback, translation fixes and new ideas. Please attach `godot.log` when reporting a crash or a desync.
 
 The original mod is MIT licensed. Copyright (c) 2026 Jack Carlton. See [LICENSE](LICENSE).
 
@@ -21,6 +23,9 @@ Adds a bargain on the opening ancient where you can sacrifice HP for gold, then 
 
 ## Install
 
+**From the Steam Workshop (recommended):** subscribe to [BetterRewards on the Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3747602295) — RitsuLib comes with it as a dependency — then enable both mods in the in-game mod list.
+
+**From a local build:**
 1. Subscribe to RitsuLib on the Workshop first. Launch once and confirm `STS2-RitsuLib` loads.
 2. Close Slay the Spire 2.
 3. In Steam, right-click `Slay the Spire 2` -> `Properties` -> `Installed Files` -> `Browse`.
@@ -33,8 +38,6 @@ Adds a bargain on the opening ancient where you can sacrifice HP for gold, then 
    - `mod_image.png`
 7. Launch Slay the Spire 2. If prompted to enable mods, accept and relaunch.
 8. In-game, enable `BetterRewards`. Open RitsuLib's mod settings (the main-menu shortcut or the pause-menu entry) and select BetterRewards.
-
-Do not publish this fork to the Steam Workshop from this tree.
 
 ## Usage
 

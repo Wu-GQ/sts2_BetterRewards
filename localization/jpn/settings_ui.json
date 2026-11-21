@@ -3,7 +3,7 @@
   "BETTERREWARDS.mod_desc": "開幕の古代イベントに取引を追加します。HPを犠牲にしてゴールドを得てから、ショップリロール、ランダムレリック、ランダムアイテムのある特別な店で買い物できます。",
   "BETTERREWARDS-EVENT.title": "イベント",
   "BETTERREWARDS-HP_SACRIFICE_PERCENT.title": "HP犠牲割合",
-  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "犠牲1回ごとに失う現在HPの割合（0.0–1.0）。1回の犠牲で失う量は、最大HPを犠牲回数で割った値を超えません。",
+  "BETTERREWARDS-HP_SACRIFICE_PERCENT.hover.desc": "犠牲1回ごとに失う最大HPの割合（0.0–1.0）。1回の犠牲で失う量は、最大HPを犠牲回数で割った値を超えません。",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "犠牲回数",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "HPをゴールドに交換できる回数。",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "スコア→ゴールド割合",
