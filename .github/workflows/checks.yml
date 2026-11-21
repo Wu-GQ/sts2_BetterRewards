@@ -1,0 +1,62 @@
+name: checks
+
+# The mod itself cannot be compiled here: BetterRewards.csproj references sts2.dll,
+# GodotSharp.dll, 0Harmony.dll and RitsuLib, none of which may be redistributed in this
+# repository (see "Developer notes" in README.md). What does not need the game is checked:
+# the dependency-free logic tests, the localization tables, and whitespace hygiene.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Logic and contract tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      # BetterRewards.Tests links only game-free source files and never loads sts2.dll,
+      # GodotSharp or RitsuLib, so it builds and runs on a machine without the game.
+      - name: Run tests
+        run: dotnet test tests/BetterRewards.Tests/BetterRewards.Tests.csproj --configuration Release --verbosity normal
+
+  localization:
+    name: Localization tables
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # Fails on invalid JSON, on a language missing an eng key, and on a settings key that
+      # no declared setting, section or fixed reset string uses.
+      - name: Check localization
+        run: python3 scripts/tools/check_localization.py
+
+  whitespace:
+    name: Whitespace
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for whitespace errors
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff --check "origin/${{ github.base_ref }}...HEAD"
+          else
+            git diff --check HEAD~1...HEAD
+          fi

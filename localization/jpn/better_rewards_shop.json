@@ -1,0 +1,8 @@
+{
+  "reroll.title": "ショップをリロール",
+  "reroll.description": "商人の商品を新しい在庫に置き換える。",
+  "random_relic.title": "ランダムレリック",
+  "random_relic.description": "通常ショップのレアリティ確率で、ランダムなレリックを購入する。",
+  "random_item.title": "ランダムアイテム",
+  "random_item.description": "通常ショップの在庫比率とレアリティ確率で、ランダムなレリック、カード、またはポーションを購入する。"
+}

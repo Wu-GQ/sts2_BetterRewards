@@ -1,0 +1,8 @@
+{
+  "reroll.title": "Reroll del negozio",
+  "reroll.description": "Sostituisci la merce del mercante con un nuovo inventario.",
+  "random_relic.title": "Reliquia casuale",
+  "random_relic.description": "Compra una reliquia casuale usando le probabilità di rarità del negozio normale.",
+  "random_item.title": "Oggetto casuale",
+  "random_item.description": "Compra una reliquia, una carta o una pozione casuale usando le proporzioni di scorta e le probabilità di rarità del negozio normale."
+}

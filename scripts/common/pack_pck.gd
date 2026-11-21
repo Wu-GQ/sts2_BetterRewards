@@ -44,12 +44,9 @@ func _init() -> void:
 		return
 
 	if image_src != "" and FileAccess.file_exists(image_src):
-		err = packer.add_file("res://mod_image.png", image_src)
-		if err != OK:
-			printerr("Failed to add mod_image.png, code: ", err)
-			quit(12)
-			return
-
+		# Only the namespaced path is packed. The game (NModInfoContainer.Fill) and
+		# RitsuLib both load "res://<mod id>/mod_image.png", so a second copy at
+		# "res://mod_image.png" would only double the pack size with no reader.
 		err = packer.add_file("res://%s/mod_image.png" % mod_id, image_src)
 		if err != OK:
 			printerr("Failed to add namespaced mod_image.png, code: ", err)

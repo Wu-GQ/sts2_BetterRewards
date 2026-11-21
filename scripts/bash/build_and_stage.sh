@@ -68,14 +68,23 @@ DIST_DIR="${PROJECT_ROOT}/dist/${MOD_ID}"
 BUILD_OUT="${PROJECT_ROOT}/bin/${CONFIG}/${TFM}"
 ROOT_JSON="${PROJECT_ROOT}/${MOD_ID}.json"
 
+BUILD_ARGS=(-c "${CONFIG}" -p:Sts2InstallDir="${STS2_INSTALL_DIR}")
+if [[ -n "${RITSULIB_DIR:-}" ]]; then
+  BUILD_ARGS+=(-p:RitsuLibDir="${RITSULIB_DIR}")
+fi
+
 echo "Building ${MOD_ID} (${CONFIG})..."
-"${BUILD_CMD[@]}" build "${PROJECT_FILE}" -c "${CONFIG}" -p:Sts2InstallDir="${STS2_INSTALL_DIR}"
+"${BUILD_CMD[@]}" build "${PROJECT_FILE}" "${BUILD_ARGS[@]}"
 
 mkdir -p "${DIST_DIR}"
 cp -f "${BUILD_OUT}/${ASSEMBLY_NAME}.dll" "${DIST_DIR}/${MOD_ID}.dll"
 cp -f "${PROJECT_ROOT}/mod_manifest.json" "${DIST_DIR}/${MOD_ID}.json"
 cp -f "${PROJECT_ROOT}/mod_manifest.json" "${ROOT_JSON}"
 rm -f "${DIST_DIR}/mod_manifest.json"
+
+if [[ -f "${PROJECT_ROOT}/mod_image.png" ]]; then
+  cp -f "${PROJECT_ROOT}/mod_image.png" "${DIST_DIR}/mod_image.png"
+fi
 
 if [[ -f "${PROJECT_ROOT}/${MOD_ID}.pck" ]]; then
   cp -f "${PROJECT_ROOT}/${MOD_ID}.pck" "${DIST_DIR}/${MOD_ID}.pck"

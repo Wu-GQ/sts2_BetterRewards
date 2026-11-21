@@ -1,0 +1,8 @@
+{
+  "reroll.title": "Reroll Shop",
+  "reroll.description": "Replace the merchant stock with a fresh roll.",
+  "random_relic.title": "Random Relic",
+  "random_relic.description": "Buy a random relic using the regular shop's rarity odds.",
+  "random_item.title": "Random Item",
+  "random_item.description": "Buy a random relic, card, or potion using the regular shop's stock ratios and rarity odds."
+}

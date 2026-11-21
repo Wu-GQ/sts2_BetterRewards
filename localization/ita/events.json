@@ -1,0 +1,16 @@
+{
+  "BETTERREWARDS.NEOW.title": "L'accordo del mercante",
+  "BETTERREWARDS.NEOW.description": "Visita un negozio speciale. Fino a {n} sacrifici, {hpPercent}% di PF ciascuno per {goldPerSacrifice} oro.",
+  "BETTERREWARDS.NEOW.description.no_score": "Visita un negozio speciale. Nessun punteggio precedente, i sacrifici non danno oro.",
+  "BETTERREWARDS.ENTER_SHOP.title": "Entra nel negozio",
+  "BETTERREWARDS.ENTER_SHOP.description": "Lascia Neow ed entra nel negozio speciale del mercante.",
+  "BETTERREWARDS.ENTER_SHOP.desc": "Lascia Neow ed entra nel negozio speciale del mercante.",
+  "BETTERREWARDS.SACRIFICE.locked.title": "Impossibile sacrificare il {hpPercent}% di PF",
+  "BETTERREWARDS.SACRIFICE.locked.description": "Questo sacrificio ti ucciderebbe.",
+  "BETTERREWARDS.SACRIFICE.locked.desc": "Questo sacrificio ti ucciderebbe.",
+  "BETTERREWARDS.SHOP_PENDING.title": "In attesa del mercante",
+  "BETTERREWARDS.SHOP_PENDING.desc": "Il mercante attende. Entrerai nel negozio speciale quando tutti avranno finito con Neow.",
+  "BETTERREWARDS.SACRIFICE.state.desc": "Il mercante offre un accordo. Sacrifica PF in cambio di oro.\n\nSacrifici: {sacrificesDone}/{maxRepeats}  |  PF: {currentHp}/{maxHp}  |  Oro per sacrificio: {goldPerSacrifice}",
+  "BETTERREWARDS.SACRIFICE.do.title": "Sacrifica {hpCost} PF per {goldPerSacrifice} oro",
+  "BETTERREWARDS.SACRIFICE.do.desc": "Perdi {hpCost} PF e ottieni {goldPerSacrifice} oro. ({sacrificeIndex}/{maxRepeats})"
+}

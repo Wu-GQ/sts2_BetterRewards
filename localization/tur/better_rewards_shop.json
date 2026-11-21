@@ -1,0 +1,8 @@
+{
+  "reroll.title": "Dükkânı yenile",
+  "reroll.description": "Tüccarın stoğunu yeni bir seçimle değiştir.",
+  "random_relic.title": "Rastgele relik",
+  "random_relic.description": "Normal dükkânın nadirlik oranlarıyla rastgele bir relik satın al.",
+  "random_item.title": "Rastgele eşya",
+  "random_item.description": "Normal dükkânın stok oranları ve nadirlik oranlarıyla rastgele bir relik, kart veya iksir satın al."
+}

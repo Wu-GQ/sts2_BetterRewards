@@ -65,7 +65,12 @@ rm -f "${GAME_MOD_DIR}/mod_manifest.json"
 if [[ -f "${SRC_PCK}" ]]; then
   cp -f "${SRC_PCK}" "${DST_PCK}"
 else
-  echo "Warning: ${MOD_ID}.pck not found in dist; DLL only was installed."
+  echo "Missing ${SRC_PCK}. BetterRewards.pck carries the mod icon. Run scripts/bash/build_and_stage.sh from a checkout that still has ${MOD_ID}.pck, or rebuild the pack with scripts/bash/make_pck.sh." >&2
+  exit 1
+fi
+
+if [[ -f "${DIST_DIR}/mod_image.png" ]]; then
+  cp -f "${DIST_DIR}/mod_image.png" "${GAME_MOD_DIR}/mod_image.png"
 fi
 
 if ! cmp -s "${SRC_DLL}" "${DST_DLL}"; then

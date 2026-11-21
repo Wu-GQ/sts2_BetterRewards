@@ -23,17 +23,27 @@ if [[ -f "${ENV_FILE}" ]]; then
   fi
 fi
 
+normalize_path() {
+  local value="$1"
+  if [[ "${value}" =~ ^([A-Za-z]):\\ ]]; then
+    local drive_letter path_tail
+    drive_letter="$(printf '%s' "${BASH_REMATCH[1]}" | tr '[:upper:]' '[:lower:]')"
+    path_tail="${value:2}"
+    path_tail="${path_tail//\\//}"
+    value="/mnt/${drive_letter}${path_tail}"
+  fi
+  printf '%s' "${value%/}"
+}
+
 if [[ -n "${STS2_INSTALL_DIR:-}" ]]; then
   # Accept either WSL paths (/mnt/c/...) or Windows paths (C:\...).
-  if [[ "${STS2_INSTALL_DIR}" =~ ^([A-Za-z]):\\ ]]; then
-    drive_letter="$(printf '%s' "${BASH_REMATCH[1]}" | tr '[:upper:]' '[:lower:]')"
-    path_tail="${STS2_INSTALL_DIR:2}"
-    path_tail="${path_tail//\\//}"
-    STS2_INSTALL_DIR="/mnt/${drive_letter}${path_tail}"
-  fi
-
-  STS2_INSTALL_DIR="${STS2_INSTALL_DIR%/}"
+  STS2_INSTALL_DIR="$(normalize_path "${STS2_INSTALL_DIR}")"
   export STS2_INSTALL_DIR
+fi
+
+if [[ -n "${RITSULIB_DIR:-}" ]]; then
+  RITSULIB_DIR="$(normalize_path "${RITSULIB_DIR}")"
+  export RITSULIB_DIR
 fi
 
 export MMS_ENV_FILE="${ENV_FILE}"

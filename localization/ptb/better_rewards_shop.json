@@ -1,0 +1,8 @@
+{
+  "reroll.title": "Reroll da loja",
+  "reroll.description": "Substitua o estoque do mercador por uma nova seleção.",
+  "random_relic.title": "Relíquia aleatória",
+  "random_relic.description": "Compre uma relíquia aleatória usando as chances de raridade da loja normal.",
+  "random_item.title": "Item aleatório",
+  "random_item.description": "Compre uma relíquia, uma carta ou uma poção aleatória usando as proporções de estoque e as chances de raridade da loja normal."
+}

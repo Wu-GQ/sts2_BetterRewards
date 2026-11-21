@@ -31,3 +31,6 @@ echo "Activated conda env: ${CONDA_ENV_NAME}"
 if [[ -n "${STS2_INSTALL_DIR:-}" ]]; then
   echo "STS2_INSTALL_DIR=${STS2_INSTALL_DIR}"
 fi
+if [[ -n "${RITSULIB_DIR:-}" ]]; then
+  echo "RITSULIB_DIR=${RITSULIB_DIR}"
+fi

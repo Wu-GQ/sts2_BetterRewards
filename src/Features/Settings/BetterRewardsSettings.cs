@@ -1,145 +1,349 @@
+using BetterRewards.Features.Multiplayer;
+using Godot;
+using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.Core.Runs;
+using STS2RitsuLib;
+using STS2RitsuLib.Data;
+using STS2RitsuLib.RunData;
+using STS2RitsuLib.Settings;
+using STS2RitsuLib.Utils.Persistence;
+
 namespace BetterRewards.Features.Settings;
 
 /// <summary>
-/// Runtime-accessible settings values for BetterRewards.
-/// All values are set by the registration/hydration layer.
+/// BetterRewards configuration. RitsuLib owns the settings UI and persists the
+/// local model to a global <c>settings.json</c>. Gameplay reads the static
+/// properties, which follow the host snapshot in a multiplayer run and the
+/// local settings otherwise.
+/// Random relic and random item buttons follow the regular merchant shop for rarity odds
+/// and item type ratios of 3 relics / 7 cards / 3 potions. Their gold cost uses a
+/// configurable base price that increases by a fixed amount after each purchase.
 /// </summary>
 internal static class BetterRewardsSettings
 {
-    // --- HP sacrifice event ---
+    public const string ModId = "BetterRewards";
+    public const string DataKey = "settings";
+    public const string RunDataKey = "settings";
+    public const string SettingsFileName = "settings.json";
 
-    /// <summary>Fraction of current HP lost per sacrifice choice (0.0–1.0).</summary>
-    public static double HpSacrificePercent { get; private set; } = 0.20;
+    internal static readonly string[] ConfigSectionNames =
+    [
+        "Event",
+        "Shop reroll",
+        "Random relic",
+        "Random item",
+    ];
 
-    /// <summary>How many times the sacrifice option may be chosen.</summary>
-    public static int SacrificeRepeatCount { get; private set; } = 4;
+    public static RunSavedData<BetterRewardsSettingsModel> RunSettings = null!;
 
-    /// <summary>Fraction of previous run score converted to gold (0.0–100.0+).</summary>
-    public static double ScoreToGoldPercent { get; private set; } = 0.25;
+    public static BetterRewardsSettingsModel Local =>
+        ModDataStore.For(ModId).Get<BetterRewardsSettingsModel>(DataKey);
 
-    /// <summary>Minimum effective previous-run score (guarantees at least this much gold opportunity).</summary>
-    public static int MinPreviousScore { get; private set; } = 1000;
-
-    // --- Shop: reroll ---
-
-    public static double ShopRerollBaseCost { get; private set; } = 150.0;
-    public static double ShopRerollCostScaling { get; private set; } = 1.10;
-
-    // --- Shop: random relic ---
-
-    public static double RelicBaseCost { get; private set; } = 300.0;
-    public static double RelicCostScaling { get; private set; } = 1.10;
-
-    // Relic rarity weights (higher = more likely)
-    public static double RelicWeightCommon   { get; private set; } = 10.0;
-    public static double RelicWeightUncommon { get; private set; } = 20.0;
-    public static double RelicWeightRare     { get; private set; } = 35.0;
-    public static double RelicWeightShop     { get; private set; } = 10.0;
-    public static double RelicWeightAncient  { get; private set; } = 25.0;
-
-    // --- Shop: random item ---
-
-    public static double RandomItemBaseCost { get; private set; } = 75.0;
-    public static double RandomItemCostScaling { get; private set; } = 1.10;
-
-    // Item type weights (Curse is now a sub-type of Card)
-    public static double ItemWeightRelic  { get; private set; } = 15.0;
-    public static double ItemWeightCard   { get; private set; } = 50.0;
-    public static double ItemWeightPotion { get; private set; } = 35.0;
-
-    // Card sub-type weights for random item
-    // Common/Uncommon/Rare = player's character card pool
-    // Colorless = colorless pool
-    // Curse = curse cards
-    public static double CardWeightCommon    { get; private set; } = 55.0;
-    public static double CardWeightUncommon  { get; private set; } = 25.0;
-    public static double CardWeightRare      { get; private set; } = 10.0;
-    public static double CardWeightColorless { get; private set; } = 5.0;
-    public static double CardWeightCurse     { get; private set; } = 5.0;
-
-    // Relic rarity weights for random item (separate from dedicated relic button)
-    public static double ItemRelicWeightCommon   { get; private set; } = 50.0;
-    public static double ItemRelicWeightUncommon { get; private set; } = 33.0;
-    public static double ItemRelicWeightRare     { get; private set; } = 17.0;
-    public static double ItemRelicWeightShop     { get; private set; } = 5.0;
-    public static double ItemRelicWeightAncient  { get; private set; } = 2.0;
-
-    // Potion rarity weights for random item
-    public static double PotionWeightCommon   { get; private set; } = 65.0;
-    public static double PotionWeightUncommon { get; private set; } = 25.0;
-    public static double PotionWeightRare     { get; private set; } = 10.0;
-
-    // -------------------------------------------------------------------------
-    // Setters (called from registration/hydration)
-    // -------------------------------------------------------------------------
-
-    public static void SetHpSacrificePercent(double v)      => HpSacrificePercent      = Math.Clamp(v, 0.0, 1.0);
-    public static void SetSacrificeRepeatCount(double v)    => SacrificeRepeatCount    = Math.Max(1, (int)Math.Round(v));
-    public static void SetScoreToGoldPercent(double v)      => ScoreToGoldPercent      = Math.Max(0.0, v);
-    public static void SetMinPreviousScore(double v)        => MinPreviousScore        = Math.Max(0, (int)Math.Round(v));
-
-    public static void SetShopRerollBaseCost(double v)      => ShopRerollBaseCost      = Math.Max(0.0, v);
-    public static void SetShopRerollCostScaling(double v)   => ShopRerollCostScaling   = Math.Max(1.0, v);
-
-    public static void SetRelicBaseCost(double v)           => RelicBaseCost           = Math.Max(0.0, v);
-    public static void SetRelicCostScaling(double v)        => RelicCostScaling        = Math.Max(1.0, v);
-    public static void SetRelicWeightCommon(double v)       => RelicWeightCommon       = Math.Max(0.0, v);
-    public static void SetRelicWeightUncommon(double v)     => RelicWeightUncommon     = Math.Max(0.0, v);
-    public static void SetRelicWeightRare(double v)         => RelicWeightRare         = Math.Max(0.0, v);
-    public static void SetRelicWeightShop(double v)         => RelicWeightShop         = Math.Max(0.0, v);
-    public static void SetRelicWeightAncient(double v)      => RelicWeightAncient      = Math.Max(0.0, v);
-
-    public static void SetRandomItemBaseCost(double v)      => RandomItemBaseCost      = Math.Max(0.0, v);
-    public static void SetRandomItemCostScaling(double v)   => RandomItemCostScaling   = Math.Max(1.0, v);
-    public static void SetItemWeightRelic(double v)         => ItemWeightRelic         = Math.Max(0.0, v);
-    public static void SetItemWeightCard(double v)          => ItemWeightCard          = Math.Max(0.0, v);
-    public static void SetItemWeightPotion(double v)        => ItemWeightPotion        = Math.Max(0.0, v);
-    public static void SetCardWeightCommon(double v)        => CardWeightCommon        = Math.Max(0.0, v);
-    public static void SetCardWeightUncommon(double v)      => CardWeightUncommon      = Math.Max(0.0, v);
-    public static void SetCardWeightRare(double v)          => CardWeightRare          = Math.Max(0.0, v);
-    public static void SetCardWeightColorless(double v)     => CardWeightColorless     = Math.Max(0.0, v);
-    public static void SetCardWeightCurse(double v)         => CardWeightCurse         = Math.Max(0.0, v);
-    public static void SetItemRelicWeightCommon(double v)   => ItemRelicWeightCommon   = Math.Max(0.0, v);
-    public static void SetItemRelicWeightUncommon(double v) => ItemRelicWeightUncommon = Math.Max(0.0, v);
-    public static void SetItemRelicWeightRare(double v)     => ItemRelicWeightRare     = Math.Max(0.0, v);
-    public static void SetItemRelicWeightShop(double v)     => ItemRelicWeightShop     = Math.Max(0.0, v);
-    public static void SetItemRelicWeightAncient(double v)  => ItemRelicWeightAncient  = Math.Max(0.0, v);
-    public static void SetPotionWeightCommon(double v)      => PotionWeightCommon      = Math.Max(0.0, v);
-    public static void SetPotionWeightUncommon(double v)    => PotionWeightUncommon    = Math.Max(0.0, v);
-    public static void SetPotionWeightRare(double v)        => PotionWeightRare        = Math.Max(0.0, v);
-
-    public static void ResetToDefaults()
+    public static BetterRewardsSettingsModel Current
     {
-        HpSacrificePercent      = 0.20;
-        SacrificeRepeatCount    = 4;
-        ScoreToGoldPercent      = 0.25;
-        MinPreviousScore        = 1000;
-        ShopRerollBaseCost      = 150.0;
-        ShopRerollCostScaling   = 1.10;
-        RelicBaseCost           = 300.0;
-        RelicCostScaling        = 1.10;
-        RelicWeightCommon       = 10.0;
-        RelicWeightUncommon     = 20.0;
-        RelicWeightRare         = 35.0;
-        RelicWeightShop         = 10.0;
-        RelicWeightAncient      = 25.0;
-        RandomItemBaseCost      = 75.0;
-        RandomItemCostScaling   = 1.10;
-        ItemWeightRelic         = 15.0;
-        ItemWeightCard          = 50.0;
-        ItemWeightPotion        = 35.0;
-        CardWeightCommon        = 55.0;
-        CardWeightUncommon      = 25.0;
-        CardWeightRare          = 10.0;
-        CardWeightColorless     = 5.0;
-        CardWeightCurse         = 5.0;
-        ItemRelicWeightCommon   = 50.0;
-        ItemRelicWeightUncommon = 33.0;
-        ItemRelicWeightRare     = 17.0;
-        ItemRelicWeightShop     = 5.0;
-        ItemRelicWeightAncient  = 2.0;
-        PotionWeightCommon      = 65.0;
-        PotionWeightUncommon    = 25.0;
-        PotionWeightRare        = 10.0;
+        get
+        {
+            if (BetterRewardsSettingsSyncService.TryGetCached(out var cached))
+            {
+                return cached;
+            }
+
+            if (TryGetMultiplayerRunSettings(out var snapshot))
+            {
+                return snapshot;
+            }
+
+            if (BetterRewardsNetSupport.IsMultiplayerRun())
+            {
+                LogLocalFallbackOnce();
+            }
+
+            return Local;
+        }
     }
+
+    public static double HpSacrificePercent => Current.HpSacrificePercent;
+    public static int SacrificeRepeatCount => Current.SacrificeRepeatCount;
+    public static double ScoreToGoldPercent => Current.ScoreToGoldPercent;
+    public static int MinPreviousScore => Current.MinPreviousScore;
+    public static double ShopRerollBaseCost => Current.ShopRerollBaseCost;
+    public static double ShopRerollCostIncrement => Current.ShopRerollCostIncrement;
+    public static double RelicBaseCost => Current.RelicBaseCost;
+    public static double RelicCostIncrement => Current.RelicCostIncrement;
+    public static double RandomItemBaseCost => Current.RandomItemBaseCost;
+    public static double RandomItemCostIncrement => Current.RandomItemCostIncrement;
+
+    private static bool _loggedLocalFallback;
+
+    private static void LogLocalFallbackOnce()
+    {
+        if (_loggedLocalFallback)
+        {
+            return;
+        }
+
+        _loggedLocalFallback = true;
+        Log.Warn("[BetterRewards] Multiplayer settings snapshot was missing; falling back to local settings.");
+    }
+
+    public static void Register()
+    {
+        BetterRewardsLocalization.TryMerge();
+
+        using (RitsuLibFramework.BeginModDataRegistration(ModId))
+        {
+            ModDataStore.For(ModId).Register(
+                key: DataKey,
+                fileName: SettingsFileName,
+                scope: SaveScope.Global,
+                defaultFactory: static () => new BetterRewardsSettingsModel(),
+                autoCreateIfMissing: true);
+
+            RunSettings = RitsuLibFramework.GetRunSavedDataStore(ModId).Register(
+                key: RunDataKey,
+                defaultFactory: static () => new BetterRewardsSettingsModel(),
+                options: new RunSavedDataOptions
+                {
+                    WritePolicy = RunSavedDataWritePolicy.WhenSet,
+                    SyncLobbyOnChange = true,
+                });
+        }
+
+        RitsuLibFramework.SubscribeLifecycle<RunSavedDataPreparingEvent>(OnPreparing);
+        RitsuLibFramework.SubscribeLifecycle<RunSavedDataLobbyStagingEvent>(OnLobbyStaging);
+    }
+
+    private static bool _pageRegistered;
+
+    internal static void RegisterPageIfNeeded()
+    {
+        if (_pageRegistered)
+        {
+            return;
+        }
+
+        RegisterPage();
+        _pageRegistered = true;
+    }
+
+    private static void RegisterPage()
+    {
+        var hpSacrificePercent = BindDouble(static s => s.HpSacrificePercent, static (s, v) => s.HpSacrificePercent = v);
+        var sacrificeRepeatCount = BindInt(static s => s.SacrificeRepeatCount, static (s, v) => s.SacrificeRepeatCount = v);
+        var scoreToGoldPercent = BindDouble(static s => s.ScoreToGoldPercent, static (s, v) => s.ScoreToGoldPercent = v);
+        var minPreviousScore = BindInt(static s => s.MinPreviousScore, static (s, v) => s.MinPreviousScore = v);
+        var shopRerollBaseCost = BindDouble(static s => s.ShopRerollBaseCost, static (s, v) => s.ShopRerollBaseCost = v);
+        var shopRerollCostIncrement = BindDouble(static s => s.ShopRerollCostIncrement, static (s, v) => s.ShopRerollCostIncrement = v);
+        var relicBaseCost = BindDouble(static s => s.RelicBaseCost, static (s, v) => s.RelicBaseCost = v);
+        var relicCostIncrement = BindDouble(static s => s.RelicCostIncrement, static (s, v) => s.RelicCostIncrement = v);
+        var randomItemBaseCost = BindDouble(static s => s.RandomItemBaseCost, static (s, v) => s.RandomItemBaseCost = v);
+        var randomItemCostIncrement = BindDouble(static s => s.RandomItemCostIncrement, static (s, v) => s.RandomItemCostIncrement = v);
+
+        RitsuLibFramework.RegisterModSettings(ModId, page => page
+            .WithTitle(Title("BETTERREWARDS.mod_title", "Better Rewards"))
+            .WithModDisplayName(Title("BETTERREWARDS.mod_title", "Better Rewards"))
+            .WithDescription(Title("BETTERREWARDS.mod_desc", "Adds an opening-ancient bargain where you can sacrifice HP for gold, then shop in a special store with reroll, random relics, and random items."))
+            .WithVisibleOnHostSurfaces(ModSettingsHostSurface.MainMenu | ModSettingsHostSurface.RunPause)
+            .AddSection("event", section => section
+                .WithTitle(Title("BETTERREWARDS-EVENT.title", "Event"))
+                .AddSlider("hp_sacrifice_percent", Title("BETTERREWARDS-HP_SACRIFICE_PERCENT.title", "HP Sacrifice %"), hpSacrificePercent,
+                    minValue: 0.0, maxValue: 1.0, step: 0.01,
+                    valueFormatter: static v => v.ToString("0.00"),
+                    description: Desc("HP_SACRIFICE_PERCENT", "Fraction of your current HP lost per sacrifice (0.0–1.0). A single sacrifice cannot exceed your max HP divided by Sacrifice Repeats."))
+                .AddIntSlider("sacrifice_repeat_count", Title("BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title", "Sacrifice Repeats"), sacrificeRepeatCount,
+                    minValue: 1, maxValue: 10, step: 1,
+                    valueFormatter: static v => v.ToString("0"),
+                    description: Desc("SACRIFICE_REPEAT_COUNT", "How many times you may sacrifice HP for gold."))
+                .AddSlider("score_to_gold_percent", Title("BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title", "Score → Gold %"), scoreToGoldPercent,
+                    minValue: 0.01, maxValue: 1.0, step: 0.01,
+                    valueFormatter: static v => v.ToString("0.00"),
+                    description: Desc("SCORE_TO_GOLD_PERCENT", "Fraction of your previous run's score converted to gold per sacrifice (e.g. 0.5 = 50% of score per sacrifice)."))
+                .AddIntSlider("min_previous_score", Title("BETTERREWARDS-MIN_PREVIOUS_SCORE.title", "Minimum Previous Score"), minPreviousScore,
+                    minValue: 0, maxValue: 2000, step: 50,
+                    valueFormatter: static v => v.ToString("0"),
+                    description: Desc("MIN_PREVIOUS_SCORE", "The effective previous-run score is at least this value, guaranteeing a minimum gold opportunity even on the first run.")))
+            .AddSection("shop_reroll", section => section
+                .WithTitle(Title("BETTERREWARDS-SHOP_REROLL.title", "Shop reroll"))
+                .AddSlider("shop_reroll_base_cost", Title("BETTERREWARDS-SHOP_REROLL_BASE_COST.title", "Reroll Base Cost"), shopRerollBaseCost,
+                    minValue: 50.0, maxValue: 1000.0, step: 5.0,
+                    valueFormatter: static v => v.ToString("0"),
+                    description: Desc("SHOP_REROLL_BASE_COST", "Gold cost for the first shop reroll."))
+                .AddSlider("shop_reroll_cost_increment", Title("BETTERREWARDS-SHOP_REROLL_COST_INCREMENT.title", "Reroll Cost Increment"), shopRerollCostIncrement,
+                    minValue: 0.0, maxValue: 500.0, step: 5.0,
+                    valueFormatter: static v => v.ToString("0"),
+                    description: Desc("SHOP_REROLL_COST_INCREMENT", "Gold added to the reroll cost after each use (e.g. 50 adds 50 gold each time).")))
+            .AddSection("random_relic", section => section
+                .WithTitle(Title("BETTERREWARDS-RANDOM_RELIC.title", "Random relic"))
+                .AddSlider("relic_base_cost", Title("BETTERREWARDS-RELIC_BASE_COST.title", "Random Relic Base Cost"), relicBaseCost,
+                    minValue: 50.0, maxValue: 1000.0, step: 5.0,
+                    valueFormatter: static v => v.ToString("0"),
+                    description: Desc("RELIC_BASE_COST", "Gold cost for the first random relic purchase."))
+                .AddSlider("relic_cost_increment", Title("BETTERREWARDS-RELIC_COST_INCREMENT.title", "Random Relic Cost Increment"), relicCostIncrement,
+                    minValue: 0.0, maxValue: 500.0, step: 5.0,
+                    valueFormatter: static v => v.ToString("0"),
+                    description: Desc("RELIC_COST_INCREMENT", "Gold added to the relic cost after each purchase (e.g. 50 adds 50 gold each time).")))
+            .AddSection("random_item", section => section
+                .WithTitle(Title("BETTERREWARDS-RANDOM_ITEM.title", "Random item"))
+                .AddSlider("random_item_base_cost", Title("BETTERREWARDS-RANDOM_ITEM_BASE_COST.title", "Random Item Base Cost"), randomItemBaseCost,
+                    minValue: 50.0, maxValue: 1000.0, step: 5.0,
+                    valueFormatter: static v => v.ToString("0"),
+                    description: Desc("RANDOM_ITEM_BASE_COST", "Gold cost for the first random item purchase."))
+                .AddSlider("random_item_cost_increment", Title("BETTERREWARDS-RANDOM_ITEM_COST_INCREMENT.title", "Random Item Cost Increment"), randomItemCostIncrement,
+                    minValue: 0.0, maxValue: 500.0, step: 5.0,
+                    valueFormatter: static v => v.ToString("0"),
+                    description: Desc("RANDOM_ITEM_COST_INCREMENT", "Gold added to the random item cost after each purchase (e.g. 25 adds 25 gold each time).")))
+            .AddSection("reset", section => section
+                .WithTitle(Title("BETTERREWARDS-RESET.title", "Reset"))
+                .AddButton(
+                    "restore_all_defaults",
+                    Title("BETTERREWARDS-RESET_ALL.title", "Restore all default settings"),
+                    Title("BETTERREWARDS-RESET_ALL.button", "Restore defaults"),
+                    host => ConfirmAndResetAllSettings(host),
+                    ModSettingsButtonTone.Danger,
+                    Desc("RESET_ALL", "Restores the ten BetterRewards settings to their defaults and saves immediately. Other mods' settings, run history, save files and the current run's settings snapshot are left untouched."))));
+    }
+
+    /// <summary>
+    /// Asks before overwriting, then restores only this mod's local settings.
+    /// <para>
+    /// Cancelling or dismissing the dialog runs no write at all. Confirming writes the ten
+    /// defaults, persists them at once, then refreshes the page so every slider and the
+    /// framework's reset menus reflect the new values.
+    /// </para>
+    /// </summary>
+    private static void ConfirmAndResetAllSettings(IModSettingsUiActionHost host)
+    {
+        var root = Engine.GetMainLoop() is SceneTree { Root: { } sceneRoot } ? sceneRoot : null;
+        if (root == null)
+        {
+            Log.Warn("[BetterRewards] Could not resolve the scene root; skipping the reset confirmation dialog.");
+            return;
+        }
+
+        ModSettingsUiFactory.ShowStyledConfirm(
+            root,
+            Title("BETTERREWARDS-RESET_CONFIRM.title", "Restore default settings?").Resolve(),
+            Desc("RESET_CONFIRM", "All ten BetterRewards settings go back to their defaults and are saved now. This does not reset the current run, other mods, run history or save files.").Resolve(),
+            Title("BETTERREWARDS-RESET_CANCEL.button", "Cancel").Resolve(),
+            Title("BETTERREWARDS-RESET_CONFIRM.button", "Restore defaults").Resolve(),
+            confirmIsDanger: true,
+            onConfirm: () =>
+            {
+                BetterRewardsResetCoordinator.ResetAllLocalSettings(LocalSettingsStore.Instance);
+                host.RequestRefreshAfterDataModelBatchChange();
+            });
+    }
+
+    /// <summary>
+    /// Adapts the mod's global local settings store to the reset port.
+    /// Writes go through the same data key the sliders use, so the UI and the reset cannot diverge.
+    /// </summary>
+    private sealed class LocalSettingsStore : IBetterRewardsSettingsStore
+    {
+        public static readonly LocalSettingsStore Instance = new();
+
+        public void UpdateLocalModel(Action<BetterRewardsSettingsModel> mutate)
+        {
+            ModDataStore.For(ModId).Modify(DataKey, mutate);
+        }
+
+        public void SaveLocalModel()
+        {
+            ModDataStore.For(ModId).Save(DataKey);
+        }
+    }
+
+    private static void OnPreparing(RunSavedDataPreparingEvent evt)
+    {
+        if (!IsHostEvent(evt))
+        {
+            return;
+        }
+
+        var local = Local;
+        RunSettings.Modify(evt.RunState, data => data.CopyFrom(local));
+        BetterRewardsSettingsSyncService.CacheAndBroadcast(local, "OnPreparing");
+    }
+
+    private static void OnLobbyStaging(RunSavedDataLobbyStagingEvent evt)
+    {
+        if (!IsHostEvent(evt))
+        {
+            return;
+        }
+
+        if (evt.Reason is not (RunSavedDataLobbyStagingReason.PlayerJoined or RunSavedDataLobbyStagingReason.Committing))
+        {
+            return;
+        }
+
+        var local = Local;
+        RunSettings.Lobby.Modify(evt.Lobby, data => data.CopyFrom(local));
+        BetterRewardsSettingsSyncService.CacheAndBroadcast(local, "OnLobbyStaging");
+    }
+
+    private static bool TryGetMultiplayerRunSettings(out BetterRewardsSettingsModel snapshot)
+    {
+        snapshot = null!;
+        var run = BetterRewardsNetSupport.TryGetRunState();
+        if (run is not RunState runState || !BetterRewardsNetSupport.IsMultiplayerRun(runState) || RunSettings is null)
+        {
+            return false;
+        }
+
+        return RunSettings.TryGet(runState, out snapshot);
+    }
+
+    private static bool IsHostEvent(object evt)
+    {
+        var type = evt.GetType();
+        foreach (var name in new[] { "IsHost", "IsAuthoritative", "IsServer" })
+        {
+            var property = type.GetProperty(name);
+            if (property?.PropertyType == typeof(bool) && property.GetValue(evt) is bool value)
+            {
+                return value;
+            }
+        }
+
+        // In a connected multiplayer session, only the host may write the shared snapshot.
+        if (BetterRewardsNetSupport.IsConnectedMultiplayer())
+        {
+            return BetterRewardsNetSupport.IsHost();
+        }
+
+        return true;
+    }
+
+    private static IModSettingsValueBinding<double> BindDouble(
+        Func<BetterRewardsSettingsModel, double> getter,
+        Action<BetterRewardsSettingsModel, double> setter)
+    {
+        return ModSettingsBindings.WithDefault(
+            new ModSettingsValueBinding<BetterRewardsSettingsModel, double>(
+                ModId, DataKey, SaveScope.Global, getter, setter),
+            () => getter(new BetterRewardsSettingsModel()));
+    }
+
+    private static IModSettingsValueBinding<int> BindInt(
+        Func<BetterRewardsSettingsModel, int> getter,
+        Action<BetterRewardsSettingsModel, int> setter)
+    {
+        return ModSettingsBindings.WithDefault(
+            new ModSettingsValueBinding<BetterRewardsSettingsModel, int>(
+                ModId, DataKey, SaveScope.Global, getter, setter),
+            () => getter(new BetterRewardsSettingsModel()));
+    }
+
+    private static ModSettingsText Title(string key, string fallback) =>
+        ModSettingsText.LocString(BetterRewardsLocalization.SettingsTable, key, fallback);
+
+    private static ModSettingsText Desc(string propertySlug, string fallback) =>
+        ModSettingsText.LocString(
+            BetterRewardsLocalization.SettingsTable,
+            $"BETTERREWARDS-{propertySlug}.hover.desc",
+            fallback);
 }
+
+// BetterRewardsSettingsModel lives in BetterRewardsSettingsModel.cs so the defaults and
+// clamp ranges stay testable without the game or RitsuLib.

@@ -1,14 +1,17 @@
 using BetterRewards.Features.Settings;
+using BetterRewards.Features.Multiplayer;
 using BetterRewards.Features.Shop;
+using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Events;
+using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Logging;
-using MegaCrit.Sts2.Core.Models.Events;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Events;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
@@ -21,32 +24,41 @@ using System.Reflection;
 namespace BetterRewards.Features.Event;
 
 /// <summary>
-/// Patches Neow.GenerateInitialOptions to append the BetterRewards sacrifice/shop option.
+/// Appends the bargain to the opening ancient only.
+/// AncientEventModel.GenerateInitialOptionsWrapper is sealed and is the path every ancient uses,
+/// including one another mod substitutes for Neow. Priority.Last appends after other postfixes.
 /// </summary>
-[HarmonyPatch(typeof(Neow), "GenerateInitialOptions")]
-internal static class NeowGenerateInitialOptionsPatch
+[HarmonyPatch(typeof(AncientEventModel), "GenerateInitialOptionsWrapper")]
+[HarmonyPriority(Priority.Last)]
+internal static class OpeningAncientOptionsPatch
 {
     // Cached reflection accessor for EventModel.SetEventState (protected)
-    private static readonly MethodInfo? _setEventState = typeof(MegaCrit.Sts2.Core.Models.EventModel)
+    private static readonly MethodInfo? _setEventState = typeof(EventModel)
         .GetMethod("SetEventState", BindingFlags.NonPublic | BindingFlags.Instance);
 
     [HarmonyPostfix]
-    public static void Postfix(Neow __instance, ref IReadOnlyList<EventOption> __result)
+    public static void Postfix(AncientEventModel __instance, ref IReadOnlyList<EventOption> __result)
     {
         try
         {
             var owner = __instance.Owner;
-            if (owner == null)
+            var run = owner?.RunState;
+            if (owner == null || run == null || !IsOpeningAncientVisit(run))
             {
                 return;
             }
 
-            BetterRewardsNeowShopTransitionState.ResetForNeowStart();
+            if (!Hook.ShouldAllowAncient(run, owner, __instance))
+            {
+                return;
+            }
 
             if (__result.Any(option => option.TextKey == "BETTERREWARDS.NEOW"))
             {
                 return;
             }
+
+            BetterRewardsOpeningShopTransitionState.ResetForOpeningAncient();
 
             var options = new List<EventOption>(__result)
             {
@@ -56,83 +68,96 @@ internal static class NeowGenerateInitialOptionsPatch
         }
         catch (Exception ex)
         {
-            Log.Warn($"[BetterRewards] Failed to inject Neow option: {ex.Message}");
+            Log.Warn($"[BetterRewards] Failed to inject opening ancient option: {ex.Message}");
         }
     }
 
-    private static EventOption BuildBargainOption(Neow neow)
+    internal static bool IsOpeningAncientVisit(IRunState run)
     {
-        var previousScore    = PreviousRunScoreService.GetPreviousRunScore(neow.Owner?.RunState);
+        if (!run.CurrentMapCoord.HasValue)
+        {
+            return false;
+        }
+
+        var start = run.Map.StartingMapPoint.coord;
+        var here = run.CurrentMapCoord.Value;
+        return OpeningAncientRules.IsOpeningPosition(
+            run.CurrentActIndex,
+            run.ExtraFields.StartedWithNeow,
+            here.col,
+            here.row,
+            start.col,
+            start.row);
+    }
+
+    internal static bool IsCurrentOpeningAncientRoom(IRunState? run)
+    {
+        if (run == null || run.CurrentRoom is not EventRoom { CanonicalEvent: AncientEventModel })
+        {
+            return false;
+        }
+
+        return IsOpeningAncientVisit(run);
+    }
+
+    private static EventOption BuildBargainOption(EventModel ancient)
+    {
+        var previousScore    = PreviousRunScoreService.GetPreviousRunScore(ancient.Owner?.RunState);
         var hPct             = BetterRewardsSettings.HpSacrificePercent;
         var n                = BetterRewardsSettings.SacrificeRepeatCount;
         var sPct             = BetterRewardsSettings.ScoreToGoldPercent;
         var effectiveHPct    = Math.Min(hPct, 1.0 / n);
         var goldPerSacrifice = (int)Math.Floor(previousScore * sPct);
 
-        EnsureLocStrings(previousScore, effectiveHPct, n, goldPerSacrifice);
+        var hpPercent = (int)(effectiveHPct * 100);
+        var descriptionKey = previousScore > 0
+            ? "BETTERREWARDS.NEOW.description"
+            : "BETTERREWARDS.NEOW.description.no_score";
 
         return new EventOption(
-            neow,
-            () => OnBargainChosen(neow, effectiveHPct, n, goldPerSacrifice, sacrificesDone: 0),
-            new LocString("events", "BETTERREWARDS.NEOW.title"),
-            new LocString("events", "BETTERREWARDS.NEOW.description"),
+            ancient,
+            () => OnBargainChosen(ancient, sacrificesDone: 0),
+            BetterRewardsLocalization.EventString("BETTERREWARDS.NEOW.title"),
+            BetterRewardsLocalization.EventString(
+                descriptionKey,
+                ("previousScore", previousScore),
+                ("n", n),
+                ("hpPercent", hpPercent),
+                ("goldPerSacrifice", goldPerSacrifice)),
             "BETTERREWARDS.NEOW",
             Array.Empty<IHoverTip>());
     }
 
-    private static void EnsureLocStrings(int previousScore, double hPct, int n, int goldPerSacrifice)
+    private static Task OnBargainChosen(EventModel ancient, int sacrificesDone)
     {
-        var locTable = LocManager.Instance.GetTable("events");
-        locTable.MergeWith(new Dictionary<string, string>
-        {
-            // NEOW option — uses LocString constructor directly so no .title/.description needed here,
-            // but also register for safety.
-            ["BETTERREWARDS.NEOW.title"]                   = "The Merchant's Bargain",
-            ["BETTERREWARDS.NEOW.description"]             = previousScore > 0
-                ? $"Visit a special shop. Sacrifice HP for gold (prev score: {previousScore}). Up to {n} sacrifices, {(int)(hPct * 100)}% HP each for {goldPerSacrifice}g."
-                : "Visit a special shop. No previous run — gold rewards will be 0.",
-            // EventOption string-key ctor appends .title / .description
-            ["BETTERREWARDS.ENTER_SHOP.title"]             = "Enter the shop",
-            ["BETTERREWARDS.ENTER_SHOP.description"]       = "Leave Neow and enter the merchant's special shop.",
-            ["BETTERREWARDS.SACRIFICE.locked.title"]       = $"Cannot Sacrifice {(int)(hPct * 100)}% HP",
-            ["BETTERREWARDS.SACRIFICE.locked.description"] = "You would die from this sacrifice.",
-            ["BETTERREWARDS.SHOP_PENDING.title"]           = "Waiting for the merchant",
-            ["BETTERREWARDS.SHOP_PENDING.desc"]            = "The merchant waits. You will enter the special shop once everyone is finished with Neow.",
-        });
-    }
-
-    private static Task OnBargainChosen(Neow neow, double hPct, int maxRepeats, int goldPerSacrifice, int sacrificesDone)
-    {
-        var owner = neow.Owner;
+        var owner = ancient.Owner;
         if (owner == null)
         {
             return Task.CompletedTask;
         }
 
         BetterRewardsShopState.Reset();
-        ShowSacrificeState(neow, owner, hPct, maxRepeats, goldPerSacrifice, sacrificesDone);
+        ShowSacrificeState(ancient, owner, sacrificesDone);
         return Task.CompletedTask;
     }
 
-    private static void ShowSacrificeState(Neow neow, MegaCrit.Sts2.Core.Entities.Players.Player owner, double hPct, int maxRepeats, int goldPerSacrifice, int sacrificesDone)
+    private static (double HPct, int MaxRepeats, int GoldPerSacrifice) GetLiveSacrificeTerms(EventModel ancient)
     {
+        var maxRepeats = BetterRewardsSettings.SacrificeRepeatCount;
+        var hPct = Math.Min(BetterRewardsSettings.HpSacrificePercent, 1.0 / maxRepeats);
+        var previousScore = PreviousRunScoreService.GetPreviousRunScore(ancient.Owner?.RunState);
+        var goldPerSacrifice = (int)Math.Floor(previousScore * BetterRewardsSettings.ScoreToGoldPercent);
+        return (hPct, maxRepeats, goldPerSacrifice);
+    }
+
+    private static void ShowSacrificeState(EventModel ancient, MegaCrit.Sts2.Core.Entities.Players.Player owner, int sacrificesDone)
+    {
+        var (hPct, maxRepeats, goldPerSacrifice) = GetLiveSacrificeTerms(ancient);
         var hpCost   = (int)Math.Floor(owner.Creature.MaxHp * hPct);
         var wouldDie = hpCost >= owner.Creature.CurrentHp;
         var canMore  = sacrificesDone < maxRepeats;
 
-        var locTable = LocManager.Instance.GetTable("events");
-
-        // Inject all display strings directly into the loc table so they resolve at display time.
-        locTable.MergeWith(new Dictionary<string, string>
-        {
-            ["BETTERREWARDS.SACRIFICE.state.desc"]         = $"The merchant offers a bargain. Sacrifice HP in exchange for gold.\n\nSacrifices: {sacrificesDone}/{maxRepeats}  |  HP: {owner.Creature.CurrentHp}/{owner.Creature.MaxHp}  |  Gold per sacrifice: {goldPerSacrifice}",
-            ["BETTERREWARDS.SACRIFICE.do.title"]           = $"Sacrifice {hpCost} HP for {goldPerSacrifice} gold",
-            ["BETTERREWARDS.SACRIFICE.do.desc"]            = $"Lose {hpCost} HP and gain {goldPerSacrifice} gold. ({sacrificesDone + 1}/{maxRepeats})",
-            ["BETTERREWARDS.SACRIFICE.locked.title"]       = $"Cannot Sacrifice {(int)(hPct * 100)}% HP",
-            ["BETTERREWARDS.SACRIFICE.locked.desc"]        = "You would die from this sacrifice.",
-            ["BETTERREWARDS.ENTER_SHOP.title"]             = "Enter the shop",
-            ["BETTERREWARDS.ENTER_SHOP.desc"]              = "Leave Neow and enter the merchant's special shop.",
-        });
+        var hpPercent = (int)(hPct * 100);
 
         // Use the LocString-based EventOption constructor directly to avoid the string-key
         // overload's call to GetOptionTitle/GetOptionDescription, which returns null for keys
@@ -142,16 +167,17 @@ internal static class NeowGenerateInitialOptionsPatch
         if (canMore && !wouldDie)
         {
             options.Add(new EventOption(
-                neow,
+                ancient,
                 async () =>
                 {
-                    var cost = (int)Math.Floor(owner.Creature.MaxHp * hPct);
+                    var (liveHPct, _, liveGold) = GetLiveSacrificeTerms(ancient);
+                    var cost = (int)Math.Floor(owner.Creature.MaxHp * liveHPct);
                     await CreatureCmd.SetCurrentHp(owner.Creature, owner.Creature.CurrentHp - cost);
-                    await PlayerCmd.GainGold(goldPerSacrifice, owner);
-                    ShowSacrificeState(neow, owner, hPct, maxRepeats, goldPerSacrifice, sacrificesDone + 1);
+                    await PlayerCmd.GainGold(liveGold, owner);
+                    ShowSacrificeState(ancient, owner, sacrificesDone + 1);
                 },
-                new LocString("events", "BETTERREWARDS.SACRIFICE.do.title"),
-                new LocString("events", "BETTERREWARDS.SACRIFICE.do.desc"),
+                BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.do.title", ("hpCost", hpCost), ("goldPerSacrifice", goldPerSacrifice), ("sacrificeIndex", sacrificesDone + 1), ("maxRepeats", maxRepeats)),
+                BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.do.desc", ("hpCost", hpCost), ("goldPerSacrifice", goldPerSacrifice), ("sacrificeIndex", sacrificesDone + 1), ("maxRepeats", maxRepeats)),
                 "BETTERREWARDS.SACRIFICE.do",
                 Array.Empty<IHoverTip>()));
         }
@@ -159,50 +185,50 @@ internal static class NeowGenerateInitialOptionsPatch
         {
             // Grayed out — null OnChosen makes IsLocked = true
             options.Add(new EventOption(
-                neow,
+                ancient,
                 null,
-                new LocString("events", "BETTERREWARDS.SACRIFICE.locked.title"),
-                new LocString("events", "BETTERREWARDS.SACRIFICE.locked.desc"),
+                BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.locked.title", ("hpPercent", hpPercent)),
+                BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.locked.desc"),
                 "BETTERREWARDS.SACRIFICE.locked",
                 Array.Empty<IHoverTip>()));
         }
 
         options.Add(new EventOption(
-            neow,
+            ancient,
             async () =>
             {
-                BetterRewardsNeowShopTransitionState.MarkMerchantPending(owner.NetId);
-                ShowMerchantPendingState(neow);
+                BetterRewardsOpeningShopTransitionState.MarkMerchantPending(owner.NetId);
+                ShowMerchantPendingState(ancient);
                 await TryEnterPendingMerchantRoom("Enter shop option");
             },
-            new LocString("events", "BETTERREWARDS.ENTER_SHOP.title"),
-            new LocString("events", "BETTERREWARDS.ENTER_SHOP.desc"),
+            BetterRewardsLocalization.EventString("BETTERREWARDS.ENTER_SHOP.title"),
+            BetterRewardsLocalization.EventString("BETTERREWARDS.ENTER_SHOP.desc"),
             "BETTERREWARDS.ENTER_SHOP",
             Array.Empty<IHoverTip>()));
 
-        CallSetEventState(neow, new LocString("events", "BETTERREWARDS.SACRIFICE.state.desc"), options);
+        CallSetEventState(ancient, BetterRewardsLocalization.EventString("BETTERREWARDS.SACRIFICE.state.desc", ("sacrificesDone", sacrificesDone), ("maxRepeats", maxRepeats), ("currentHp", owner.Creature.CurrentHp), ("maxHp", owner.Creature.MaxHp), ("goldPerSacrifice", goldPerSacrifice)), options);
     }
 
-    private static void ShowMerchantPendingState(Neow neow)
+    private static void ShowMerchantPendingState(EventModel ancient)
     {
         NMapScreen.Instance?.SetTravelEnabled(enabled: false);
 
         CallSetEventState(
-            neow,
-            new LocString("events", "BETTERREWARDS.SHOP_PENDING.desc"),
+            ancient,
+            BetterRewardsLocalization.EventString("BETTERREWARDS.SHOP_PENDING.desc"),
             new[]
             {
                 new EventOption(
-                    neow,
+                    ancient,
                     null,
-                    new LocString("events", "BETTERREWARDS.SHOP_PENDING.title"),
-                    new LocString("events", "BETTERREWARDS.SHOP_PENDING.desc"),
+                    BetterRewardsLocalization.EventString("BETTERREWARDS.SHOP_PENDING.title"),
+                    BetterRewardsLocalization.EventString("BETTERREWARDS.SHOP_PENDING.desc"),
                     "BETTERREWARDS.SHOP_PENDING",
                     Array.Empty<IHoverTip>())
             });
     }
 
-    private static void CallSetEventState(Neow neow, LocString description, IEnumerable<EventOption> options)
+    private static void CallSetEventState(EventModel ancient, LocString description, IEnumerable<EventOption> options)
     {
         if (_setEventState == null)
         {
@@ -210,25 +236,25 @@ internal static class NeowGenerateInitialOptionsPatch
             return;
         }
 
-        _setEventState.Invoke(neow, new object[] { description, options });
+        _setEventState.Invoke(ancient, new object[] { description, options });
     }
 
     internal static async Task TryEnterPendingMerchantRoom(string source)
     {
         var runManager = RunManager.Instance;
         var runState = runManager.DebugOnlyGetState();
-        if (runState?.CurrentRoom is not EventRoom { CanonicalEvent: Neow })
+        if (!IsCurrentOpeningAncientRoom(runState))
         {
             return;
         }
 
         var synchronizer = runManager.EventSynchronizer;
-        if (synchronizer == null || synchronizer.Events.Count == 0 || synchronizer.Events.Any(@event => !BetterRewardsNeowShopTransitionState.IsEventReadyForMerchantTransition(@event)))
+        if (synchronizer == null || synchronizer.Events.Count == 0 || synchronizer.Events.Any(@event => !BetterRewardsOpeningShopTransitionState.IsEventReadyForMerchantTransition(@event)))
         {
             return;
         }
 
-        if (!BetterRewardsNeowShopTransitionState.TryBeginMerchantTransition())
+        if (!BetterRewardsOpeningShopTransitionState.TryBeginMerchantTransition())
         {
             return;
         }
@@ -236,24 +262,24 @@ internal static class NeowGenerateInitialOptionsPatch
         try
         {
             BetterRewardsShopButtonsFeature.IsActiveShop = true;
-            Log.Info($"[BetterRewards] Entering special merchant room after Neow from '{source}'.");
+            Log.Info($"[BetterRewards] Entering special merchant room after the opening ancient from '{source}'.");
             await runManager.EnterRoom(new MerchantRoom());
         }
         catch (Exception ex)
         {
             BetterRewardsShopButtonsFeature.IsActiveShop = false;
-            BetterRewardsNeowShopTransitionState.CancelMerchantTransition();
+            BetterRewardsOpeningShopTransitionState.CancelMerchantTransition();
             Log.Warn($"[BetterRewards] Failed to enter special merchant room: {ex.Message}");
         }
     }
 }
 
-internal static class BetterRewardsNeowShopTransitionState
+internal static class BetterRewardsOpeningShopTransitionState
 {
     private static readonly HashSet<ulong> PendingMerchantPlayers = [];
     private static bool _merchantTransitionStarted;
 
-    public static void ResetForNeowStart()
+    public static void ResetForOpeningAncient()
     {
         PendingMerchantPlayers.Clear();
         _merchantTransitionStarted = false;
@@ -269,7 +295,7 @@ internal static class BetterRewardsNeowShopTransitionState
 
         PendingMerchantPlayers.Add(playerId);
         NMapScreen.Instance?.SetTravelEnabled(enabled: false);
-        Log.Info($"[BetterRewards] Special merchant room queued after Neow for player {playerId}.");
+        Log.Info($"[BetterRewards] Special merchant room queued after the opening ancient for player {playerId}.");
     }
 
     public static bool TryBeginMerchantTransition()
@@ -299,7 +325,7 @@ internal static class BetterRewardsNeowShopTransitionState
     public static bool ShouldBlockProceed()
     {
         return PendingMerchantPlayers.Count > 0
-            && RunManager.Instance?.DebugOnlyGetState()?.CurrentRoom is EventRoom { CanonicalEvent: Neow };
+            && OpeningAncientOptionsPatch.IsCurrentOpeningAncientRoom(RunManager.Instance?.DebugOnlyGetState());
     }
 
     public static bool IsEventReadyForMerchantTransition(MegaCrit.Sts2.Core.Models.EventModel eventModel)
@@ -356,27 +382,27 @@ internal static class NMerchantInventoryInitializePatch
 }
 
 [HarmonyPatch(typeof(EventRoom), "OnEventStateChanged")]
-internal static class EventRoomNeowMerchantTransitionPatch
+internal static class EventRoomOpeningAncientTransitionPatch
 {
     [HarmonyPostfix]
     public static void Postfix(EventRoom __instance)
     {
-        if (__instance.CanonicalEvent is not Neow)
+        if (__instance.CanonicalEvent is not AncientEventModel)
         {
             return;
         }
 
-        TaskHelper.RunSafely(NeowGenerateInitialOptionsPatch.TryEnterPendingMerchantRoom("EventRoom.OnEventStateChanged"));
+        TaskHelper.RunSafely(OpeningAncientOptionsPatch.TryEnterPendingMerchantRoom("EventRoom.OnEventStateChanged"));
     }
 }
 
 [HarmonyPatch(typeof(NEventRoom), nameof(NEventRoom.OptionButtonClicked))]
-internal static class BetterRewardsBlockNeowProceedWhileMerchantPendingPatch
+internal static class BetterRewardsBlockProceedWhileMerchantPendingPatch
 {
     [HarmonyPrefix]
     public static bool Prefix(EventOption option)
     {
-        if (!option.IsProceed || !BetterRewardsNeowShopTransitionState.ShouldBlockProceed())
+        if (!option.IsProceed || !BetterRewardsOpeningShopTransitionState.ShouldBlockProceed())
         {
             return true;
         }
@@ -392,46 +418,162 @@ internal static class BetterRewardsMerchantRoomExitPatch
     [HarmonyPostfix]
     public static void Postfix()
     {
-        BetterRewardsNeowShopTransitionState.ClearAfterMerchantExit();
+        BetterRewardsOpeningShopTransitionState.ClearAfterMerchantExit();
     }
 }
 
-[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpNewSinglePlayer))]
+[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpNewSingleplayer))]
 internal static class BetterRewardsResetSinglePlayerRunPatch
 {
     [HarmonyPostfix]
     public static void Postfix()
     {
-        BetterRewardsNeowShopTransitionState.ResetForNeowStart();
+        BetterRewardsOpeningShopTransitionState.ResetForOpeningAncient();
     }
 }
 
-[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpSavedSinglePlayer))]
+[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpSavedSingleplayer))]
 internal static class BetterRewardsResetSavedSinglePlayerRunPatch
 {
     [HarmonyPostfix]
     public static void Postfix()
     {
-        BetterRewardsNeowShopTransitionState.ResetForNeowStart();
+        BetterRewardsOpeningShopTransitionState.ResetForOpeningAncient();
     }
 }
 
-[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpNewMultiPlayer))]
+[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpNewMultiplayer))]
 internal static class BetterRewardsResetNewMultiplayerRunPatch
 {
     [HarmonyPostfix]
     public static void Postfix()
     {
-        BetterRewardsNeowShopTransitionState.ResetForNeowStart();
+        BetterRewardsOpeningShopTransitionState.ResetForOpeningAncient();
     }
 }
 
-[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpSavedMultiPlayer))]
+[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpSavedMultiplayer))]
 internal static class BetterRewardsResetSavedMultiplayerRunPatch
 {
     [HarmonyPostfix]
     public static void Postfix()
     {
-        BetterRewardsNeowShopTransitionState.ResetForNeowStart();
+        BetterRewardsOpeningShopTransitionState.ResetForOpeningAncient();
+    }
+}
+
+
+/// <summary>
+/// Shows an embedded icon on BetterRewards event options through the relic icon slot.
+/// That slot, including %Outline, is what CznStyleUI styles. These are textures only:
+/// no relic model is created, so nothing is added to the compendium or the player's relic list.
+/// </summary>
+[HarmonyPatch(typeof(NEventOptionButton), "_Ready")]
+internal static class NEventOptionButtonReadyPatch
+{
+    private const string FallbackShopIconPath = "res://images/packed/common_ui/map/icons/map_shop.png";
+    private const string NeowIconResourceName = "BetterRewards.MerchantTradeContractPng";
+    private const string SacrificeIconResourceName = "BetterRewards.LifeForGoldHeartPng";
+    private const string EnterShopIconResourceName = "BetterRewards.EnterShopDoorPng";
+    private const string WaitMerchantIconResourceName = "BetterRewards.WaitMerchantHourglassPng";
+
+    private static readonly Dictionary<string, Texture2D?> CustomIcons = new();
+
+    [HarmonyPostfix]
+    public static void Postfix(NEventOptionButton __instance)
+    {
+        try
+        {
+            var option = __instance.Option;
+            if (option?.TextKey is not string textKey ||
+                !textKey.StartsWith("BETTERREWARDS.", StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            var icon = __instance.GetNodeOrNull<TextureRect>("%RelicIcon");
+            if (icon == null)
+            {
+                return;
+            }
+
+            var texture = TextureFor(textKey);
+            if (texture == null)
+            {
+                return;
+            }
+
+            icon.SetTexture(texture);
+            var outline = icon.GetNodeOrNull<TextureRect>("%Outline");
+            outline?.SetTexture(texture);
+            icon.Visible = true;
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"[BetterRewards] Failed to apply event option icon: {ex.Message}");
+        }
+    }
+
+    private static Texture2D? TextureFor(string textKey)
+    {
+        var resourceName = textKey switch
+        {
+            "BETTERREWARDS.NEOW" => NeowIconResourceName,
+            "BETTERREWARDS.SACRIFICE.do" or "BETTERREWARDS.SACRIFICE.locked" => SacrificeIconResourceName,
+            "BETTERREWARDS.ENTER_SHOP" => EnterShopIconResourceName,
+            "BETTERREWARDS.SHOP_PENDING" => WaitMerchantIconResourceName,
+            // Any other BetterRewards option keeps the vanilla shop map icon.
+            _ => null
+        };
+
+        if (resourceName == null)
+        {
+            return ResourceLoader.Load<Texture2D>(FallbackShopIconPath, cacheMode: ResourceLoader.CacheMode.Reuse);
+        }
+
+        if (CustomIcons.TryGetValue(resourceName, out var cached))
+        {
+            return cached ?? ResourceLoader.Load<Texture2D>(FallbackShopIconPath, cacheMode: ResourceLoader.CacheMode.Reuse);
+        }
+
+        var texture = LoadEmbeddedPngTexture(resourceName);
+        CustomIcons[resourceName] = texture;
+        return texture ?? ResourceLoader.Load<Texture2D>(FallbackShopIconPath, cacheMode: ResourceLoader.CacheMode.Reuse);
+    }
+
+    private static Texture2D? LoadEmbeddedPngTexture(string resourceName)
+    {
+        try
+        {
+            var assembly = typeof(NEventOptionButtonReadyPatch).Assembly;
+            using var stream = assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
+            {
+                Log.Warn($"[BetterRewards] Missing embedded event icon resource: {resourceName}");
+                return null;
+            }
+
+            var bytes = new byte[stream.Length];
+            var read = stream.Read(bytes, 0, bytes.Length);
+            if (read != bytes.Length)
+            {
+                Log.Warn($"[BetterRewards] Could not read full event icon resource: {resourceName}");
+                return null;
+            }
+
+            var image = new Image();
+            if (image.LoadPngFromBuffer(bytes) != Error.Ok)
+            {
+                Log.Warn($"[BetterRewards] Could not decode event icon resource: {resourceName}");
+                return null;
+            }
+
+            return ImageTexture.CreateFromImage(image);
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"[BetterRewards] Failed loading event icon resource {resourceName}: {ex.Message}");
+            return null;
+        }
     }
 }

@@ -1,0 +1,16 @@
+{
+  "BETTERREWARDS.NEOW.title": "商人的交易",
+  "BETTERREWARDS.NEOW.description": "进入特殊商店。可牺牲最多 {n} 次，每次失去 {hpPercent}% 生命，获得 {goldPerSacrifice} 金币。",
+  "BETTERREWARDS.NEOW.description.no_score": "进入特殊商店。没有上一局得分，牺牲生命不会获得金币。",
+  "BETTERREWARDS.ENTER_SHOP.title": "进入商店",
+  "BETTERREWARDS.ENTER_SHOP.description": "离开涅奥，进入商人的特殊商店。",
+  "BETTERREWARDS.ENTER_SHOP.desc": "离开涅奥，进入商人的特殊商店。",
+  "BETTERREWARDS.SACRIFICE.locked.title": "无法牺牲 {hpPercent}% 生命",
+  "BETTERREWARDS.SACRIFICE.locked.description": "这次牺牲会让你死亡。",
+  "BETTERREWARDS.SACRIFICE.locked.desc": "这次牺牲会让你死亡。",
+  "BETTERREWARDS.SHOP_PENDING.title": "等待商人",
+  "BETTERREWARDS.SHOP_PENDING.desc": "商人正在等待。等所有人结束与涅奥的选择后，将进入特殊商店。",
+  "BETTERREWARDS.SACRIFICE.state.desc": "商人提出一笔交易：牺牲生命以换取金币。\n\n已牺牲：{sacrificesDone}/{maxRepeats}  |  生命：{currentHp}/{maxHp}  |  每次可获得金币：{goldPerSacrifice}",
+  "BETTERREWARDS.SACRIFICE.do.title": "牺牲 {hpCost} 点生命，获得 {goldPerSacrifice} 金币",
+  "BETTERREWARDS.SACRIFICE.do.desc": "失去 {hpCost} 点生命，获得 {goldPerSacrifice} 金币。（{sacrificeIndex}/{maxRepeats}）"
+}

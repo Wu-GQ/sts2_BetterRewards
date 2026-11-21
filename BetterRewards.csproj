@@ -7,7 +7,18 @@
     <AssemblyName>BetterRewards</AssemblyName>
     <RootNamespace>BetterRewards</RootNamespace>
     <Sts2InstallDir Condition="'$(Sts2InstallDir)' == '' and '$(STS2_INSTALL_DIR)' != ''">$(STS2_INSTALL_DIR)</Sts2InstallDir>
+    <RitsuLibDir Condition="'$(RitsuLibDir)' == '' and '$(RITSULIB_DIR)' != ''">$(RITSULIB_DIR)</RitsuLibDir>
+    <!-- First existing RitsuLib bundle wins. Workshop installs usually live under steamapps/workshop/content. -->
+    <RitsuLibDir Condition="'$(RitsuLibDir)' == '' and Exists('$(Sts2InstallDir)/mods/STS2-RitsuLib/RitsuLib.References.props')">$(Sts2InstallDir)/mods/STS2-RitsuLib</RitsuLibDir>
+    <RitsuLibDir Condition="'$(RitsuLibDir)' == '' and Exists('$(Sts2InstallDir)/mods/RitsuLib/RitsuLib.References.props')">$(Sts2InstallDir)/mods/RitsuLib</RitsuLibDir>
+    <RitsuLibDir Condition="'$(RitsuLibDir)' == '' and Exists('$(Sts2InstallDir)/../../workshop/content/2868840/3747602295/RitsuLib.References.props')">$([MSBuild]::NormalizeDirectory('$(Sts2InstallDir)/../../workshop/content/2868840/3747602295'))</RitsuLibDir>
+    <!-- Compile-time RitsuLib reference, which must name an exact folder under
+         RitsuLib/compat. It stays 0.113.0 because that is the newest compat target the
+         bundle ships; the runtime requirement is min_game_version in the manifests. -->
+    <RitsuLibReferenceTarget Condition="'$(RitsuLibReferenceTarget)' == ''">0.113.0</RitsuLibReferenceTarget>
   </PropertyGroup>
+
+  <Import Project="$(RitsuLibDir)/RitsuLib.References.props" Condition="'$(RitsuLibDir)' != '' and Exists('$(RitsuLibDir)/RitsuLib.References.props')" />
 
   <ItemGroup>
     <Reference Include="sts2">
@@ -22,21 +33,33 @@
       <HintPath>$(Sts2InstallDir)/data_sts2_windows_x86_64/0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="ModManagerSettings" Condition="Exists('../ModManagerSettings/dist/ModManagerSettings/ModManagerSettings.dll')">
-      <HintPath>../ModManagerSettings/dist/ModManagerSettings/ModManagerSettings.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The mod project uses the SDK's default Compile glob, which would otherwise pull in
+         tests/**/*.cs (and its obj/ output) and fail on missing xunit references. -->
+    <Compile Remove="tests/**" />
+    <Compile Remove="dist/**" />
+    <Compile Remove="decompile/**" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="resources/reroll_icon.png" LogicalName="BetterRewards.RerollIconPng" />
     <EmbeddedResource Include="resources/random_relic_icon.png" LogicalName="BetterRewards.RandomRelicIconPng" />
     <EmbeddedResource Include="resources/random_item_icon.png" LogicalName="BetterRewards.RandomItemIconPng" />
+    <EmbeddedResource Include="resources/merchant-trade-contract.png" LogicalName="BetterRewards.MerchantTradeContractPng" />
+    <EmbeddedResource Include="resources/life-for-gold-heart.png" LogicalName="BetterRewards.LifeForGoldHeartPng" />
+    <EmbeddedResource Include="resources/enter-shop-door.png" LogicalName="BetterRewards.EnterShopDoorPng" />
+    <EmbeddedResource Include="resources/wait-merchant-hourglass.png" LogicalName="BetterRewards.WaitMerchantHourglassPng" />
+    <LocalizationJson Include="localization/*/*.json" />
+    <EmbeddedResource Include="@(LocalizationJson)">
+      <LogicalName>BetterRewards.Loc.$([System.IO.Path]::GetFileName($([System.IO.Path]::GetDirectoryName(%(FullPath))))).$([System.IO.Path]::GetFileNameWithoutExtension(%(Identity)))</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 
   <Target Name="ValidateSts2InstallDir" BeforeTargets="ResolveReferences">
     <Error Condition="'$(Sts2InstallDir)' == ''" Text="Sts2InstallDir is not set. Define STS2_INSTALL_DIR in .env or pass -p:Sts2InstallDir=/path/to/Slay the Spire 2." />
     <Error Condition="!Exists('$(Sts2InstallDir)/data_sts2_windows_x86_64/sts2.dll')" Text="Could not find sts2.dll under '$(Sts2InstallDir)/data_sts2_windows_x86_64'. Check STS2_INSTALL_DIR in .env." />
-    <Error Condition="!Exists('../ModManagerSettings/dist/ModManagerSettings/ModManagerSettings.dll')" Text="BetterRewards depends on ModManagerSettings. Build/install ModManagerSettings first so '../ModManagerSettings/dist/ModManagerSettings/ModManagerSettings.dll' exists." />
+    <Error Condition="'$(RitsuLibDir)' == '' or !Exists('$(RitsuLibDir)/RitsuLib.References.props')" Text="Could not find RitsuLib. Install STS2-RitsuLib from the Steam Workshop (item 3747602295) or from https://github.com/BAKAOLC/STS2-RitsuLib, then set RITSULIB_DIR to the folder that contains RitsuLib.References.props. Searched: '$(RITSULIB_DIR)', '$(Sts2InstallDir)/mods/STS2-RitsuLib', '$(Sts2InstallDir)/mods/RitsuLib', and the Workshop folder 3747602295." />
   </Target>
 </Project>

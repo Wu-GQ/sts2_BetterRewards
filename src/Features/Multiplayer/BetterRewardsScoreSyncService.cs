@@ -1,3 +1,4 @@
+using System.Reflection;
 using BetterRewards.Features.Event;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Multiplayer;
@@ -22,6 +23,7 @@ internal struct BetterRewardsPreviousRunScoreMessage : INetMessage, IPacketSeria
 
     public LogLevel LogLevel => LogLevel.Info;
 
+    public bool ShouldBuffer => true;
     public void Serialize(PacketWriter writer)
     {
         writer.WriteString(PlayerSignature ?? string.Empty);
@@ -220,45 +222,59 @@ internal static class BetterRewardsScoreSyncService
     }
 }
 
-[HarmonyPatch(typeof(NetClientGameService))]
+[HarmonyPatch]
 internal static class NetClientGameServiceAttachBetterRewardsScorePatch
 {
-    [HarmonyPatch(MethodType.Constructor)]
+    private static IEnumerable<MethodBase> TargetMethods()
+    {
+        return typeof(NetClientGameService).GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+    }
+
     [HarmonyPostfix]
     public static void Postfix(NetClientGameService __instance)
     {
         BetterRewardsScoreSyncService.EnsureAttached(__instance, "NetClientGameService::.ctor");
+        BetterRewardsSettingsSyncService.EnsureAttached(__instance, "NetClientGameService::.ctor");
+        BetterRewardsShopSyncService.EnsureAttached(__instance, "NetClientGameService::.ctor");
     }
 }
 
-[HarmonyPatch(typeof(NetHostGameService))]
+[HarmonyPatch]
 internal static class NetHostGameServiceAttachBetterRewardsScorePatch
 {
-    [HarmonyPatch(MethodType.Constructor)]
+    private static IEnumerable<MethodBase> TargetMethods()
+    {
+        return typeof(NetHostGameService).GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+    }
+
     [HarmonyPostfix]
     public static void Postfix(NetHostGameService __instance)
     {
         BetterRewardsScoreSyncService.EnsureAttached(__instance, "NetHostGameService::.ctor");
+        BetterRewardsSettingsSyncService.EnsureAttached(__instance, "NetHostGameService::.ctor");
+        BetterRewardsShopSyncService.EnsureAttached(__instance, "NetHostGameService::.ctor");
     }
 }
 
-[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpNewMultiPlayer))]
+[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpNewMultiplayer))]
 internal static class RunManagerSetUpNewMultiPlayerBetterRewardsPatch
 {
     [HarmonyPostfix]
     public static void Postfix(RunState state)
     {
-        BetterRewardsScoreSyncService.RefreshForCurrentRun(state, "RunManager.SetUpNewMultiPlayer");
+        BetterRewardsScoreSyncService.RefreshForCurrentRun(state, "RunManager.SetUpNewMultiplayer");
+        BetterRewardsSettingsSyncService.RefreshFromHostLocal("RunManager.SetUpNewMultiplayer");
     }
 }
 
-[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpSavedMultiPlayer))]
+[HarmonyPatch(typeof(RunManager), nameof(RunManager.SetUpSavedMultiplayer))]
 internal static class RunManagerSetUpSavedMultiPlayerBetterRewardsPatch
 {
     [HarmonyPostfix]
     public static void Postfix(RunState state)
     {
-        BetterRewardsScoreSyncService.RefreshForCurrentRun(state, "RunManager.SetUpSavedMultiPlayer");
+        BetterRewardsScoreSyncService.RefreshForCurrentRun(state, "RunManager.SetUpSavedMultiplayer");
+        BetterRewardsSettingsSyncService.RefreshFromHostLocal("RunManager.SetUpSavedMultiplayer");
     }
 }
 
@@ -283,6 +299,7 @@ internal static class StartRunLobbyJoinBetterRewardsScoreSnapshotPatch
             senderId,
             __instance.Players.Select(player => player.id),
             "StartRunLobby join");
+        BetterRewardsSettingsSyncService.SendSnapshotTo(__instance.NetService, senderId, "StartRunLobby join");
     }
 }
 
@@ -307,5 +324,6 @@ internal static class StartRunLobbyReadyBetterRewardsScoreSnapshotPatch
             senderId,
             __instance.Players.Select(player => player.id),
             "StartRunLobby ready");
+        BetterRewardsSettingsSyncService.SendSnapshotTo(__instance.NetService, senderId, "StartRunLobby ready");
     }
 }

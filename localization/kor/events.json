@@ -1,0 +1,16 @@
+{
+  "BETTERREWARDS.NEOW.title": "상인의 거래",
+  "BETTERREWARDS.NEOW.description": "특수 상점을 방문합니다. 최대 {n}회까지 희생할 수 있으며, 매번 HP의 {hpPercent}%를 잃고 {goldPerSacrifice} 골드를 얻습니다.",
+  "BETTERREWARDS.NEOW.description.no_score": "특수 상점을 방문합니다. 이전 점수가 없어 희생해도 골드를 얻지 못합니다.",
+  "BETTERREWARDS.ENTER_SHOP.title": "상점 입장",
+  "BETTERREWARDS.ENTER_SHOP.description": "네오를 떠나 상인의 특수 상점으로 들어갑니다.",
+  "BETTERREWARDS.ENTER_SHOP.desc": "네오를 떠나 상인의 특수 상점으로 들어갑니다.",
+  "BETTERREWARDS.SACRIFICE.locked.title": "HP {hpPercent}%를 희생할 수 없음",
+  "BETTERREWARDS.SACRIFICE.locked.description": "이번 희생으로 사망합니다.",
+  "BETTERREWARDS.SACRIFICE.locked.desc": "이번 희생으로 사망합니다.",
+  "BETTERREWARDS.SHOP_PENDING.title": "상인 대기 중",
+  "BETTERREWARDS.SHOP_PENDING.desc": "상인이 기다리고 있습니다. 모두가 네오와의 선택을 마치면 특수 상점으로 들어갑니다.",
+  "BETTERREWARDS.SACRIFICE.state.desc": "상인이 거래를 제안합니다. HP를 희생하고 골드를 얻으세요.\n\n희생: {sacrificesDone}/{maxRepeats}  |  HP: {currentHp}/{maxHp}  |  희생당 골드: {goldPerSacrifice}",
+  "BETTERREWARDS.SACRIFICE.do.title": "{hpCost} HP를 희생하여 {goldPerSacrifice} 골드 획득",
+  "BETTERREWARDS.SACRIFICE.do.desc": "{hpCost} HP를 잃고 {goldPerSacrifice} 골드를 얻습니다. ({sacrificeIndex}/{maxRepeats})"
+}

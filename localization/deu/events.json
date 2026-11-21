@@ -1,0 +1,16 @@
+{
+  "BETTERREWARDS.NEOW.title": "Der Handel des Händlers",
+  "BETTERREWARDS.NEOW.description": "Besuche einen besonderen Laden. Bis zu {n} Opfer, jeweils {hpPercent} % LP für {goldPerSacrifice} Gold.",
+  "BETTERREWARDS.NEOW.description.no_score": "Besuche einen besonderen Laden. Kein vorheriger Punktestand, Opfer bringen kein Gold.",
+  "BETTERREWARDS.ENTER_SHOP.title": "Laden betreten",
+  "BETTERREWARDS.ENTER_SHOP.description": "Verlasse Neow und betritt den besonderen Laden des Händlers.",
+  "BETTERREWARDS.ENTER_SHOP.desc": "Verlasse Neow und betritt den besonderen Laden des Händlers.",
+  "BETTERREWARDS.SACRIFICE.locked.title": "Kann {hpPercent} % LP nicht opfern",
+  "BETTERREWARDS.SACRIFICE.locked.description": "Dieses Opfer würde dich töten.",
+  "BETTERREWARDS.SACRIFICE.locked.desc": "Dieses Opfer würde dich töten.",
+  "BETTERREWARDS.SHOP_PENDING.title": "Warten auf den Händler",
+  "BETTERREWARDS.SHOP_PENDING.desc": "Der Händler wartet. Du betrittst den besonderen Laden, sobald alle mit Neow fertig sind.",
+  "BETTERREWARDS.SACRIFICE.state.desc": "Der Händler bietet einen Handel an. Opfere LP im Tausch gegen Gold.\n\nOpfer: {sacrificesDone}/{maxRepeats}  |  LP: {currentHp}/{maxHp}  |  Gold pro Opfer: {goldPerSacrifice}",
+  "BETTERREWARDS.SACRIFICE.do.title": "Opfere {hpCost} LP für {goldPerSacrifice} Gold",
+  "BETTERREWARDS.SACRIFICE.do.desc": "Verliere {hpCost} LP und erhalte {goldPerSacrifice} Gold. ({sacrificeIndex}/{maxRepeats})"
+}

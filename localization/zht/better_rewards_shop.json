@@ -1,0 +1,8 @@
+{
+  "reroll.title": "刷新商店",
+  "reroll.description": "將商人的商品替換為一批新的庫存。",
+  "random_relic.title": "隨機遺物",
+  "random_relic.description": "按普通商店的稀有度機率，購買一件隨機遺物。",
+  "random_item.title": "隨機物品",
+  "random_item.description": "按普通商店的貨欄比例與稀有度機率，購買一件隨機遺物、卡牌或藥水。"
+}
