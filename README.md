@@ -83,7 +83,7 @@ What is shared, and therefore replayed on every peer, is the run state the purch
 ./scripts/bash/install_to_game.sh
 ```
 
-`build_and_stage.sh` compiles `BetterRewards.dll` against the game assemblies and RitsuLib, then copies the dll, `BetterRewards.json`, `BetterRewards.pck`, and `mod_image.png` into `dist/BetterRewards`. The pack only contains the mod icon. Rebuild it with `./scripts/bash/make_pck.sh` if a newer game rejects the committed pack. That script needs Godot.
+`build_and_stage.sh` compiles `BetterRewards.dll` against the game assemblies and RitsuLib, then copies the dll, `BetterRewards.json`, `BetterRewards.pck`, and `mod_image.png` into `dist/BetterRewards`. The pack holds only the mod icon, at the one path the game reads it from (`res://BetterRewards/mod_image.png`). Rebuild it with `./scripts/bash/make_pck.sh` after changing `mod_image.png`, or if a newer game rejects the committed pack. That script needs Godot 4.5.
 
 **What to test in game:**
 1. The mod list shows BetterRewards, and RitsuLib's settings screen lists the Event, Shop reroll, Random relic, and Random item sliders.

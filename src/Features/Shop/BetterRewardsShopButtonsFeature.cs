@@ -60,8 +60,6 @@ internal static class BetterRewardsShopButtonsFeature
         }
     }
 
-    internal static bool IsLocalPlayer(Player player) => LocalContext.IsMe(player);
-
     public static void TryAttachButtons(NMerchantInventory merchantInventory)
     {
         if (!IsActiveShop)
@@ -249,8 +247,6 @@ internal static class BetterRewardsShopButtonsFeature
             entry.PurchaseCompleted += (_, _) => _activeRefreshAction?.Invoke();
         }
     }
-
-    internal static void RefreshActiveLabels() => _activeRefreshAction?.Invoke();
 
     internal static void ShowStockedSlots(NMerchantInventory nInventory)
     {
@@ -922,19 +918,6 @@ internal static class BetterRewardsShopButtonsFeature
         return null;
     }
 
-    private static void SetAllMouseFiltersIgnore(Node node)
-    {
-        if (node is Control c)
-        {
-            c.MouseFilter = Control.MouseFilterEnum.Ignore;
-        }
-
-        foreach (var child in node.GetChildren())
-        {
-            SetAllMouseFiltersIgnore(child);
-        }
-    }
-
     private static void SetCost(ShopActionUi ui)
     {
         var cost = ui.GetCost();
@@ -946,9 +929,7 @@ internal static class BetterRewardsShopButtonsFeature
     }
 
     /// <summary>
-    /// Picks a random unlocked Ancient relic the player doesn't already own.
-    /// Ancient relics are excluded from the normal grab bag, so we query ModelDb directly.
-    /// Returns null if no candidates exist (caller should fall back to Rare).
+    /// True when the local player can afford the given price, which is what colours the label.
     /// </summary>
     private static bool HasEnoughGold(int cost)
     {
@@ -1016,14 +997,6 @@ internal static class BetterRewardsShopButtonsFeature
             RandomItemType.Card => Card?.IsStocked == true,
             RandomItemType.Potion => Potion?.IsStocked == true,
             _ => false,
-        };
-
-        public int Cost => Type switch
-        {
-            RandomItemType.Relic => Relic!.Cost,
-            RandomItemType.Card => Card!.Cost,
-            RandomItemType.Potion => Potion!.Cost,
-            _ => 0,
         };
 
         public static PreparedItemOffer FromRelic(MerchantRelicEntry entry) => new(RandomItemType.Relic, entry, null, null);

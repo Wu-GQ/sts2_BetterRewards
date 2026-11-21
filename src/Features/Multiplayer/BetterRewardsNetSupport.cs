@@ -89,21 +89,6 @@ internal static class BetterRewardsNetSupport
         return localId.HasValue ? FindPlayer(localId.Value) : null;
     }
 
-    public static void RunOnMainThread(Action action)
-    {
-        Callable.From(() =>
-        {
-            try
-            {
-                action();
-            }
-            catch (Exception ex)
-            {
-                Log.Warn($"[BetterRewards] Deferred multiplayer apply failed: {ex}");
-            }
-        }).CallDeferred();
-    }
-
     /// <summary>
     /// Runs an async action on the Godot main thread.
     /// <para>
@@ -137,8 +122,4 @@ internal static class BetterRewardsNetSupport
         var raw = reader.ReadString();
         return double.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out var value) ? value : 0d;
     }
-
-    public static void WriteULong(PacketWriter writer, ulong value) => writer.WriteULong(value);
-
-    public static ulong ReadULong(PacketReader reader) => reader.ReadULong();
 }

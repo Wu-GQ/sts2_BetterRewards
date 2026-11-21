@@ -83,7 +83,7 @@ RitsuLib 会把它们保存为游戏用户数据目录下的 `settings.json`。�
 ./scripts/bash/install_to_game.sh
 ```
 
-`build_and_stage.sh` 会针对游戏程序集和 RitsuLib 编译 `BetterRewards.dll`，然后将 dll、`BetterRewards.json`、`BetterRewards.pck` 和 `mod_image.png` 复制到 `dist/BetterRewards`。pck 包里只有模组图标。如果更新后的游戏拒绝已提交的 pck，可用 `./scripts/bash/make_pck.sh` 重新打包。该脚本需要 Godot。
+`build_and_stage.sh` 会针对游戏程序集和 RitsuLib 编译 `BetterRewards.dll`，然后将 dll、`BetterRewards.json`、`BetterRewards.pck` 和 `mod_image.png` 复制到 `dist/BetterRewards`。pck 包里只有模组图标，且只放在游戏实际读取的那一个路径（`res://BetterRewards/mod_image.png`）。改动 `mod_image.png` 之后，或遇到更新后的游戏拒绝已提交的 pck 时，可用 `./scripts/bash/make_pck.sh` 重新打包。该脚本需要 Godot 4.5。
 
 **建议在游戏中测试：**
 1. 模组列表中能看到 BetterRewards，RitsuLib 的设置界面中能看到事件、商店刷新、随机遗物、随机物品这些滑条。
