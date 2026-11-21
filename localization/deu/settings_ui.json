@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Opferwiederholungen",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Wie oft du LP gegen Gold opfern darfst.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Punktestand → Gold %",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Anteil des Punktestands des vorherigen Laufs, der pro Opfer in Gold umgewandelt wird (z. B. 0.5 = 50 % des Punktestands pro Opfer).",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Anteil des Punktestands des vorherigen Laufs, der pro Opfer in Gold umgewandelt wird (z. B. 0.25 = 25 % des Punktestands pro Opfer).",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Mindestpunktestand des vorherigen Laufs",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "Der wirksame Punktestand des vorherigen Laufs beträgt mindestens diesen Wert und garantiert auch im ersten Lauf eine Mindestmenge an Gold.",
   "BETTERREWARDS-SHOP_REROLL.title": "Laden-Reroll",

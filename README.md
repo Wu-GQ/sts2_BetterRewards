@@ -53,7 +53,7 @@ RitsuLib saves them as `settings.json` in the game's user data folder. On Window
 |---|---:|---|
 | HP Sacrifice % | 0.20 | 0.00–1.00, step 0.01 |
 | Sacrifice Repeats | 4 | 1–10 |
-| Score → Gold % | 0.50 | 0.01–1.00, step 0.01 |
+| Score → Gold % | 0.25 | 0.01–1.00, step 0.01 |
 | Minimum Previous Score | 1000 | 0–2000, step 50 |
 | Reroll Base Cost | 150 | 50–1000, step 5 |
 | Reroll Cost Increment | 50 | 0–500, step 5 |

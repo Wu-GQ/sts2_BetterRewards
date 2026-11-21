@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Numero di sacrifici",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Quante volte puoi sacrificare PF in cambio di oro.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Punteggio → oro %",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Frazione del punteggio della corsa precedente convertita in oro a ogni sacrificio (es. 0.5 = 50% del punteggio per sacrificio).",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Frazione del punteggio della corsa precedente convertita in oro a ogni sacrificio (es. 0.25 = 25% del punteggio per sacrificio).",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Punteggio precedente minimo",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "Il punteggio effettivo della corsa precedente è almeno questo valore, garantendo un minimo di oro anche alla prima partita.",
   "BETTERREWARDS-SHOP_REROLL.title": "Reroll del negozio",

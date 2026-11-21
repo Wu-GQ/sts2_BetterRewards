@@ -157,7 +157,7 @@ internal static class BetterRewardsSettings
                 .AddSlider("score_to_gold_percent", Title("BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title", "Score → Gold %"), scoreToGoldPercent,
                     minValue: 0.01, maxValue: 1.0, step: 0.01,
                     valueFormatter: static v => v.ToString("0.00"),
-                    description: Desc("SCORE_TO_GOLD_PERCENT", "Fraction of your previous run's score converted to gold per sacrifice (e.g. 0.5 = 50% of score per sacrifice)."))
+                    description: Desc("SCORE_TO_GOLD_PERCENT", "Fraction of your previous run's score converted to gold per sacrifice (e.g. 0.25 = 25% of score per sacrifice)."))
                 .AddIntSlider("min_previous_score", Title("BETTERREWARDS-MIN_PREVIOUS_SCORE.title", "Minimum Previous Score"), minPreviousScore,
                     minValue: 0, maxValue: 2000, step: 50,
                     valueFormatter: static v => v.ToString("0"),

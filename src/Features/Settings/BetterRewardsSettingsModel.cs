@@ -12,7 +12,7 @@ internal sealed class BetterRewardsSettingsModel
 {
     public double HpSacrificePercent { get; set; } = 0.20;
     public int SacrificeRepeatCount { get; set; } = 4;
-    public double ScoreToGoldPercent { get; set; } = 0.5;
+    public double ScoreToGoldPercent { get; set; } = 0.25;
     public int MinPreviousScore { get; set; } = 1000;
     public double ShopRerollBaseCost { get; set; } = 150.0;
     public double ShopRerollCostIncrement { get; set; } = 50.0;

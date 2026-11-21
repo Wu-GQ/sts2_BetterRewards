@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "عدد التضحيات",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "كم مرة يمكنك التضحية بنقاط الصحة مقابل الذهب.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "النتيجة ← الذهب %",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "حصة نتيجة الجولة السابقة التي تُحوَّل إلى ذهب في كل تضحية (مثلًا 0.5 = 50% من النتيجة لكل تضحية).",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "حصة نتيجة الجولة السابقة التي تُحوَّل إلى ذهب في كل تضحية (مثلًا 0.25 = 25% من النتيجة لكل تضحية).",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "الحد الأدنى للنتيجة السابقة",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "النتيجة الفعلية للجولة السابقة لا تقل عن هذه القيمة، مما يضمن حدًا أدنى من الذهب حتى في الجولة الأولى.",
   "BETTERREWARDS-SHOP_REROLL.title": "إعادة رمي المتجر",

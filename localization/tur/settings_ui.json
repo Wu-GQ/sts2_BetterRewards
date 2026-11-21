@@ -7,7 +7,7 @@
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title": "Fedakârlık sayısı",
   "BETTERREWARDS-SACRIFICE_REPEAT_COUNT.hover.desc": "Canı altın karşılığında kaç kez feda edebileceğin.",
   "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.title": "Skor → altın %",
-  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Önceki koşunun skorunun her fedakârlıkta altına çevrilen oranı (ör. 0.5 = fedakârlık başına skorun %50'si).",
+  "BETTERREWARDS-SCORE_TO_GOLD_PERCENT.hover.desc": "Önceki koşunun skorunun her fedakârlıkta altına çevrilen oranı (ör. 0.25 = fedakârlık başına skorun %25'i).",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.title": "Minimum önceki skor",
   "BETTERREWARDS-MIN_PREVIOUS_SCORE.hover.desc": "Önceki koşunun geçerli skoru en az bu değer olur; böylece ilk oyunda bile asgari altın fırsatı garanti edilir.",
   "BETTERREWARDS-SHOP_REROLL.title": "Dükkân yenileme",
