@@ -149,7 +149,7 @@ internal static class BetterRewardsSettings
                 .AddSlider("hp_sacrifice_percent", Title("BETTERREWARDS-HP_SACRIFICE_PERCENT.title", "HP Sacrifice %"), hpSacrificePercent,
                     minValue: 0.0, maxValue: 1.0, step: 0.01,
                     valueFormatter: static v => v.ToString("0.00"),
-                    description: Desc("HP_SACRIFICE_PERCENT", "Fraction of your current HP lost per sacrifice (0.0–1.0). A single sacrifice cannot exceed your max HP divided by Sacrifice Repeats."))
+                    description: Desc("HP_SACRIFICE_PERCENT", "Share of your max HP paid per sacrifice (0.0–1.0). A single sacrifice cannot exceed your max HP divided by Sacrifice Repeats."))
                 .AddIntSlider("sacrifice_repeat_count", Title("BETTERREWARDS-SACRIFICE_REPEAT_COUNT.title", "Sacrifice Repeats"), sacrificeRepeatCount,
                     minValue: 1, maxValue: 10, step: 1,
                     valueFormatter: static v => v.ToString("0"),
