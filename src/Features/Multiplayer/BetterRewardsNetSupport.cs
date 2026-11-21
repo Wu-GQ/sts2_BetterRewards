@@ -1,6 +1,8 @@
 using System.Globalization;
 using System.Reflection;
+using BetterRewards.Features.Shop;
 using Godot;
+using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Logging;
@@ -78,6 +80,15 @@ internal static class BetterRewardsNetSupport
         return run?.Players.FirstOrDefault(player => player.NetId == netId);
     }
 
+    /// <summary>
+    /// The local player, for code paths that run before a room node can name them.
+    /// </summary>
+    public static Player? FindLocalPlayer()
+    {
+        var localId = LocalContext.NetId;
+        return localId.HasValue ? FindPlayer(localId.Value) : null;
+    }
+
     public static void RunOnMainThread(Action action)
     {
         Callable.From(() =>
@@ -93,14 +104,30 @@ internal static class BetterRewardsNetSupport
         }).CallDeferred();
     }
 
+    /// <summary>
+    /// Runs an async action on the Godot main thread.
+    /// <para>
+    /// The deferred callback must not return <see cref="Task"/>. Godot's
+    /// <c>Callable.From</c> trampoline tries to convert a lambda's return value into a
+    /// <c>Variant</c>, and <c>Task</c> has no Variant conversion, so the call throws
+    /// <c>InvalidOperationException</c> before the work ever runs. The async body is therefore
+    /// started inside a void lambda.
+    /// </para>
+    /// </summary>
     public static void RunSafelyOnMainThread(Func<Task> action)
     {
-        Callable.From(() => TaskHelper.RunSafely(action())).CallDeferred();
+        Callable.From(() =>
+        {
+            try
+            {
+                TaskHelper.RunSafely(action());
+            }
+            catch (Exception ex)
+            {
+                Log.Warn($"[BetterRewards] Deferred multiplayer apply failed: {ex}");
+            }
+        }).CallDeferred();
     }
-
-    public static void WriteBool(PacketWriter writer, bool value) => writer.WriteInt(value ? 1 : 0);
-
-    public static bool ReadBool(PacketReader reader) => reader.ReadInt() != 0;
 
     public static void WriteDouble(PacketWriter writer, double value) =>
         writer.WriteString(value.ToString("G17", CultureInfo.InvariantCulture));
@@ -111,12 +138,7 @@ internal static class BetterRewardsNetSupport
         return double.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out var value) ? value : 0d;
     }
 
-    public static void WriteULong(PacketWriter writer, ulong value) =>
-        writer.WriteString(value.ToString(CultureInfo.InvariantCulture));
+    public static void WriteULong(PacketWriter writer, ulong value) => writer.WriteULong(value);
 
-    public static ulong ReadULong(PacketReader reader)
-    {
-        var raw = reader.ReadString();
-        return ulong.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value) ? value : 0UL;
-    }
+    public static ulong ReadULong(PacketReader reader) => reader.ReadULong();
 }

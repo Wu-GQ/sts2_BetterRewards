@@ -64,6 +64,10 @@ Random relic and random item prices are a configurable base cost that increases 
 
 In multiplayer, the host's settings are copied into the run when it starts and then shared through RitsuLib. Clients use that host snapshot for sacrifice and shop prices during the run; their local settings files are not overwritten. Previous-run score sharing is unchanged.
 
+**Each player keeps their own shop.** Slay the Spire 2 builds a separate `MerchantInventory` per player from that character's card pool and that player's `PlayerRng.Shops`, so two players see different stock and have different shelf layouts. The special shop follows that: pressing reroll, random relic, or random item only changes *your* shelves, and the price ladder is tracked per player. Other players still see their own prices and their own stock.
+
+What is shared, and therefore replayed on every peer, is the run state the purchase touches: gold spent, the relic or card or potion you received, the use counts behind your price ladder, and the relic ids the action pulled out of the grab bags. The game checksums the per-player relic grab bag, so those ids travel with the action instead of being re-derived; otherwise the bags would drift apart and the session could be flagged as diverged.
+
 ## Developer notes
 
 **Requirements:** .NET 9 SDK, a local Slay the Spire 2 install (public 0.107.x or newer; the manifest asks for `0.107.1`), and RitsuLib 0.6.14 or newer. This tree does not vendor `sts2.dll` or RitsuLib assemblies.

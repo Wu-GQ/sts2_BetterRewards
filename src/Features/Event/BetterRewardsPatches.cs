@@ -373,7 +373,6 @@ internal static class NMerchantInventoryInitializePatch
         try
         {
             BetterRewardsShopButtonsFeature.TrySubscribePurchaseEvents(__instance);
-            BetterRewardsShopSyncService.TryApplyPendingReroll(__instance);
         }
         catch (Exception ex)
         {

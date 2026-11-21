@@ -23,6 +23,7 @@
     <Compile Include="../../src/Features/Settings/BetterRewardsSettingsModel.cs" Link="Linked/BetterRewardsSettingsModel.cs" />
     <Compile Include="../../src/Features/Settings/BetterRewardsResetCoordinator.cs" Link="Linked/BetterRewardsResetCoordinator.cs" />
     <Compile Include="../../src/Features/Settings/BetterRewardsSettingsDefaults.cs" Link="Linked/BetterRewardsSettingsDefaults.cs" />
+    <Compile Include="../../src/Features/Shop/BetterRewardsShopUseCount.cs" Link="Linked/BetterRewardsShopUseCount.cs" />
   </ItemGroup>
 
   <ItemGroup>

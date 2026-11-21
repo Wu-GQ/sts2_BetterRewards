@@ -46,9 +46,6 @@ internal static class BetterRewardsShopButtonsFeature
     private static Texture2D? _randomRelicIconTexture;
     private static Texture2D? _randomItemIconTexture;
 
-    private static MerchantRelicEntry? _preparedRelic;
-    private static PreparedItemOffer? _preparedItem;
-
     private static bool _isActiveShop;
     public static bool IsActiveShop
     {
@@ -59,10 +56,11 @@ internal static class BetterRewardsShopButtonsFeature
             if (!value)
             {
                 _activeRefreshAction = null;
-                ClearPreparedOffers();
             }
         }
     }
+
+    internal static bool IsLocalPlayer(Player player) => LocalContext.IsMe(player);
 
     public static void TryAttachButtons(NMerchantInventory merchantInventory)
     {
@@ -113,6 +111,10 @@ internal static class BetterRewardsShopButtonsFeature
         _randomItemIconTexture ??= LoadEmbeddedPngTexture(RandomItemIconResourceName);
 
         EnsureTooltipLocalization();
+
+        // Prices are per player, so the label getters must read the owner of this inventory.
+        // The owner is only known once Initialize runs, so resolve again from there too.
+        BetterRewardsShopState.LocalPlayerId = ResolveLocalPlayerId(merchantInventory);
 
         var rerollButton = MakeIconAction(
             "reroll",
@@ -232,6 +234,9 @@ internal static class BetterRewardsShopButtonsFeature
         var container = slotsContainer.GetNodeOrNull<Control>(ContainerName);
         if (container == null) return;
 
+        // Inventory is populated by now, so this is the first reliable point to learn whose
+        // price ladder these buttons should display.
+        BetterRewardsShopState.LocalPlayerId = ResolveLocalPlayerId(merchantInventory);
         // Find the RefreshLabels closure captured in TryAttachButtons by looking for
         // the buttons node — we need to call SetCost on all ShopActionUi children.
         // Simpler: just keep a static registry of active refresh delegates.
@@ -247,20 +252,6 @@ internal static class BetterRewardsShopButtonsFeature
 
     internal static void RefreshActiveLabels() => _activeRefreshAction?.Invoke();
 
-    internal static void RefreshAfterRemoteInventoryChange(NMerchantInventory nInventory)
-    {
-        ShowStockedSlots(nInventory);
-        RefreshCardRemovalNode(nInventory);
-        RefreshActiveLabels();
-    }
-
-    internal static void AnimateRemoteCardToDeck(CardModel card, Player player) => AnimateCardToDeck(card, player);
-
-    internal static void SetCardRemovalUsed(MerchantCardRemovalEntry entry, bool used)
-    {
-        _setCardRemovalUsed?.Invoke(entry, [used]);
-    }
-
     internal static void ShowStockedSlots(NMerchantInventory nInventory)
     {
         foreach (var slot in nInventory.GetAllSlots())
@@ -272,48 +263,8 @@ internal static class BetterRewardsShopButtonsFeature
         }
     }
 
-    internal static void RefreshCardRemovalNode(NMerchantInventory nInventory)
-    {
-        var cardRemoval = nInventory.Inventory?.CardRemovalEntry;
-        if (cardRemoval == null)
-        {
-            return;
-        }
-
-        var usedProperty = typeof(MerchantCardRemovalEntry).GetProperty("Used", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        var used = usedProperty?.GetValue(cardRemoval) is true;
-        var cardRemovalNode = nInventory.GetNodeOrNull<NMerchantCardRemoval>("%MerchantCardRemoval");
-        if (cardRemovalNode == null)
-        {
-            return;
-        }
-
-        if (!used)
-        {
-            _isUnavailableField?.SetValue(cardRemovalNode, false);
-            if (_animatorField?.GetValue(cardRemovalNode) is AnimationPlayer animator)
-            {
-                animator.CurrentAnimation = "Used";
-                animator.Seek(0.0, true);
-                animator.Stop();
-            }
-
-            var hitbox = cardRemovalNode.Hitbox;
-            if (hitbox != null)
-            {
-                hitbox.MouseFilter = Control.MouseFilterEnum.Stop;
-                cardRemovalNode.FocusMode = Control.FocusModeEnum.All;
-            }
-        }
-
-        cardRemoval.OnMerchantInventoryUpdated();
-    }
-
     // Stores the most recent RefreshLabels delegate so the Initialize patch can subscribe it.
     private static Action? _activeRefreshAction;
-
-    private static readonly MethodInfo? _restockAfterPurchase =
-        typeof(MerchantEntry).GetMethod("RestockAfterPurchase", BindingFlags.NonPublic | BindingFlags.Instance);
 
     private static readonly MethodInfo? _setCardRemovalUsed =
         typeof(MerchantCardRemovalEntry).GetProperty("Used", BindingFlags.Public | BindingFlags.Instance)
@@ -330,15 +281,17 @@ internal static class BetterRewardsShopButtonsFeature
     private static async Task DoReroll(Player player, int cost, Action refreshLabels, NMerchantInventory nInventory)
     {
         await PlayerCmd.LoseGold(cost, player, GoldLossType.Spent);
-        BetterRewardsShopState.RecordRerollUse();
+        BetterRewardsShopState.RecordRerollUse(player.NetId);
 
-        var inventory = NMerchantRoom.Instance?.Inventory?.Inventory;
+        var inventory = nInventory.Inventory;
         if (inventory == null)
         {
             Log.Warn("[BetterRewards] DoReroll: MerchantInventory not found.");
             refreshLabels();
             return;
         }
+
+        var pulledRelics = new List<BetterRewardsPulledRelic>();
 
         // Re-populate card entries, then notify UI for each one individually.
         // (CalcCost throws if CreationResult is null, so we must Populate before notifying.)
@@ -349,22 +302,15 @@ internal static class BetterRewardsShopButtonsFeature
         }
 
         // Re-populate relic and potion entries (including purchased/cleared slots).
-        if (_restockAfterPurchase != null)
+        // Record which relics this leaves the grab bag, because peers must remove the same ids.
+        foreach (var entry in inventory.RelicEntries)
         {
-            foreach (var entry in inventory.RelicEntries)
-            {
-                _restockAfterPurchase.Invoke(entry, new object?[] { inventory });
-                entry.OnMerchantInventoryUpdated();
-            }
-            foreach (var entry in inventory.PotionEntries)
-            {
-                _restockAfterPurchase.Invoke(entry, new object?[] { inventory });
-                entry.OnMerchantInventoryUpdated();
-            }
+            RestockRelicAndRecordPulls(entry, inventory, pulledRelics);
         }
-        else
+
+        foreach (var entry in inventory.PotionEntries)
         {
-            Log.Warn("[BetterRewards] Could not reflect RestockAfterPurchase — relics/potions not rerolled.");
+            BetterRewardsShopSyncService.RestockOwnEntry(entry, inventory);
         }
 
         // Reset card removal — re-enable the service for this rerolled shop visit.
@@ -402,24 +348,66 @@ internal static class BetterRewardsShopButtonsFeature
         ShowStockedSlots(nInventory);
 
         refreshLabels();
-        BetterRewardsShopSyncService.BroadcastReroll(player, inventory, cost);
-        Log.Info("[BetterRewards] Shop rerolled in-place.");
+
+        BetterRewardsShopState.GetUseCounts(player.NetId, out var rerolls, out var relics, out var items);
+        BetterRewardsShopSyncService.PublishAction(new BetterRewardsShopActionMessage
+        {
+            ActorNetId = player.NetId,
+            Kind = BetterRewardsShopActionKind.Reroll,
+            PaidCost = cost,
+            RerollUseCount = rerolls,
+            RelicUseCount = relics,
+            RandomItemUseCount = items,
+            PulledRelics = pulledRelics.ToArray(),
+            // The engine replays purchases against each peer's copy of this player's shop, so
+            // the rerolled stock has to travel with the action or teammates buy the old shelves.
+            Slots = BetterRewardsShopSyncService.CaptureSlots(inventory),
+        }, player);
+
+        Log.Info($"[BetterRewards] Shop rerolled in place ({pulledRelics.Count} relics pulled).");
+    }
+
+    /// <summary>
+    /// Restocks one of the acting player's relic slots and records the relic the restock consumed.
+    /// <para>
+    /// <c>RestockAfterPurchase</c> pulls a fresh relic with <c>RelicFactory.PullNextRelicFromBack</c>,
+    /// which removes that relic from both the player's bag and the shared bag. The pulled relic's
+    /// id is only known after the restock runs, so it is read back afterwards and sent to peers
+    /// so they can remove the same relic.
+    /// </para>
+    /// </summary>
+    private static void RestockRelicAndRecordPulls(
+        MerchantRelicEntry entry,
+        MerchantInventory inventory,
+        List<BetterRewardsPulledRelic> pulled)
+    {
+        var before = entry.Model?.Id.ToString();
+        BetterRewardsShopSyncService.RestockOwnEntry(entry, inventory);
+        var after = entry.Model?.Id.ToString();
+
+        // A restock that produced the same relic drew from the fallback, so nothing left the bag.
+        if (string.Equals(before, after, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        RecordPulled(entry.Model, pulled);
     }
 
     private static async Task DoRandomRelic(Player player, Action refreshLabels)
     {
-        EnsurePreparedRelic(player);
-        var entry = _preparedRelic;
-        if (entry?.Model == null)
-        {
-            Log.Warn("[BetterRewards] Random Relic → no prepared relic offer.");
-            refreshLabels();
-            return;
-        }
-
         var cost = BetterRewardsShopState.CurrentRelicCost;
         if (player.Gold < cost)
         {
+            return;
+        }
+
+        var pulledRelics = new List<BetterRewardsPulledRelic>();
+        var entry = RollRelicOffer(player, pulledRelics);
+        if (entry?.Model == null)
+        {
+            Log.Warn("[BetterRewards] Random Relic → no relic could be rolled.");
+            refreshLabels();
             return;
         }
 
@@ -430,32 +418,45 @@ internal static class BetterRewardsShopButtonsFeature
         Log.Info($"[BetterRewards] Random Relic → {relic.Rarity} relic: {relic.Id} for {cost} gold");
         await RelicCmd.Obtain(mutable, player);
 
-        BetterRewardsShopState.RecordRelicUse();
-        BetterRewardsShopSyncService.BroadcastGrant(player, BetterRewardsShopGrantKind.Relic, relic.Id.ToString() ?? string.Empty, cost);
-        _preparedRelic = null;
-        EnsurePreparedRelic(player);
+        BetterRewardsShopState.RecordRelicUse(player.NetId);
+
+        BetterRewardsShopState.GetUseCounts(player.NetId, out var rerolls, out var relics, out var items);
+        BetterRewardsShopSyncService.PublishAction(new BetterRewardsShopActionMessage
+        {
+            ActorNetId = player.NetId,
+            Kind = BetterRewardsShopActionKind.RandomRelic,
+            PaidCost = cost,
+            GrantedModelId = relic.Id.ToString(),
+            RerollUseCount = rerolls,
+            RelicUseCount = relics,
+            RandomItemUseCount = items,
+            PulledRelics = pulledRelics.ToArray(),
+        }, player);
+
         refreshLabels();
     }
 
     private static async Task DoRandomItem(Player player, Action refreshLabels)
     {
-        EnsurePreparedItem(player);
-        var offer = _preparedItem;
-        if (offer == null || !offer.IsReady)
-        {
-            Log.Warn("[BetterRewards] Random Item → no prepared item offer.");
-            refreshLabels();
-            return;
-        }
-
         var cost = BetterRewardsShopState.CurrentRandomItemCost;
         if (player.Gold < cost)
         {
             return;
         }
 
+        var pulledRelics = new List<BetterRewardsPulledRelic>();
+        var offer = RollItemOffer(player, pulledRelics);
+        if (offer == null || !offer.IsReady)
+        {
+            Log.Warn("[BetterRewards] Random Item → no item could be rolled.");
+            refreshLabels();
+            return;
+        }
+
         Log.Info($"[BetterRewards] Random Item rolled type: {offer.Type}");
-        var granted = false;
+        var grantedId = string.Empty;
+        var cardUpgraded = false;
+
         try
         {
             switch (offer.Type)
@@ -467,7 +468,7 @@ internal static class BetterRewardsShopButtonsFeature
                     Log.Info($"[BetterRewards] Random Item (Relic) → {relic.Rarity}: {relic.Id} for {cost} gold");
                     await PlayerCmd.LoseGold(cost, player, GoldLossType.Spent);
                     await RelicCmd.Obtain(mutable, player);
-                    granted = true;
+                    grantedId = relic.Id.ToString();
                     break;
                 }
                 case RandomItemType.Card:
@@ -482,7 +483,8 @@ internal static class BetterRewardsShopButtonsFeature
 
                     await PlayerCmd.LoseGold(cost, player, GoldLossType.Spent);
                     AnimateCardToDeck(card, player);
-                    granted = true;
+                    grantedId = card.Id.ToString();
+                    cardUpgraded = card.IsUpgraded;
                     break;
                 }
                 case RandomItemType.Potion:
@@ -497,7 +499,7 @@ internal static class BetterRewardsShopButtonsFeature
                     }
 
                     await PlayerCmd.LoseGold(cost, player, GoldLossType.Spent);
-                    granted = true;
+                    grantedId = potion.Id.ToString();
                     break;
                 }
             }
@@ -507,25 +509,23 @@ internal static class BetterRewardsShopButtonsFeature
             Log.Warn($"[BetterRewards] Random item grant failed: {ex.Message}\n{ex.StackTrace}");
         }
 
-        if (granted)
+        if (!string.IsNullOrEmpty(grantedId))
         {
-            BetterRewardsShopState.RecordRandomItemUse();
-            var grantedId = offer.Type switch
+            BetterRewardsShopState.RecordRandomItemUse(player.NetId);
+
+            BetterRewardsShopState.GetUseCounts(player.NetId, out var rerolls, out var relics, out var items);
+            BetterRewardsShopSyncService.PublishAction(new BetterRewardsShopActionMessage
             {
-                RandomItemType.Relic => offer.Relic?.Model?.Id.ToString() ?? string.Empty,
-                RandomItemType.Card => offer.Card?.CreationResult?.Card.Id.ToString() ?? string.Empty,
-                RandomItemType.Potion => offer.Potion?.Model?.Id.ToString() ?? string.Empty,
-                _ => string.Empty,
-            };
-            var grantKind = offer.Type switch
-            {
-                RandomItemType.Relic => BetterRewardsShopGrantKind.Relic,
-                RandomItemType.Card => BetterRewardsShopGrantKind.Card,
-                _ => BetterRewardsShopGrantKind.Potion,
-            };
-            BetterRewardsShopSyncService.BroadcastGrant(player, grantKind, grantedId, cost);
-            _preparedItem = null;
-            EnsurePreparedItem(player);
+                ActorNetId = player.NetId,
+                Kind = BetterRewardsShopActionKind.RandomItem,
+                PaidCost = cost,
+                GrantedModelId = grantedId,
+                GrantedCardUpgraded = cardUpgraded,
+                RerollUseCount = rerolls,
+                RelicUseCount = relics,
+                RandomItemUseCount = items,
+                PulledRelics = pulledRelics.ToArray(),
+            }, player);
         }
 
         refreshLabels();
@@ -570,6 +570,29 @@ internal static class BetterRewardsShopButtonsFeature
         return null;
     }
 
+    /// <summary>
+    /// Identifies whose price ladder the buttons should show.
+    /// <para>
+    /// <c>NMerchantInventory.Inventory</c> is null while <c>_Ready</c> runs (the room assigns it
+    /// in <c>Initialize</c> afterwards), so fall back to the local net id, which is what
+    /// <c>MerchantSynchronizer.GetLocalInventory()</c> will hand this node anyway.
+    /// </para>
+    /// </summary>
+    private static ulong ResolveLocalPlayerId(NMerchantInventory merchantInventory)
+    {
+        var owner = merchantInventory.Inventory?.Player
+            ?? NMerchantRoom.Instance?.Inventory?.Inventory?.Player;
+
+        if (owner != null)
+        {
+            return owner.NetId;
+        }
+
+        return LocalContext.NetId
+            ?? BetterRewardsNetSupport.FindLocalPlayer()?.NetId
+            ?? 0UL;
+    }
+
     private static readonly CardType[] ShopCharacterCardTypes =
     {
         CardType.Attack, CardType.Attack, CardType.Skill, CardType.Skill, CardType.Power
@@ -584,42 +607,59 @@ internal static class BetterRewardsShopButtonsFeature
     private const int ShopCardSlotCount = 7;
     private const int ShopPotionSlotCount = 3;
 
-    internal static void ClearPreparedOffers()
+    /// <summary>
+    /// Rolls the offer the Random Relic button will sell, at the moment it is pressed.
+    /// <para>
+    /// Rolling lazily is deliberate. An eagerly "prepared" offer would consume
+    /// <c>PlayerRng.Shops</c> and pull a relic out of the grab bag just by opening the shop,
+    /// on the acting peer only, which desynchronises the checksummed per-player bag even if
+    /// nobody presses anything.
+    /// </para>
+    /// </summary>
+    private static MerchantRelicEntry? RollRelicOffer(Player player, List<BetterRewardsPulledRelic> pulled)
     {
-        _preparedRelic = null;
-        _preparedItem = null;
-    }
-
-    private static void EnsurePreparedRelic(Player player)
-    {
-        if (_preparedRelic?.IsStocked == true)
-        {
-            return;
-        }
-
         var rarity = RelicFactory.RollRarity(player.PlayerRng.Shops);
-        _preparedRelic = new MerchantRelicEntry(rarity, player);
+        var entry = new MerchantRelicEntry(rarity, player);
+        if (!entry.IsStocked)
+        {
+            return null;
+        }
+
+        RecordPulled(entry.Model, pulled);
+        return entry;
     }
 
-    private static void EnsurePreparedItem(Player player)
+    /// <summary>
+    /// Records a relic the shop just pulled, so peers can remove the same relic from their copy
+    /// of the actor's grab bags.
+    /// </summary>
+    private static void RecordPulled(RelicModel? relic, List<BetterRewardsPulledRelic> pulled)
     {
-        if (_preparedItem?.IsReady == true)
+        var id = relic?.Id.ToString();
+        if (string.IsNullOrEmpty(id) || pulled.Any(entry => entry.ModelId == id))
         {
             return;
         }
 
-        _preparedItem = null;
-        for (var attempt = 0; attempt < 5 && _preparedItem == null; attempt++)
+        pulled.Add(new BetterRewardsPulledRelic { ModelId = id });
+    }
+
+    /// <summary>
+    /// Rolls the offer the Random Item button will sell, at the moment it is pressed. The type
+    /// ratio matches a vanilla merchant: 3 relics, 7 cards, 3 potions.
+    /// </summary>
+    private static PreparedItemOffer? RollItemOffer(Player player, List<BetterRewardsPulledRelic> pulled)
+    {
+        for (var attempt = 0; attempt < 5; attempt++)
         {
             switch (RollItemType(player))
             {
                 case RandomItemType.Relic:
                 {
-                    var rarity = RelicFactory.RollRarity(player.PlayerRng.Shops);
-                    var entry = new MerchantRelicEntry(rarity, player);
-                    if (entry.IsStocked)
+                    var entry = RollRelicOffer(player, pulled);
+                    if (entry != null)
                     {
-                        _preparedItem = PreparedItemOffer.FromRelic(entry);
+                        return PreparedItemOffer.FromRelic(entry);
                     }
                     break;
                 }
@@ -628,7 +668,7 @@ internal static class BetterRewardsShopButtonsFeature
                     var entry = CreateShopCardEntry(player);
                     if (entry.IsStocked)
                     {
-                        _preparedItem = PreparedItemOffer.FromCard(entry);
+                        return PreparedItemOffer.FromCard(entry);
                     }
                     break;
                 }
@@ -637,12 +677,14 @@ internal static class BetterRewardsShopButtonsFeature
                     var potion = PotionFactory.CreateRandomPotionOutOfCombat(player, player.PlayerRng.Shops);
                     if (potion != null)
                     {
-                        _preparedItem = PreparedItemOffer.FromPotion(new MerchantPotionEntry(potion.ToMutable(), player));
+                        return PreparedItemOffer.FromPotion(new MerchantPotionEntry(potion.ToMutable(), player));
                     }
                     break;
                 }
             }
         }
+
+        return null;
     }
 
     private static MerchantCardEntry CreateShopCardEntry(Player player)
