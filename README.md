@@ -4,6 +4,8 @@
 
 This repository is a fork of [customjack/sts2_BetterRewards](https://github.com/customjack/sts2_BetterRewards) by Jack Carlton. Gameplay is his. This fork uses [RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib) for settings and in-run multiplayer sync. It is not the upstream project.
 
+The whole concept comes from [Skrelpoid](https://github.com/Skrelpoid)'s [BetterRewards for Slay the Spire 1](https://steamcommunity.com/sharedfiles/filedetails/?id=1613185732) ([source](https://github.com/Skrelpoid/BetterRewardsMod)): trading your Neow reward for gold and a special starting shop. Jack Carlton's STS2 version is what this fork builds on.
+
 Issues and pull requests are welcome: bug reports, balance feedback, translation fixes and new ideas. Please attach `godot.log` when reporting a crash or a desync.
 
 The original mod is MIT licensed. Copyright (c) 2026 Jack Carlton. See [LICENSE](LICENSE).

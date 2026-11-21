@@ -4,7 +4,9 @@
 
 This repository is a fork of Jack Carlton's [customjack/sts2_BetterRewards](https://github.com/customjack/sts2_BetterRewards). Gameplay is his. This fork uses [RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib) for settings and in-run multiplayer sync. It is not the upstream project.
 
-欢迎提交 issue 与 pull request：Bug 反馈、平衡建议、翻译修正、新点子都可以。反馈崩溃或联机分歧时请附上 `godot.log`。
+整个玩法概念来自 [Skrelpoid](https://github.com/Skrelpoid) 的[杀戮尖塔 1 版 BetterRewards](https://steamcommunity.com/sharedfiles/filedetails/?id=1613185732)（[源码](https://github.com/Skrelpoid/BetterRewardsMod)）：用尼欧的奖励换取金币并进入特殊商店。本 fork 基于 Jack Carlton 的《杀戮尖塔 2》版本。
+
+欢迎提交 issue 与 pull request：Bug 反馈、平衡建议、翻译修正、新点子。反馈崩溃或联机分歧时请附上 `godot.log`。
 
 原模组采用 MIT 许可。Copyright (c) 2026 Jack Carlton。详见 [LICENSE](LICENSE)。
 
