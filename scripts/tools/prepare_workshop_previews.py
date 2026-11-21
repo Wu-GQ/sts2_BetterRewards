@@ -70,40 +70,48 @@ def crop_to_aspect(im: Image.Image) -> Image.Image:
 
 
 def encode_under_limit(im: Image.Image) -> tuple[bytes, str]:
-    """Return PNG bytes under MAX_BYTES, downscaling if needed."""
-    width = im.width
-    while True:
-        canvas = im
-        if width < im.width:
-            height = int(round(width * ASPECT_H / ASPECT_W))
-            canvas = im.resize((width, height), Image.LANCZOS)
+    """Encode under MAX_BYTES, preferring full resolution over lossless format.
 
+    Game screenshots contain a lot of smooth gradients and small text; PNG stays
+    large there while high-quality JPEG is far smaller at the same size. Keeping
+    every preview at the same resolution matters more for the Workshop gallery
+    than keeping PNG, so try PNG once, then step JPEG quality down, and only
+    downscale as a genuine last resort.
+    """
+    rgb = im.convert("RGB") if im.mode != "RGB" else im
+
+    # 1. Lossless first, in case it already fits at full size.
+    buf = io.BytesIO()
+    im.save(buf, format="PNG", optimize=True)
+    png = buf.getvalue()
+    if len(png) <= MAX_BYTES:
+        return png, f"{im.width}x{im.height} PNG"
+
+    # 2. High-quality JPEG at full resolution.
+    for quality in (95, 92, 90, 87, 84, 80, 76, 72, 68):
         buf = io.BytesIO()
-        canvas.save(buf, format="PNG", optimize=True)
+        rgb.save(buf, format="JPEG", quality=quality, subsampling=0, optimize=True)
         data = buf.getvalue()
-
         if len(data) <= MAX_BYTES:
-            return data, f"{canvas.width}x{canvas.height} PNG"
+            return data, f"{im.width}x{im.height} JPEG{quality}"
 
-        # Shrink by 15% and try again; screenshots compress very well in PNG.
-        next_width = int(width * 0.85)
-        if next_width < 1280:
-            # Last resort: high-quality JPEG is far smaller for noisy/photographic art.
+    # 3. Still too big: downscale, then retry JPEG at the reduced size.
+    width = im.width
+    while width > 960:
+        width = int(width * 0.9)
+        height = int(round(width * ASPECT_H / ASPECT_W))
+        canvas = rgb.resize((width, height), Image.LANCZOS)
+        for quality in (92, 88, 84, 80):
             buf = io.BytesIO()
-            rgb = canvas.convert("RGB") if canvas.mode != "RGB" else canvas
-            rgb.save(buf, format="JPEG", quality=90, optimize=True)
-            jpeg = buf.getvalue()
-            if len(jpeg) <= MAX_BYTES:
-                return jpeg, f"{canvas.width}x{canvas.height} JPEG"
-            # Extremely noisy source: keep the resolution, lower quality.
-            for quality in (85, 80, 75, 70):
-                buf = io.BytesIO()
-                rgb.save(buf, format="JPEG", quality=quality, optimize=True)
-                jpeg = buf.getvalue()
-                if len(jpeg) <= MAX_BYTES:
-                    return jpeg, f"{canvas.width}x{canvas.height} JPEG{quality}"
-            return jpeg, f"{canvas.width}x{canvas.height} JPEG70"
-        width = next_width
+            canvas.save(buf, format="JPEG", quality=quality, subsampling=0, optimize=True)
+            data = buf.getvalue()
+            if len(data) <= MAX_BYTES:
+                return data, f"{canvas.width}x{canvas.height} JPEG{quality}"
+
+    # 4. Give up on the limit and hand back the smallest attempt.
+    buf = io.BytesIO()
+    rgb.save(buf, format="JPEG", quality=68, optimize=True)
+    return buf.getvalue(), f"{rgb.width}x{rgb.height} JPEG68 (over limit)"
 
 
 def main() -> int:
