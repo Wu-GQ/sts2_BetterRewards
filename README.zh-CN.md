@@ -76,7 +76,20 @@ RitsuLib 会把它们保存为游戏用户数据目录下的 `settings.json`。�
 
 **环境要求：** .NET 9 SDK、本地安装的《杀戮尖塔 2》，以及 RitsuLib 0.6.14 或更高版本。本仓库不附带 `sts2.dll` 或 RitsuLib 程序集。
 
-**一份 DLL，两个游戏分支。** 发布的 DLL 同时支持 `public` 正式版（0.111.x）与 `public-beta`（0.113.x）。它以**最老**的受支持版本为编译目标，较新的商店 API（`MerchantEntry.Id`、`MerchantCardEntry` 的构造函数与 `Populate` 重载、`MerchantSynchronizer`）通过 [`src/Core/Sts2ApiCompat.cs`](src/Core/Sts2ApiCompat.cs) 里的反射访问。请始终以 0.111.x 编译；如果你的 Steam 安装在 `public-beta` 分支上，把 `STS2_REFERENCE_DIR` 指向一份 0.111.x 快照，避免 0.113 专属成员混进构建、导致正式版运行时崩溃。
+**一份 DLL，两个游戏分支。** 发布的 DLL 同时支持 `public` 正式版（0.111.x）与 `public-beta`（0.113.x）。它以**最老**的受支持版本为编译目标，较新的商店 API（`MerchantEntry.Id`、`MerchantCardEntry` 的构造函数与 `Populate` 重载、`MerchantSynchronizer`）通过 [`src/Core/Sts2ApiCompat.cs`](src/Core/Sts2ApiCompat.cs) 里的反射访问。
+
+若你的 Steam 安装在 `public-beta`，把 0.111.x 的程序集快照放到 `.reference/0.111.1/`：
+
+```
+.reference/0.111.1/
+  release_info.json
+  data_sts2_windows_x86_64/
+    sts2.dll
+    GodotSharp.dll
+    0Harmony.dll
+```
+
+它会被**自动使用**，包括直接运行 `dotnet build` 的情况（该路径不读 `.env`）。该目录已在 `.gitignore` 中忽略，因为那些是受版权保护的游戏文件。若快照缺失，构建会回退到已安装的游戏，此时 0.113 专属成员可能被编译进来，导致正式版运行时崩溃。
 
 **准备：**
 1. 将 `.env.example` 复制为 `.env`。

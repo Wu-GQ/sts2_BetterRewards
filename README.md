@@ -76,7 +76,20 @@ What is shared, and therefore replayed on every peer, is the run state the purch
 
 **Requirements:** .NET 9 SDK, a local Slay the Spire 2 install, and RitsuLib 0.6.14 or newer. This tree does not vendor `sts2.dll` or RitsuLib assemblies.
 
-**One assembly, two game branches.** The released DLL runs on both the `public` branch (0.111.x) and `public-beta` (0.113.x). It is compiled against the *oldest* supported build, and reaches the newer merchant API (`MerchantEntry.Id`, the `MerchantCardEntry` constructor and `Populate` overloads, `MerchantSynchronizer`) through reflection in [`src/Core/Sts2ApiCompat.cs`](src/Core/Sts2ApiCompat.cs). Always compile against 0.111.x; if your Steam install is on `public-beta`, pin `STS2_REFERENCE_DIR` to a 0.111.x snapshot so a 0.113-only member cannot slip into the build and break the public branch at runtime.
+**One assembly, two game branches.** The released DLL runs on both the `public` branch (0.111.x) and `public-beta` (0.113.x). It is compiled against the *oldest* supported build, and reaches the newer merchant API (`MerchantEntry.Id`, the `MerchantCardEntry` constructor and `Populate` overloads, `MerchantSynchronizer`) through reflection in [`src/Core/Sts2ApiCompat.cs`](src/Core/Sts2ApiCompat.cs).
+
+To keep the compile reference pinned when your Steam install is on `public-beta`, put a snapshot of the 0.111.x assemblies in `.reference/0.111.1/`:
+
+```
+.reference/0.111.1/
+  release_info.json
+  data_sts2_windows_x86_64/
+    sts2.dll
+    GodotSharp.dll
+    0Harmony.dll
+```
+
+It is used automatically, including by a plain `dotnet build` (that path does not read `.env`). The folder is gitignored because those are copyrighted game files. If the snapshot is missing, the build falls back to the installed game, and a 0.113-only member would then compile and break the `public` branch at runtime.
 
 **Setup:**
 1. Copy `.env.example` to `.env`.
