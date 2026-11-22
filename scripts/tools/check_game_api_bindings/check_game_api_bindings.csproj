@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Build-time guard for the one-assembly/two-branches arrangement.
+
+    BetterRewards is compiled against the OLDEST supported game build so a single DLL can run on
+    both `public` (0.111.x) and `public-beta` (0.113.x), and reaches newer APIs by reflection.
+    That makes a whole class of bug invisible to the compiler: a member whose signature changed
+    between builds still compiles against the old reference and only fails at runtime with
+    MissingMethodException. That is exactly how 0.113's
+    `MerchantInventory.AllEntries` (IEnumerable<T> -> List<T>) broke shop sync on beta while
+    every build stayed green.
+
+    This tool reads the built DLL's metadata and resolves every MemberRef into MegaCrit.* against
+    a given sts2.dll by NAME AND SIGNATURE. Run it against each supported build; a difference in
+    return type is a hard failure, which is what forces those members through Sts2ApiCompat.
+
+    Not part of BetterRewards.csproj: it needs a real game assembly, which cannot be
+    redistributed, so CI cannot run it (see .github/workflows/checks.yml).
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>check_game_api_bindings</AssemblyName>
+    <RootNamespace>CheckGameApiBindings</RootNamespace>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+  </PropertyGroup>
+</Project>

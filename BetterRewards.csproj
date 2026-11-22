@@ -13,34 +13,62 @@
     <RitsuLibDir Condition="'$(RitsuLibDir)' == '' and Exists('$(Sts2InstallDir)/mods/RitsuLib/RitsuLib.References.props')">$(Sts2InstallDir)/mods/RitsuLib</RitsuLibDir>
     <RitsuLibDir Condition="'$(RitsuLibDir)' == '' and Exists('$(Sts2InstallDir)/../../workshop/content/2868840/3747602295/RitsuLib.References.props')">$([MSBuild]::NormalizeDirectory('$(Sts2InstallDir)/../../workshop/content/2868840/3747602295'))</RitsuLibDir>
     <!-- Compile-time RitsuLib reference, which must name an exact folder under
-         RitsuLib/compat. It stays 0.113.0 because that is the newest compat target the
-         bundle ships; the runtime requirement is min_game_version in the manifests. -->
-    <RitsuLibReferenceTarget Condition="'$(RitsuLibReferenceTarget)' == ''">0.113.0</RitsuLibReferenceTarget>
+         RitsuLib/compat. It stays 0.111.0 to match the oldest game build this mod supports
+         and compiles against (see Sts2ReferenceDir below); building against a newer variant
+         would let a newer RitsuLib-only API slip in unnoticed. The runtime requirement is
+         min_game_version in the manifests. -->
+    <RitsuLibReferenceTarget Condition="'$(RitsuLibReferenceTarget)' == ''">0.111.0</RitsuLibReferenceTarget>
+    <!-- The single source of truth for the supported game floor is the manifest; read it so the
+         reference-snapshot lookup below and min_game_version can never drift apart. -->
+    <MinGameVersion Condition="'$(MinGameVersion)' == ''">0.111.1</MinGameVersion>
+    <!-- Optional override: game assemblies to compile against, when they differ from the
+         installed copy. The mod ships one assembly for both the public branch and
+         public-beta, so it must always be compiled against the OLDEST supported build and
+         reach newer APIs by reflection (see src/Core/Sts2ApiCompat.cs). Point this at a
+         pinned 0.111.x snapshot and a beta install cannot leak 0.113-only members into the
+         build.
+         Resolution order, first hit wins:
+           1. -p:Sts2ReferenceDir / STS2_REFERENCE_DIR
+           2. .reference/<anything> with a release_info.json and sts2.dll, picking the lowest
+              version so a snapshot of the oldest build wins. This is what makes a plain
+              `dotnet build` safe too: that path does not read .env, so without this step the
+              pinned reference would silently be ignored and the installed build used instead.
+           3. Sts2InstallDir.
+         Empty means: use Sts2InstallDir. -->
+    <Sts2ReferenceDir Condition="'$(Sts2ReferenceDir)' == '' and '$(STS2_REFERENCE_DIR)' != ''">$(STS2_REFERENCE_DIR)</Sts2ReferenceDir>
+    <!-- Last-resort discovery so a plain `dotnet build` cannot silently skip the pin: that
+         path does not read .env, and falling back to the installed build there is exactly the
+         mistake this property exists to prevent. The directory name is the manifest's
+         min_game_version, so the snapshot is unambiguous and needs no version sorting. -->
+    <Sts2ReferenceDir Condition="'$(Sts2ReferenceDir)' == '' and Exists('$(MSBuildProjectDirectory)/.reference/$(MinGameVersion)/data_sts2_windows_x86_64/sts2.dll')">$(MSBuildProjectDirectory)/.reference/$(MinGameVersion)</Sts2ReferenceDir>
+    <Sts2ReferenceDir Condition="'$(Sts2ReferenceDir)' == ''">$(Sts2InstallDir)</Sts2ReferenceDir>
   </PropertyGroup>
 
   <Import Project="$(RitsuLibDir)/RitsuLib.References.props" Condition="'$(RitsuLibDir)' != '' and Exists('$(RitsuLibDir)/RitsuLib.References.props')" />
 
   <ItemGroup>
     <Reference Include="sts2">
-      <HintPath>$(Sts2InstallDir)/data_sts2_windows_x86_64/sts2.dll</HintPath>
+      <HintPath>$(Sts2ReferenceDir)/data_sts2_windows_x86_64/sts2.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="GodotSharp">
-      <HintPath>$(Sts2InstallDir)/data_sts2_windows_x86_64/GodotSharp.dll</HintPath>
+      <HintPath>$(Sts2ReferenceDir)/data_sts2_windows_x86_64/GodotSharp.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="0Harmony">
-      <HintPath>$(Sts2InstallDir)/data_sts2_windows_x86_64/0Harmony.dll</HintPath>
+      <HintPath>$(Sts2ReferenceDir)/data_sts2_windows_x86_64/0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
 
   <ItemGroup>
     <!-- The mod project uses the SDK's default Compile glob, which would otherwise pull in
-         tests/**/*.cs (and its obj/ output) and fail on missing xunit references. -->
+         tests/**/*.cs (and its obj/ output) and fail on missing xunit references, plus the
+         standalone tools under scripts/tools (each their own project, with their own obj/). -->
     <Compile Remove="tests/**" />
     <Compile Remove="dist/**" />
     <Compile Remove="decompile/**" />
+    <Compile Remove="scripts/**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +88,7 @@
   <Target Name="ValidateSts2InstallDir" BeforeTargets="ResolveReferences">
     <Error Condition="'$(Sts2InstallDir)' == ''" Text="Sts2InstallDir is not set. Define STS2_INSTALL_DIR in .env or pass -p:Sts2InstallDir=/path/to/Slay the Spire 2." />
     <Error Condition="!Exists('$(Sts2InstallDir)/data_sts2_windows_x86_64/sts2.dll')" Text="Could not find sts2.dll under '$(Sts2InstallDir)/data_sts2_windows_x86_64'. Check STS2_INSTALL_DIR in .env." />
+    <Error Condition="!Exists('$(Sts2ReferenceDir)/data_sts2_windows_x86_64/sts2.dll')" Text="Sts2ReferenceDir ('$(Sts2ReferenceDir)') does not contain data_sts2_windows_x86_64/sts2.dll. This is the compile reference and must hold the OLDEST game build the mod supports. Leave STS2_REFERENCE_DIR unset to compile against the installed game." />
     <Error Condition="'$(RitsuLibDir)' == '' or !Exists('$(RitsuLibDir)/RitsuLib.References.props')" Text="Could not find RitsuLib. Install STS2-RitsuLib from the Steam Workshop (item 3747602295) or from https://github.com/BAKAOLC/STS2-RitsuLib, then set RITSULIB_DIR to the folder that contains RitsuLib.References.props. Searched: '$(RITSULIB_DIR)', '$(Sts2InstallDir)/mods/STS2-RitsuLib', '$(Sts2InstallDir)/mods/RitsuLib', and the Workshop folder 3747602295." />
   </Target>
 </Project>

@@ -12,6 +12,11 @@ __pycache__/
 /.env
 /decompile
 
+# Pinned game assemblies used as the compile reference (STS2_REFERENCE_DIR).
+# They are copyrighted game files and must never be redistributed, same reason
+# sts2.dll and RitsuLib are not vendored.
+/.reference/
+
 /tmp
 
 # IDE folders

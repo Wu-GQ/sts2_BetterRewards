@@ -7,7 +7,7 @@ namespace BetterRewards.Core;
 public static class ModBootstrap
 {
     private const string HarmonyId = "betterrewards.harmony";
-    private const string BuildMarker = "2026-11-21-mp-perplayer-shop";
+    private const string BuildMarker = "2026-11-22-dual-branch-allentries";
 
     private static bool _initialized;
 
@@ -20,6 +20,7 @@ public static class ModBootstrap
 
         _initialized = true;
         Log.Info($"[BetterRewards] Mod loaded. build={BuildMarker}");
+        Log.Info($"[BetterRewards] {Sts2ApiCompat.DescribeResolvedGameBuild()}");
 
         BetterRewardsSettings.Register();
 

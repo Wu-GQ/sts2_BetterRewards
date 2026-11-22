@@ -74,7 +74,30 @@ What is shared, and therefore replayed on every peer, is the run state the purch
 
 ## Developer notes
 
-**Requirements:** .NET 9 SDK, a local Slay the Spire 2 install (the manifest asks for `0.113.1`; this fork was built and tested on `v0.113.1`), and RitsuLib 0.6.14 or newer. This tree does not vendor `sts2.dll` or RitsuLib assemblies.
+**Requirements:** .NET 9 SDK, a local Slay the Spire 2 install, and RitsuLib 0.6.14 or newer. This tree does not vendor `sts2.dll` or RitsuLib assemblies.
+
+**One assembly, two game branches.** The released DLL runs on both the `public` branch (0.111.x) and `public-beta` (0.113.x). It is compiled against the *oldest* supported build, and reaches the newer merchant API (`MerchantInventory.AllEntries`, `MerchantEntry.Id`, the `MerchantCardEntry` constructor and `Populate` overloads, `MerchantSynchronizer`) through reflection in [`src/Core/Sts2ApiCompat.cs`](src/Core/Sts2ApiCompat.cs).
+
+That arrangement has one sharp edge worth knowing about: **a member whose signature changed between branches still compiles**, because the compile reference is the old build. The failure only shows up in game as a `MissingMethodException`. `MerchantInventory.AllEntries` is the worked example — `IEnumerable<MerchantEntry>` on 0.111, `List<MerchantEntry>` on 0.113, and a property getter's return type *is* part of its metadata signature. A direct call compiled against 0.111 threw on beta inside the reroll's snapshot capture, which took the whole `PublishAction` with it: the host paid and rerolled locally, never told anyone, and teammates kept the pre-reroll stock.
+
+Two guards prevent a repeat. Neither needs the game to run, and both run before a build is staged:
+
+- `scripts/tools/check_game_api_bindings` resolves every `MegaCrit.*` MemberRef in the built DLL against a given `sts2.dll` **by name and signature** and fails on a mismatch. `build_and_stage.sh` runs it against both the pinned reference and the installed build, so compiling against 0.111 while installed on beta is checked rather than assumed.
+- `tests/BetterRewards.Tests/DualBranchApiContractTests.cs` is a cheap source-text net that forbids direct `AllEntries` / `MerchantEntry.Id` reads outside the compat layer, so the regression is caught even on a machine without the game.
+
+
+To keep the compile reference pinned when your Steam install is on `public-beta`, put a snapshot of the 0.111.x assemblies in `.reference/0.111.1/`:
+
+```
+.reference/0.111.1/
+  release_info.json
+  data_sts2_windows_x86_64/
+    sts2.dll
+    GodotSharp.dll
+    0Harmony.dll
+```
+
+It is used automatically, including by a plain `dotnet build` (that path does not read `.env`). The folder is gitignored because those are copyrighted game files. If the snapshot is missing, the build falls back to the installed game, and a 0.113-only member would then compile and break the `public` branch at runtime.
 
 **Setup:**
 1. Copy `.env.example` to `.env`.

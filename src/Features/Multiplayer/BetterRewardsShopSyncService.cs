@@ -1,4 +1,5 @@
 using System.Reflection;
+using BetterRewards.Core;
 using BetterRewards.Features.Shop;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -312,16 +313,24 @@ internal static class BetterRewardsShopSyncService
 
     /// <summary>
     /// Reads the acting player's current shelves into wire form.
+    /// <para>
+    /// <c>EntryId</c> is <c>MerchantEntry.Id</c> where the build has it (0.113+), otherwise the
+    /// entry's ordinal in <c>AllEntries</c>. 0.113 replays a purchase by id, and its
+    /// <c>Setup</c> assigns that id from this exact ordinal, so the two agree; 0.111 has no id
+    /// and never re-reads another player's shelves, so the ordinal is only ever used for
+    /// bookkeeping there. <c>AllEntries</c> is ordered cards, relics, potions, blitz, card
+    /// removal, test entries in both builds.
+    /// </para>
     /// </summary>
     public static BetterRewardsShopSlotSnapshot[] CaptureSlots(MerchantInventory inventory)
     {
         var slots = new List<BetterRewardsShopSlotSnapshot>();
-        foreach (var entry in inventory.AllEntries)
+        var entries = Sts2ApiCompat.GetAllEntries(inventory);
+        for (var index = 0; index < entries.Count; index++)
         {
-            if (entry.Id is not uint id)
-            {
-                continue;
-            }
+            var entry = entries[index];
+            // Prefer the engine's own id: that is what 0.113's purchase replay looks up.
+            var id = Sts2ApiCompat.TryGetEntryId(entry) ?? (uint)index;
 
             var baseCost = CostField?.GetValue(entry) is int cost ? cost : entry.Cost;
 
@@ -527,16 +536,22 @@ internal static class BetterRewardsShopSyncService
             return;
         }
 
-        MerchantInventory inventory;
+        // 0.111.x replicates a purchase as "player X spent G and received Y" through
+        // RewardSynchronizer, so no peer ever re-reads another player's shelf snapshot.
+        // Writing one here would only alter what the room records in run history on exit.
+        if (!Sts2ApiCompat.HasMerchantSynchronizer)
+        {
+            return;
+        }
+
+        MerchantInventory? inventory;
         try
         {
-            var synchronizer = RunManager.Instance?.MerchantSynchronizer;
-            if (synchronizer == null)
+            inventory = Sts2ApiCompat.FindInventoryFor(actor);
+            if (inventory == null)
             {
                 return;
             }
-
-            inventory = synchronizer.GetInventoryFor(actor);
         }
         catch (Exception ex)
         {
@@ -547,12 +562,12 @@ internal static class BetterRewardsShopSyncService
         }
 
         var byId = new Dictionary<uint, MerchantEntry>();
-        foreach (var entry in inventory.AllEntries)
+        var entries = Sts2ApiCompat.GetAllEntries(inventory);
+        for (var index = 0; index < entries.Count; index++)
         {
-            if (entry.Id is uint id)
-            {
-                byId[id] = entry;
-            }
+            // Same id rule as CaptureSlots, or a snapshot taken on one peer would not resolve
+            // against the copy held by another.
+            byId[Sts2ApiCompat.TryGetEntryId(entries[index]) ?? (uint)index] = entries[index];
         }
 
         var applied = 0;
