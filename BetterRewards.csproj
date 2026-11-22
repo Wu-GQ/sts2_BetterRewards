@@ -63,10 +63,12 @@
 
   <ItemGroup>
     <!-- The mod project uses the SDK's default Compile glob, which would otherwise pull in
-         tests/**/*.cs (and its obj/ output) and fail on missing xunit references. -->
+         tests/**/*.cs (and its obj/ output) and fail on missing xunit references, plus the
+         standalone tools under scripts/tools (each their own project, with their own obj/). -->
     <Compile Remove="tests/**" />
     <Compile Remove="dist/**" />
     <Compile Remove="decompile/**" />
+    <Compile Remove="scripts/**" />
   </ItemGroup>
 
   <ItemGroup>

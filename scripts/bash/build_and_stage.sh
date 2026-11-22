@@ -79,6 +79,34 @@ fi
 echo "Building ${MOD_ID} (${CONFIG})..."
 "${BUILD_CMD[@]}" build "${PROJECT_FILE}" "${BUILD_ARGS[@]}"
 
+# Runtime API guard. The DLL is compiled against the OLDEST supported game build and reaches
+# newer members by reflection, so a member whose signature changed between branches still
+# compiles and only fails in game with MissingMethodException. This resolves every game
+# MemberRef by name AND signature against each sts2.dll we can see, and fails the build on a
+# mismatch. Needs real game assemblies, so it runs here and not in CI.
+BINDING_CHECK_PROJECT="${PROJECT_ROOT}/scripts/tools/check_game_api_bindings/check_game_api_bindings.csproj"
+if [[ -f "${BINDING_CHECK_PROJECT}" ]]; then
+  BINDING_CHECK_OUT="${PROJECT_ROOT}/scripts/tools/check_game_api_bindings/bin/Release/net9.0"
+  if [[ "${OSTYPE:-}" == msys* || "${OSTYPE:-}" == cygwin* || "${OSTYPE:-}" == win32* ]]; then
+    BINDING_CHECK_EXE="${BINDING_CHECK_OUT}/check_game_api_bindings.exe"
+  else
+    BINDING_CHECK_EXE="${BINDING_CHECK_OUT}/check_game_api_bindings"
+  fi
+  if [[ ! -x "${BINDING_CHECK_EXE}" ]]; then
+    "${BUILD_CMD[@]}" build "${BINDING_CHECK_PROJECT}" -c Release -v q --nologo >/dev/null
+  fi
+
+  BUILT_DLL="${BUILD_OUT}/${ASSEMBLY_NAME}.dll"
+  REFERENCE_DLL="${STS2_REFERENCE_DIR:-${PROJECT_ROOT}/.reference/0.111.1}/data_sts2_windows_x86_64/sts2.dll"
+  INSTALLED_DLL="${STS2_INSTALL_DIR}/data_sts2_windows_x86_64/sts2.dll"
+
+  echo "Checking game API bindings..."
+  "${BINDING_CHECK_EXE}" "${BUILT_DLL}" "${REFERENCE_DLL}"
+  # The installed copy is a different branch whenever the pinned reference is in use, which
+  # is exactly the case that used to break silently.
+  "${BINDING_CHECK_EXE}" "${BUILT_DLL}" "${INSTALLED_DLL}"
+fi
+
 mkdir -p "${DIST_DIR}"
 cp -f "${BUILD_OUT}/${ASSEMBLY_NAME}.dll" "${DIST_DIR}/${MOD_ID}.dll"
 cp -f "${PROJECT_ROOT}/mod_manifest.json" "${DIST_DIR}/${MOD_ID}.json"
