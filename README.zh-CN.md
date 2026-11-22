@@ -76,7 +76,15 @@ RitsuLib 会把它们保存为游戏用户数据目录下的 `settings.json`。�
 
 **环境要求：** .NET 9 SDK、本地安装的《杀戮尖塔 2》，以及 RitsuLib 0.6.14 或更高版本。本仓库不附带 `sts2.dll` 或 RitsuLib 程序集。
 
-**一份 DLL，两个游戏分支。** 发布的 DLL 同时支持 `public` 正式版（0.111.x）与 `public-beta`（0.113.x）。它以**最老**的受支持版本为编译目标，较新的商店 API（`MerchantEntry.Id`、`MerchantCardEntry` 的构造函数与 `Populate` 重载、`MerchantSynchronizer`）通过 [`src/Core/Sts2ApiCompat.cs`](src/Core/Sts2ApiCompat.cs) 里的反射访问。
+**一份 DLL，两个游戏分支。** 发布的 DLL 同时支持 `public` 正式版（0.111.x）与 `public-beta`（0.113.x）。它以**最老**的受支持版本为编译目标，较新的商店 API（`MerchantInventory.AllEntries`、`MerchantEntry.Id`、`MerchantCardEntry` 的构造函数与 `Populate` 重载、`MerchantSynchronizer`）通过 [`src/Core/Sts2ApiCompat.cs`](src/Core/Sts2ApiCompat.cs) 里的反射访问。
+
+这个安排有一个必须知道的尖角：**两个分支之间签名发生变化的成员照样能编译通过**，因为编译引用的是旧版本。它只在游戏里以 `MissingMethodException` 的形式暴露。`MerchantInventory.AllEntries` 就是现成的例子——0.111 上是 `IEnumerable<MerchantEntry>`，0.113 上是 `List<MerchantEntry>`，而属性 getter 的返回类型**本身就是元数据签名的一部分**。按 0.111 编译的直接调用在 beta 上会在刷新商店取快照时抛异常，把整个 `PublishAction` 一并带走：房主扣了钱、本地也刷新了，却没有通知任何人，队友看到的仍是刷新前的货架。
+
+两道防线防止再次发生，两者都不需要运行游戏，且都在产物暂存前执行：
+
+- `scripts/tools/check_game_api_bindings` 把产物 DLL 里所有 `MegaCrit.*` 的 MemberRef 按**名字与签名**逐个拿到指定的 `sts2.dll` 里解析，不匹配即失败。`build_and_stage.sh` 会对固定引用与本机已安装版本各跑一次，因此"编译在 0.111 上、装在 beta 上"是被检查过的，而不是被默认的。
+- `tests/BetterRewards.Tests/DualBranchApiContractTests.cs` 是一道低成本的源码文本防线，禁止在兼容层之外直接读 `AllEntries` / `MerchantEntry.Id`，这样在没有游戏的机器上也能拦住回归。
+
 
 若你的 Steam 安装在 `public-beta`，把 0.111.x 的程序集快照放到 `.reference/0.111.1/`：
 
