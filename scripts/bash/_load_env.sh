@@ -46,5 +46,10 @@ if [[ -n "${RITSULIB_DIR:-}" ]]; then
   export RITSULIB_DIR
 fi
 
+if [[ -n "${STS2_REFERENCE_DIR:-}" ]]; then
+  STS2_REFERENCE_DIR="$(normalize_path "${STS2_REFERENCE_DIR}")"
+  export STS2_REFERENCE_DIR
+fi
+
 export MMS_ENV_FILE="${ENV_FILE}"
 export MMS_ENV_LOADED=1

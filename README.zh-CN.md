@@ -74,7 +74,9 @@ RitsuLib 会把它们保存为游戏用户数据目录下的 `settings.json`。�
 
 ## 开发说明
 
-**环境要求：** .NET 9 SDK、本地安装的《杀戮尖塔 2》（清单要求 `0.113.1`；本 fork 在 `v0.113.1` 上编译并测试），以及 RitsuLib 0.6.14 或更高版本。本仓库不附带 `sts2.dll` 或 RitsuLib 程序集。
+**环境要求：** .NET 9 SDK、本地安装的《杀戮尖塔 2》，以及 RitsuLib 0.6.14 或更高版本。本仓库不附带 `sts2.dll` 或 RitsuLib 程序集。
+
+**一份 DLL，两个游戏分支。** 发布的 DLL 同时支持 `public` 正式版（0.111.x）与 `public-beta`（0.113.x）。它以**最老**的受支持版本为编译目标，较新的商店 API（`MerchantEntry.Id`、`MerchantCardEntry` 的构造函数与 `Populate` 重载、`MerchantSynchronizer`）通过 [`src/Core/Sts2ApiCompat.cs`](src/Core/Sts2ApiCompat.cs) 里的反射访问。请始终以 0.111.x 编译；如果你的 Steam 安装在 `public-beta` 分支上，把 `STS2_REFERENCE_DIR` 指向一份 0.111.x 快照，避免 0.113 专属成员混进构建、导致正式版运行时崩溃。
 
 **准备：**
 1. 将 `.env.example` 复制为 `.env`。

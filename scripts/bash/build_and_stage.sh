@@ -72,6 +72,9 @@ BUILD_ARGS=(-c "${CONFIG}" -p:Sts2InstallDir="${STS2_INSTALL_DIR}")
 if [[ -n "${RITSULIB_DIR:-}" ]]; then
   BUILD_ARGS+=(-p:RitsuLibDir="${RITSULIB_DIR}")
 fi
+if [[ -n "${STS2_REFERENCE_DIR:-}" ]]; then
+  BUILD_ARGS+=(-p:Sts2ReferenceDir="${STS2_REFERENCE_DIR}")
+fi
 
 echo "Building ${MOD_ID} (${CONFIG})..."
 "${BUILD_CMD[@]}" build "${PROJECT_FILE}" "${BUILD_ARGS[@]}"

@@ -74,7 +74,9 @@ What is shared, and therefore replayed on every peer, is the run state the purch
 
 ## Developer notes
 
-**Requirements:** .NET 9 SDK, a local Slay the Spire 2 install (the manifest asks for `0.113.1`; this fork was built and tested on `v0.113.1`), and RitsuLib 0.6.14 or newer. This tree does not vendor `sts2.dll` or RitsuLib assemblies.
+**Requirements:** .NET 9 SDK, a local Slay the Spire 2 install, and RitsuLib 0.6.14 or newer. This tree does not vendor `sts2.dll` or RitsuLib assemblies.
+
+**One assembly, two game branches.** The released DLL runs on both the `public` branch (0.111.x) and `public-beta` (0.113.x). It is compiled against the *oldest* supported build, and reaches the newer merchant API (`MerchantEntry.Id`, the `MerchantCardEntry` constructor and `Populate` overloads, `MerchantSynchronizer`) through reflection in [`src/Core/Sts2ApiCompat.cs`](src/Core/Sts2ApiCompat.cs). Always compile against 0.111.x; if your Steam install is on `public-beta`, pin `STS2_REFERENCE_DIR` to a 0.111.x snapshot so a 0.113-only member cannot slip into the build and break the public branch at runtime.
 
 **Setup:**
 1. Copy `.env.example` to `.env`.

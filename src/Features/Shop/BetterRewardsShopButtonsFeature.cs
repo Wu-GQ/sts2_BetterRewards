@@ -1,4 +1,5 @@
 using System.Reflection;
+using BetterRewards.Core;
 using BetterRewards.Features.Multiplayer;
 using BetterRewards.Features.Settings;
 using Godot;
@@ -141,6 +142,7 @@ internal static class BetterRewardsShopButtonsFeature
             }
 
             var cost = BetterRewardsShopState.CurrentRerollCost;
+            ShopActionProbe.NotePress("Reroll", player, cost);
             if (player.Gold < cost)
             {
                 return;
@@ -158,6 +160,7 @@ internal static class BetterRewardsShopButtonsFeature
             }
 
             var cost = BetterRewardsShopState.CurrentRelicCost;
+            ShopActionProbe.NotePress("RandomRelic", player, cost);
             if (player.Gold < cost)
             {
                 return;
@@ -175,6 +178,7 @@ internal static class BetterRewardsShopButtonsFeature
             }
 
             var cost = BetterRewardsShopState.CurrentRandomItemCost;
+            ShopActionProbe.NotePress("RandomItem", player, cost);
             if (player.Gold < cost)
             {
                 return;
@@ -274,8 +278,17 @@ internal static class BetterRewardsShopButtonsFeature
     private static readonly FieldInfo? _animatorField =
         typeof(NMerchantCardRemoval).GetField("_animator", BindingFlags.NonPublic | BindingFlags.Instance);
 
+    /// <summary>
+    /// <c>NMerchantRelic._relic</c>, the relic the node will animate on purchase. Reflected because
+    /// the reroll has to keep it in step with the entry; see <see cref="SyncRelicSlotCache"/>.
+    /// </summary>
+    private static readonly Lazy<FieldInfo?> NMerchantRelicRelicField = new(() =>
+        typeof(NMerchantRelic).GetField("_relic", BindingFlags.NonPublic | BindingFlags.Instance));
+
     private static async Task DoReroll(Player player, int cost, Action refreshLabels, NMerchantInventory nInventory)
     {
+        using var probe = ShopActionProbe.Begin("Reroll", player, cost);
+
         await PlayerCmd.LoseGold(cost, player, GoldLossType.Spent);
         BetterRewardsShopState.RecordRerollUse(player.NetId);
 
@@ -293,7 +306,7 @@ internal static class BetterRewardsShopButtonsFeature
         // (CalcCost throws if CreationResult is null, so we must Populate before notifying.)
         foreach (var entry in inventory.CardEntries)
         {
-            entry.Populate(inventory);
+            Sts2ApiCompat.PopulateCardEntry(entry, inventory);
             entry.OnMerchantInventoryUpdated();
         }
 
@@ -343,6 +356,11 @@ internal static class BetterRewardsShopButtonsFeature
         // After re-populating all entries, force all slots visible again.
         ShowStockedSlots(nInventory);
 
+        // The relic slots now hold new models, but each node still caches the model it had when
+        // FillSlot last ran. Buying one before the next purchase would animate that stale (often
+        // null) model and throw inside AnimateRelic, losing the fly-in.
+        SyncRelicSlotCache(nInventory);
+
         refreshLabels();
 
         BetterRewardsShopState.GetUseCounts(player.NetId, out var rerolls, out var relics, out var items);
@@ -361,6 +379,57 @@ internal static class BetterRewardsShopButtonsFeature
         }, player);
 
         Log.Info($"[BetterRewards] Shop rerolled in place ({pulledRelics.Count} relics pulled).");
+    }
+
+    /// <summary>
+    /// Points each relic slot node's cached relic at the entry's current model.
+    /// <para>
+    /// <c>NMerchantRelic</c> keeps the relic it will animate in a private <c>_relic</c> field that
+    /// is only refreshed in two places: <c>FillSlot</c> (first population) and
+    /// <c>OnSuccessfulPurchase</c> (after the animation). A reroll swaps the entry's model but
+    /// never runs either, so the field keeps the pre-reroll value. Vanilla only ever clears a
+    /// relic entry, so it never meets this state; once the slot has been rerolled the stale value
+    /// can be null, and <c>OnSuccessfulPurchase</c> passes it straight to
+    /// <c>NRelicInventory.AnimateRelic</c>, which throws
+    /// <c>ArgumentNullException (Parameter 'relic')</c> and loses the fly-in animation for that
+    /// purchase. The purchase itself still succeeds, so this is a visual-only defect.
+    /// </para>
+    /// <para>
+    /// Called after the entries are restocked and before any new press can complete. Peers that
+    /// replay the reroll are unaffected: their own copy of the actor's shop is never rendered.
+    /// </para>
+    /// </summary>
+    private static void SyncRelicSlotCache(NMerchantInventory nInventory)
+    {
+        var field = NMerchantRelicRelicField.Value;
+        if (field == null)
+        {
+            Log.Warn("[BetterRewards] Could not reflect NMerchantRelic._relic; " +
+                     "a purchased relic may skip its fly-in animation after a reroll.");
+            return;
+        }
+
+        var synced = 0;
+        foreach (var node in nInventory.GetAllSlots())
+        {
+            if (node is not NMerchantRelic relicNode)
+            {
+                continue;
+            }
+
+            try
+            {
+                var model = relicNode.Entry is MerchantRelicEntry relicEntry ? relicEntry.Model : null;
+                field.SetValue(relicNode, model);
+                synced++;
+            }
+            catch (Exception ex)
+            {
+                Log.Warn($"[BetterRewards] Could not sync a relic slot's cached model: {ex.Message}");
+            }
+        }
+
+        Log.Info($"[BetterRewards] Synced {synced} relic slot cache(s) after reroll.");
     }
 
     /// <summary>
@@ -392,6 +461,8 @@ internal static class BetterRewardsShopButtonsFeature
 
     private static async Task DoRandomRelic(Player player, Action refreshLabels)
     {
+        using var probe = ShopActionProbe.Begin("RandomRelic", player, BetterRewardsShopState.CurrentRelicCost);
+
         var cost = BetterRewardsShopState.CurrentRelicCost;
         if (player.Gold < cost)
         {
@@ -434,6 +505,8 @@ internal static class BetterRewardsShopButtonsFeature
 
     private static async Task DoRandomItem(Player player, Action refreshLabels)
     {
+        using var probe = ShopActionProbe.Begin("RandomItem", player, BetterRewardsShopState.CurrentRandomItemCost);
+
         var cost = BetterRewardsShopState.CurrentRandomItemCost;
         if (player.Gold < cost)
         {
@@ -696,8 +769,8 @@ internal static class BetterRewardsShopButtonsFeature
         {
             var type = ShopCharacterCardTypes[slot];
             var pool = player.Character.CardPool.GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint);
-            entry = new MerchantCardEntry(player, pool, type);
-            entry.Populate(inventory);
+            entry = Sts2ApiCompat.CreateCardEntry(player, inventory, pool, type);
+            Sts2ApiCompat.PopulateCardEntry(entry, inventory);
             if (rng.NextInt(characterSlots) == 0)
             {
                 entry.SetOnSale();
@@ -708,8 +781,8 @@ internal static class BetterRewardsShopButtonsFeature
         {
             var rarity = ShopColorlessCardRarities[slot - characterSlots];
             var pool = ModelDb.CardPool<ColorlessCardPool>().GetUnlockedCards(player.UnlockState, player.RunState.CardMultiplayerConstraint);
-            entry = new MerchantCardEntry(player, pool, rarity);
-            entry.Populate(inventory);
+            entry = Sts2ApiCompat.CreateCardEntry(player, inventory, pool, rarity);
+            Sts2ApiCompat.PopulateCardEntry(entry, inventory);
             Log.Info($"[BetterRewards] Prepared colorless {rarity}: {entry.CreationResult?.Card.Id}");
         }
 

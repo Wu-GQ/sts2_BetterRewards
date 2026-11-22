@@ -1,4 +1,5 @@
 using System.Reflection;
+using BetterRewards.Core;
 using BetterRewards.Features.Shop;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -312,16 +313,23 @@ internal static class BetterRewardsShopSyncService
 
     /// <summary>
     /// Reads the acting player's current shelves into wire form.
+    /// <para>
+    /// <c>EntryId</c> is the entry's ordinal in <c>AllEntries</c>, not
+    /// <c>MerchantEntry.Id</c>: 0.111.x has no such property, and 0.113 assigns that id from
+    /// this exact index, so the two are interchangeable and neither build needs reflection for
+    /// it. <c>AllEntries</c> is ordered cards, relics, potions, blitz, card removal, test
+    /// entries in both builds.
+    /// </para>
     /// </summary>
     public static BetterRewardsShopSlotSnapshot[] CaptureSlots(MerchantInventory inventory)
     {
         var slots = new List<BetterRewardsShopSlotSnapshot>();
-        foreach (var entry in inventory.AllEntries)
+        // 0.113 exposes AllEntries as List<MerchantEntry>, 0.111 as IEnumerable<MerchantEntry>.
+        var entries = inventory.AllEntries.ToList();
+        for (var index = 0; index < entries.Count; index++)
         {
-            if (entry.Id is not uint id)
-            {
-                continue;
-            }
+            var entry = entries[index];
+            var id = (uint)index;
 
             var baseCost = CostField?.GetValue(entry) is int cost ? cost : entry.Cost;
 
@@ -527,16 +535,22 @@ internal static class BetterRewardsShopSyncService
             return;
         }
 
-        MerchantInventory inventory;
+        // 0.111.x replicates a purchase as "player X spent G and received Y" through
+        // RewardSynchronizer, so no peer ever re-reads another player's shelf snapshot.
+        // Writing one here would only alter what the room records in run history on exit.
+        if (!Sts2ApiCompat.HasMerchantSynchronizer)
+        {
+            return;
+        }
+
+        MerchantInventory? inventory;
         try
         {
-            var synchronizer = RunManager.Instance?.MerchantSynchronizer;
-            if (synchronizer == null)
+            inventory = Sts2ApiCompat.FindInventoryFor(actor);
+            if (inventory == null)
             {
                 return;
             }
-
-            inventory = synchronizer.GetInventoryFor(actor);
         }
         catch (Exception ex)
         {
@@ -547,12 +561,10 @@ internal static class BetterRewardsShopSyncService
         }
 
         var byId = new Dictionary<uint, MerchantEntry>();
-        foreach (var entry in inventory.AllEntries)
+        var entries = inventory.AllEntries.ToList();
+        for (var index = 0; index < entries.Count; index++)
         {
-            if (entry.Id is uint id)
-            {
-                byId[id] = entry;
-            }
+            byId[(uint)index] = entries[index];
         }
 
         var applied = 0;
