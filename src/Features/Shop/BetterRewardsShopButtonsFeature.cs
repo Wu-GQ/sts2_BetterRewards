@@ -246,7 +246,7 @@ internal static class BetterRewardsShopButtonsFeature
 
         if (merchantInventory.Inventory == null) return;
 
-        foreach (var entry in merchantInventory.Inventory.AllEntries)
+        foreach (var entry in Sts2ApiCompat.GetAllEntries(merchantInventory.Inventory))
         {
             entry.PurchaseCompleted += (_, _) => _activeRefreshAction?.Invoke();
         }
@@ -364,6 +364,10 @@ internal static class BetterRewardsShopButtonsFeature
         refreshLabels();
 
         BetterRewardsShopState.GetUseCounts(player.NetId, out var rerolls, out var relics, out var items);
+        // Read the shelves before the publish so the log can state how many slots went out. An
+        // empty array here (a failed entry lookup) still publishes the action, so the count is the
+        // only way to tell "sent the new stock" from "sent nothing".
+        var slots = BetterRewardsShopSyncService.CaptureSlots(inventory);
         BetterRewardsShopSyncService.PublishAction(new BetterRewardsShopActionMessage
         {
             ActorNetId = player.NetId,
@@ -375,10 +379,11 @@ internal static class BetterRewardsShopButtonsFeature
             PulledRelics = pulledRelics.ToArray(),
             // The engine replays purchases against each peer's copy of this player's shop, so
             // the rerolled stock has to travel with the action or teammates buy the old shelves.
-            Slots = BetterRewardsShopSyncService.CaptureSlots(inventory),
+            Slots = slots,
         }, player);
 
-        Log.Info($"[BetterRewards] Shop rerolled in place ({pulledRelics.Count} relics pulled).");
+        Log.Info($"[BetterRewards] Shop rerolled in place ({pulledRelics.Count} relics pulled, " +
+                 $"{slots.Length} slots carried).");
     }
 
     /// <summary>

@@ -314,22 +314,23 @@ internal static class BetterRewardsShopSyncService
     /// <summary>
     /// Reads the acting player's current shelves into wire form.
     /// <para>
-    /// <c>EntryId</c> is the entry's ordinal in <c>AllEntries</c>, not
-    /// <c>MerchantEntry.Id</c>: 0.111.x has no such property, and 0.113 assigns that id from
-    /// this exact index, so the two are interchangeable and neither build needs reflection for
-    /// it. <c>AllEntries</c> is ordered cards, relics, potions, blitz, card removal, test
-    /// entries in both builds.
+    /// <c>EntryId</c> is <c>MerchantEntry.Id</c> where the build has it (0.113+), otherwise the
+    /// entry's ordinal in <c>AllEntries</c>. 0.113 replays a purchase by id, and its
+    /// <c>Setup</c> assigns that id from this exact ordinal, so the two agree; 0.111 has no id
+    /// and never re-reads another player's shelves, so the ordinal is only ever used for
+    /// bookkeeping there. <c>AllEntries</c> is ordered cards, relics, potions, blitz, card
+    /// removal, test entries in both builds.
     /// </para>
     /// </summary>
     public static BetterRewardsShopSlotSnapshot[] CaptureSlots(MerchantInventory inventory)
     {
         var slots = new List<BetterRewardsShopSlotSnapshot>();
-        // 0.113 exposes AllEntries as List<MerchantEntry>, 0.111 as IEnumerable<MerchantEntry>.
-        var entries = inventory.AllEntries.ToList();
+        var entries = Sts2ApiCompat.GetAllEntries(inventory);
         for (var index = 0; index < entries.Count; index++)
         {
             var entry = entries[index];
-            var id = (uint)index;
+            // Prefer the engine's own id: that is what 0.113's purchase replay looks up.
+            var id = Sts2ApiCompat.TryGetEntryId(entry) ?? (uint)index;
 
             var baseCost = CostField?.GetValue(entry) is int cost ? cost : entry.Cost;
 
@@ -561,10 +562,12 @@ internal static class BetterRewardsShopSyncService
         }
 
         var byId = new Dictionary<uint, MerchantEntry>();
-        var entries = inventory.AllEntries.ToList();
+        var entries = Sts2ApiCompat.GetAllEntries(inventory);
         for (var index = 0; index < entries.Count; index++)
         {
-            byId[(uint)index] = entries[index];
+            // Same id rule as CaptureSlots, or a snapshot taken on one peer would not resolve
+            // against the copy held by another.
+            byId[Sts2ApiCompat.TryGetEntryId(entries[index]) ?? (uint)index] = entries[index];
         }
 
         var applied = 0;

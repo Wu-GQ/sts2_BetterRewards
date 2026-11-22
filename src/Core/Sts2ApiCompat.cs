@@ -14,13 +14,18 @@ namespace BetterRewards.Core;
 /// public branch and public-beta.
 /// <para>
 /// The build targets the oldest supported game (0.111.x), so every call here must compile
-/// against 0.111 and work on 0.113 through reflection. 0.113 changed four things this mod
+/// against 0.111 and work on 0.113 through reflection. 0.113 changed five things this mod
 /// touches:
 /// </para>
 /// <list type="bullet">
-/// <item><c>MerchantEntry.Id</c> was added, plus a sequential assignment in <c>Populate</c>.
-///      Slot order is identical in both builds, so the ordinal into <c>AllEntries</c> is used
-///      instead and no reflection is needed for it.</item>
+/// <item><c>MerchantInventory.AllEntries</c> changed from <c>IEnumerable&lt;MerchantEntry&gt;</c>
+///      to <c>List&lt;MerchantEntry&gt;</c>. A property getter's return type is part of its
+///      metadata signature, so a call compiled against 0.111 binds to
+///      <c>get_AllEntries() : IEnumerable&lt;...&gt;</c> and throws
+///      <c>MissingMethodException</c> on 0.113. It must be reached through
+///      <see cref="GetAllEntries"/>, never by a direct call.</item>
+/// <item><c>MerchantEntry.Id</c> was added, plus a sequential assignment in <c>Setup</c>. Read
+///      it through <see cref="TryGetEntryId"/>.</item>
 /// <item><c>MerchantCardEntry</c> gained an <c>inventory</c> constructor parameter, and
 ///      <c>Populate(MerchantInventory?)</c> replaced the parameterless <c>Populate()</c>.</item>
 /// <item><c>MerchantSynchronizer</c> took over per-player shop ownership from
@@ -68,6 +73,21 @@ internal static class Sts2ApiCompat
     private static readonly MethodInfo? PopulateParameterlessMethod =
         typeof(MerchantCardEntry).GetMethod("Populate", BindingFlags.Public | BindingFlags.Instance, null,
             Type.EmptyTypes, null);
+
+    /// <summary>
+    /// <c>MerchantInventory.AllEntries</c>. Reflected because its return type differs per build
+    /// (<c>List&lt;MerchantEntry&gt;</c> on 0.113, <c>IEnumerable&lt;MerchantEntry&gt;</c> on
+    /// 0.111), and a getter's return type is part of the method signature.
+    /// </summary>
+    private static readonly PropertyInfo? AllEntriesProperty =
+        typeof(MerchantInventory).GetProperty("AllEntries", BindingFlags.Public | BindingFlags.Instance);
+
+    /// <summary>
+    /// <c>MerchantEntry.Id</c> (0.113+). Absent on 0.111.x, where the ordinal into
+    /// <c>AllEntries</c> is the only identity a shelf item has.
+    /// </summary>
+    private static readonly PropertyInfo? EntryIdProperty =
+        typeof(MerchantEntry).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance);
 
     /// <summary>
     /// Creates a shop card entry for either game build. The caller must still populate it with
@@ -129,6 +149,74 @@ internal static class Sts2ApiCompat
     }
 
     /// <summary>
+    /// Enumerates a shop's entries on either game build.
+    /// <para>
+    /// This is the only permitted way to read <c>AllEntries</c>. A direct call compiles against
+    /// the 0.111 signature (<c>IEnumerable&lt;MerchantEntry&gt;</c>) and throws
+    /// <c>MissingMethodException</c> on 0.113, where the property returns
+    /// <c>List&lt;MerchantEntry&gt;</c>. That failure is not cosmetic: the reroll builds its wire
+    /// snapshot from this list, so a throw here aborts the publish and teammates keep seeing the
+    /// pre-reroll shelves.
+    /// </para>
+    /// <para>
+    /// Never throws. A lookup that did not resolve, or a getter that fails, yields an empty list
+    /// and a warning: degrading to "no slots carried" still lets the rest of the action replicate,
+    /// which is strictly better than losing the whole message.
+    /// </para>
+    /// </summary>
+    public static IReadOnlyList<MerchantEntry> GetAllEntries(MerchantInventory inventory)
+    {
+        if (AllEntriesProperty == null)
+        {
+            Log.Warn("[BetterRewards] MerchantInventory.AllEntries did not resolve on this game build; " +
+                     "shop sync will carry no slots.");
+            return [];
+        }
+
+        try
+        {
+            // List<T> and IEnumerable<T> both assign to this, so one path serves both builds.
+            return AllEntriesProperty.GetValue(inventory) is IEnumerable<MerchantEntry> entries
+                ? entries as IReadOnlyList<MerchantEntry> ?? entries.ToList()
+                : [];
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"[BetterRewards] Could not enumerate the merchant inventory: {ex.Message}");
+            return [];
+        }
+    }
+
+    /// <summary>
+    /// The engine's own identity for a shelf item, or null on a build that has no
+    /// <c>MerchantEntry.Id</c>.
+    /// <para>
+    /// 0.113 replays a purchase as "player X bought entry N" and resolves N with
+    /// <c>AllEntries.FirstOrDefault(e =&gt; e.Id == N)</c>, so a snapshot slot must carry this
+    /// exact value. 0.111 has no such property and no peer ever re-reads another player's
+    /// shelves, so the caller falls back to the ordinal there.
+    /// </para>
+    /// </summary>
+    public static uint? TryGetEntryId(MerchantEntry entry)
+    {
+        if (EntryIdProperty == null)
+        {
+            return null;
+        }
+
+        try
+        {
+            // The property is uint?; a boxed value unboxes to uint, and an unset one to null.
+            return EntryIdProperty.GetValue(entry) is uint id ? id : null;
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"[BetterRewards] Could not read MerchantEntry.Id: {ex.Message}");
+            return null;
+        }
+    }
+
+    /// <summary>
     /// One-line probe for the startup log: which game build this assembly resolved, and which
     /// merchant path it will therefore take. Without it, a silently-failing reflection lookup
     /// on one branch would only show up as a missing shop button much later.
@@ -156,6 +244,22 @@ internal static class Sts2ApiCompat
         if (PopulateWithInventoryMethod == null && PopulateParameterlessMethod == null)
         {
             missing.Add("card Populate");
+        }
+
+        // These two are the ones that fail silently today: without them the reroll builds an
+        // empty snapshot and stops publishing, and the only trace is a MissingMethodException
+        // at the moment a player presses the button.
+        if (AllEntriesProperty == null)
+        {
+            missing.Add("entry list");
+        }
+
+        if (EntryIdProperty == null && HasMerchantSynchronizer)
+        {
+            // 0.113 replays a purchase by id, so a snapshot is useless without it. 0.111 has no
+            // id and no purchase replay, and keys snapshots by ordinal, so its absence is normal
+            // there and must not be reported.
+            missing.Add("entry id");
         }
 
         return missing.Count == 0

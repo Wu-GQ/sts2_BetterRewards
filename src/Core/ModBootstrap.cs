@@ -7,7 +7,7 @@ namespace BetterRewards.Core;
 public static class ModBootstrap
 {
     private const string HarmonyId = "betterrewards.harmony";
-    private const string BuildMarker = "2026-11-22-dual-branch-probe2";
+    private const string BuildMarker = "2026-11-22-dual-branch-allentries";
 
     private static bool _initialized;
 
